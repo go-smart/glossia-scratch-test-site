@@ -32,22 +32,23 @@ class CreateParameterAttributionsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('parameter_attributions', function(Blueprint $table)
+		Schema::create('Parameter_Attribution', function(Blueprint $table)
 		{
-			$table->char('id', 36)->primary();
-      $table->char('parameter_id', 36)->nullable();
-      $table->foreign('parameter_id')->references('id')->on('parameters');
-      $table->char('needle_id', 36)->nullable();
-      $table->foreign('needle_id')->references('id')->on('needles');
-      $table->char('power_generator_id', 36)->nullable();
-      $table->foreign('power_generator_id')->references('id')->on('power_generators');
-      $table->char('numerical_model_id', 36)->nullable();
-      $table->foreign('numerical_model_id')->references('id')->on('numerical_models');
-      $table->char('context_id', 36)->nullable();
-      $table->foreign('context_id')->references('id')->on('contexts');
-      $table->char('algorithm_id', 36)->nullable();
-      $table->foreign('algorithm_id')->references('id')->on('algorithms');
-      $table->string('value')->nullable();
+			$table->char('Id', 36)->primary();
+      $table->char('Parameter_Id', 36)->nullable();
+      $table->foreign('Parameter_Id')->references('Id')->on('Parameter')->onDelete('cascade');
+      $table->char('Needle_Id', 36)->nullable();
+      $table->foreign('Needle_Id')->references('Id')->on('Needle')->onDelete('cascade');
+      $table->char('Power_Generator_Id', 36)->nullable();
+      $table->foreign('Power_Generator_Id')->references('Id')->on('Power_Generator')->onDelete('cascade');
+      $table->char('Numerical_Model_Id', 36)->nullable();
+      $table->foreign('Numerical_Model_Id')->references('Id')->on('Numerical_Model')->onDelete('cascade');
+      $table->char('Context_Id', 36)->nullable();
+      if (!Config::get('gosmart.context_as_enum'))
+        $table->foreign('Context_Id')->references('Id')->on('Context')->onDelete('cascade');
+      $table->char('Algorithm_Id', 36)->nullable();
+      $table->foreign('Algorithm_Id')->references('Id')->on('Algorithm')->onDelete('cascade');
+      $table->string('Value')->nullable();
 			$table->timestamps();
 		});
 	}
@@ -59,7 +60,7 @@ class CreateParameterAttributionsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('parameter_attributions');
+		Schema::drop('Parameter_Attribution');
 	}
 
 }

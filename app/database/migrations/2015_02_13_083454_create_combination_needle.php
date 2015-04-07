@@ -32,13 +32,13 @@ class CreateCombinationNeedle extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('combination_needle', function(Blueprint $table)
+		Schema::create('Combination_Needle', function(Blueprint $table)
 		{
-			$table->increments('id');
-      $table->char('needle_id', 36);
-      $table->foreign('needle_id')->references('id')->on('needles');
-      $table->char('combination_id', 36);
-      $table->foreign('combination_id')->references('id')->on('combinations');
+			$table->increments('Id');
+      $table->char('Needle_Id', 36);
+      $table->foreign('Needle_Id')->references('Id')->on('Needle')->onDelete('cascade');
+      $table->char('Combination_Id', 36);
+      $table->foreign('Combination_Id')->references('Id')->on('Combination')->onDelete('cascade');
 		});
 	}
 
@@ -49,7 +49,7 @@ class CreateCombinationNeedle extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('combination_needle');
+		Schema::drop('Combination_Needle');
 	}
 
 }

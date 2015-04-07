@@ -32,10 +32,10 @@ class CreateModalities extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('modalities', function(Blueprint $table)
+		Schema::create('Modality', function(Blueprint $table)
 		{
-			$table->char('id', 36)->primary();
-			$table->string('name');
+			$table->char('Id', 36)->primary();
+			$table->string('Name')->unique();
 		});
 	}
 
@@ -46,7 +46,7 @@ class CreateModalities extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('modalities');
+		Schema::drop('Modality');
 	}
 
 }

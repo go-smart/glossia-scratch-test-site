@@ -9,7 +9,7 @@ class ProtocolController extends \BaseController {
 	 */
 	public function index()
 	{
-    $modalities = Modality::with('protocols')->get();
+    $modalities = Modality::with('Protocols')->get();
 
 		return View::make('protocols.index', compact('modalities'));
 	}
@@ -22,7 +22,7 @@ class ProtocolController extends \BaseController {
 	 */
 	public function create()
 	{
-    $modalities = Modality::all()->lists('name', 'id');
+    $modalities = Modality::all()->lists('Name', 'Id');
 
     return View::make('protocols.create', compact('modalities'));
 	}
@@ -54,7 +54,7 @@ class ProtocolController extends \BaseController {
       return Redirect::route('protocol.index')->withError("Protocol not found");
     }
 
-    $protocol->combinations->load('powerGenerator', 'numericalModel', 'context');
+    $protocol->combinations->load('PowerGenerator', 'NumericalModel', 'Context');
 
 		return View::make('protocols.show', compact('protocol'));
 		//

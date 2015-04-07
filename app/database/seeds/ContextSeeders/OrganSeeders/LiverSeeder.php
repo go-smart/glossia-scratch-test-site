@@ -33,8 +33,8 @@ class LiverSeeder extends Seeder {
    */
   public function run()
   {
-    $liver = Context::create(['family' => 'organ', 'name' => 'liver']);
+    $liver = Context::create(['Family' => 'organ', 'Name' => 'liver']);
 
-    $liver->attribute(['name' => 'BODY_TEMPERATURE', 'type' => 'float', 'value' => '37.0', 'widget' => 'textbox']);
+    $liver->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'float', 'Value' => '37.0', 'Widget' => 'textbox']);
   }
 }

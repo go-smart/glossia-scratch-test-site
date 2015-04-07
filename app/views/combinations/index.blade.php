@@ -1,12 +1,12 @@
 <table>
-@foreach ($combinations as $combination)
+@foreach ($Combinations as $combination)
     <tr>
-      <td>{{ $combination->protocol->name }}</td>
+      <td>{{ $combination->Protocol->Name }}</td>
       <td>
-      @foreach ($combination->needles as $needle)
-        {{ $needle->name }}</td>
+      @foreach ($combination->Needles as $needle)
+        {{ $needle->Name }}</td>
       @endforeach
-      <td>{{ $combination->power_generator->name }}</td>
+      <td>{{ $combination->Power_Generator->Name }}</td>
     </tr>
 @endforeach
 </table>

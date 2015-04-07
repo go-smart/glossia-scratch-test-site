@@ -42,47 +42,47 @@ class MWACombinationSeeder extends Seeder {
    */
   public function run()
   {
-    $modality['mwa'] = Modality::create(array("name" => "MWA"));
+    $modality['mwa'] = Modality::create(array("Name" => "MWA"));
 
     /* Add model */
     $model['mwa linear sif'] = new NumericalModel;
-    $model['mwa linear sif']->fill(array('name' => 'NUMA MWA Linear SIF', 'family' => 'elmer-libnuma'));
+    $model['mwa linear sif']->fill(array('Name' => 'NUMA MWA Linear SIF', 'Family' => 'elmer-libnuma'));
     $modality['mwa']->numericalModels()->save($model['mwa linear sif']);
     $model['mwa linear sif']->importSif(public_path() . '/templates/go-smart-template_mwa-l.sif');
-    $model['mwa linear sif']->arguments()->save(new Argument(['name' => 'Temperature']));
-    $model['mwa linear sif']->arguments()->save(new Argument(['name' => 'Time']));
-    $model['mwa linear sif']->attribute(['name' => 'SETTING_TIMESTEP_SIZE', 'type' => 'float', 'value' => '4', 'widget' => 'textbox']);
-    $model['mwa linear sif']->attribute(['name' => 'BODY_TEMPERATURE', 'type' => 'float', 'value' => null, 'widget' => 'textbox']);
+    $model['mwa linear sif']->arguments()->save(new Argument(['Name' => 'Temperature']));
+    $model['mwa linear sif']->arguments()->save(new Argument(['Name' => 'Time']));
+    $model['mwa linear sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);
+    $model['mwa linear sif']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'float', 'Value' => null, 'Widget' => 'textbox']);
 
     /* Defaults */
-    $model['mwa linear sif']->attribute(['name' => 'SETTING_TIMESTEP_SIZE', 'type' => 'float', 'value' => '4', 'widget' => 'textbox']);
+    $model['mwa linear sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);
     // Allows an upper limit if protocol mucks up:
-    $model['mwa linear sif']->attribute(['name' => 'SETTING_FINAL_TIMESTEP', 'type' => 'int', 'value' => '10000', 'widget' => 'textbox']);
-    $model['mwa linear sif']->attribute(['name' => 'CENTRE_LOCATION', 'type' => 'string', 'value' => 'first-needle', 'widget' => 'textbox']);
-    $model['mwa linear sif']->attribute(['name' => 'SIMULATION_SCALING', 'type' => 'float', 'value' => '0.001', 'widget' => 'textbox']);
-    $model['mwa linear sif']->attribute(['name' => 'SIMULATION_DOMAIN_RADIUS', 'type' => 'float', 'value' => '40.0', 'widget' => 'textbox']);
-    $model['mwa linear sif']->attribute(['name' => 'SETTING_AXISYMMETRIC_INNER', 'type' => 'string', 'value' => 'basic-mwa', 'widget' => 'textbox']);
-    $model['mwa linear sif']->attribute(['name' => 'SETTING_AXISYMMETRIC_INNER_COARSE', 'type' => 'string', 'value' => 'basic-mwa-coarse', 'widget' => 'textbox']);
+    $model['mwa linear sif']->attribute(['Name' => 'SETTING_FINAL_TIMESTEP', 'Type' => 'int', 'Value' => '10000', 'Widget' => 'textbox']);
+    $model['mwa linear sif']->attribute(['Name' => 'CENTRE_LOCATION', 'Type' => 'string', 'Value' => 'first-needle', 'Widget' => 'textbox']);
+    $model['mwa linear sif']->attribute(['Name' => 'SIMULATION_SCALING', 'Type' => 'float', 'Value' => '0.001', 'Widget' => 'textbox']);
+    $model['mwa linear sif']->attribute(['Name' => 'SIMULATION_DOMAIN_RADIUS', 'Type' => 'float', 'Value' => '40.0', 'Widget' => 'textbox']);
+    $model['mwa linear sif']->attribute(['Name' => 'SETTING_AXISYMMETRIC_INNER', 'Type' => 'string', 'Value' => 'basic-mwa', 'Widget' => 'textbox']);
+    $model['mwa linear sif']->attribute(['Name' => 'SETTING_AXISYMMETRIC_INNER_COARSE', 'Type' => 'string', 'Value' => 'basic-mwa-coarse', 'Widget' => 'textbox']);
 
     $model['mwa nonlinear sif'] = new NumericalModel;
-    $model['mwa nonlinear sif']->fill(array('name' => 'NUMA MWA Nonlinear SIF', 'family' => 'elmer-libnuma'));
+    $model['mwa nonlinear sif']->fill(array('Name' => 'NUMA MWA Nonlinear SIF', 'Family' => 'elmer-libnuma'));
     $modality['mwa']->numericalModels()->save($model['mwa nonlinear sif']);
     $model['mwa nonlinear sif']->importSif(public_path() . '/templates/go-smart-template_mwa-nl.sif');
-    $model['mwa nonlinear sif']->arguments()->save(new Argument(['name' => 'Temperature']));
-    $model['mwa nonlinear sif']->arguments()->save(new Argument(['name' => 'Time']));
-    $model['mwa nonlinear sif']->attribute(['name' => 'SETTING_TIMESTEP_SIZE', 'type' => 'float', 'value' => '4', 'widget' => 'textbox']);
-    $model['mwa nonlinear sif']->attribute(['name' => 'BODY_TEMPERATURE', 'type' => 'float', 'value' => null, 'widget' => 'textbox']);
+    $model['mwa nonlinear sif']->arguments()->save(new Argument(['Name' => 'Temperature']));
+    $model['mwa nonlinear sif']->arguments()->save(new Argument(['Name' => 'Time']));
+    $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);
+    $model['mwa nonlinear sif']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'float', 'Value' => null, 'Widget' => 'textbox']);
 
     /* Defaults */
-    $model['mwa nonlinear sif']->attribute(['name' => 'SETTING_TIMESTEP_SIZE', 'type' => 'float', 'value' => '4', 'widget' => 'textbox']);
+    $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);
     // Allows an upper limit if protocol mucks up:
-    $model['mwa nonlinear sif']->attribute(['name' => 'SETTING_FINAL_TIMESTEP', 'type' => 'int', 'value' => '10000', 'widget' => 'textbox']);
-    $model['mwa nonlinear sif']->attribute(['name' => 'CENTRE_LOCATION', 'type' => 'string', 'value' => 'first-needle', 'widget' => 'textbox']);
-    $model['mwa nonlinear sif']->attribute(['name' => 'SIMULATION_SCALING', 'type' => 'float', 'value' => '0.001', 'widget' => 'textbox']);
-    $model['mwa nonlinear sif']->attribute(['name' => 'SIMULATION_DOMAIN_RADIUS', 'type' => 'float', 'value' => '40.0', 'widget' => 'textbox']);
-    $model['mwa nonlinear sif']->attribute(['name' => 'SETTING_AXISYMMETRIC_INNER', 'type' => 'string', 'value' => 'basic-mwa', 'widget' => 'textbox']);
-    $model['mwa nonlinear sif']->attribute(['name' => 'SETTING_AXISYMMETRIC_INNER_COARSE', 'type' => 'string', 'value' => 'basic-mwa-coarse', 'widget' => 'textbox']);
-    $model['mwa nonlinear sif']->attribute(['name' => 'ELMER_NUMA_MODULES', 'type' => 'array(string)', 'value' => '[ "mwa_RelPerm", "mwa_ElecCond" ]', 'widget' => 'textbox']);
+    $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_FINAL_TIMESTEP', 'Type' => 'int', 'Value' => '10000', 'Widget' => 'textbox']);
+    $model['mwa nonlinear sif']->attribute(['Name' => 'CENTRE_LOCATION', 'Type' => 'string', 'Value' => 'first-needle', 'Widget' => 'textbox']);
+    $model['mwa nonlinear sif']->attribute(['Name' => 'SIMULATION_SCALING', 'Type' => 'float', 'Value' => '0.001', 'Widget' => 'textbox']);
+    $model['mwa nonlinear sif']->attribute(['Name' => 'SIMULATION_DOMAIN_RADIUS', 'Type' => 'float', 'Value' => '40.0', 'Widget' => 'textbox']);
+    $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_AXISYMMETRIC_INNER', 'Type' => 'string', 'Value' => 'basic-mwa', 'Widget' => 'textbox']);
+    $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_AXISYMMETRIC_INNER_COARSE', 'Type' => 'string', 'Value' => 'basic-mwa-coarse', 'Widget' => 'textbox']);
+    $model['mwa nonlinear sif']->attribute(['Name' => 'ELMER_NUMA_MODULES', 'Type' => 'array(string)', 'Value' => '[ "mwa_RelPerm", "mwa_ElecCond" ]', 'Widget' => 'textbox']);
 
     $organ = Region::whereName('organ')->first();
     $vessels = Region::whereName('vessels')->first();
@@ -90,7 +90,7 @@ class MWACombinationSeeder extends Seeder {
     $arteries = Region::whereName('arteries')->first();
     $bronchi = Region::whereName('bronchi')->first();
     $tumour = Region::whereName('tumour')->first();
-    $model['mwa nonlinear sif']->regions()->attach($organ, ['minimum' => 1, 'maximum' => 1]);
+    $model['mwa nonlinear sif']->regions()->attach($organ, ['Minimum' => 1, 'Maximum' => 1]);
     $model['mwa nonlinear sif']->regions()->attach($vessels);
     $model['mwa nonlinear sif']->regions()->attach($veins);
     $model['mwa nonlinear sif']->regions()->attach($arteries);

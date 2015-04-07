@@ -29,23 +29,25 @@ class Algorithm extends Paramable {
    */
   public $timestamps = false;
 
+  protected static $updateByDefault = false;
+
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 'algorithms';
+	protected $table = 'Algorithm';
 
-  public function protocol() {
-    return $this->belongsTo('Protocol');
+  public function Protocol() {
+    return $this->belongsTo('Protocol', 'Protocol_Id');
   }
 
-  public function result() {
-    return $this->belongsTo('Parameter', 'result_id');
+  public function Result() {
+    return $this->belongsTo('Parameter', 'Result_Id');
   }
 
-  public function arguments() {
-    return $this->morphMany('Argument', 'argumentable');
+  public function Arguments() {
+    return $this->morphMany('Argument', 'Argumentable');
   }
 
   /**
@@ -54,27 +56,32 @@ class Algorithm extends Paramable {
 
   /* Web UI */
   public function arguments_as_string() {
-    return $this->arguments->implode('name', ', ');
+    return $this->Arguments->implode('Name', ', ');
   }
 
   /* XML */
   public function xml($parent) {
     $xml = new DOMElement("algorithm");
     $parent->appendChild($xml);
-    $xml->setAttribute('result', $this->result->name);
+    $xml->setAttribute('result', $this->Result->Name);
 
     $arguments = new DOMElement("arguments");
     $xml->appendChild($arguments);
-    foreach ($this->arguments as $argument)
+    foreach ($this->Arguments as $argument)
     {
       $argument->xml($arguments);
     }
 
     $content = new DOMElement("content");
-    $contentText = new DOMText($this->content);
+    $contentText = new DOMText($this->Content);
     $xml->appendChild($content);
     $content->appendChild($contentText);
 
     return $xml;
+  }
+
+  public function findUnique()
+  {
+    return false;
   }
 }

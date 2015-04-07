@@ -34,26 +34,26 @@ class NumericalModel extends Paramable {
 	 *
 	 * @var string
 	 */
-	protected $table = 'numerical_models';
+	protected $table = 'Numerical_Model';
 
   /**
    * The modality that this applies to.
    *
    * @var string
    */
-  public function modality() {
-    return $this->belongsTo('Modality');
+  public function Modality() {
+    return $this->belongsTo('Modality', 'Modality_Id');
   }
 
-  public function regions() {
-    return $this->belongsToMany('Region')->withPivot('maximum', 'minimum');
+  public function Regions() {
+    return $this->belongsToMany('Region', 'Numerical_Model_Region', 'Numerical_Model_Id', 'Region_Id')->withPivot('Maximum', 'Minimum');
   }
 
-  public function combinations() {
-    return $this->hasMany('Combination');
+  public function Combinations() {
+    return $this->hasMany('Combination', 'Numerical_Model_Id');
   }
 
-  public function arguments() {
+  public function Arguments() {
     return $this->morphMany('Argument', 'argumentable');
   }
 
@@ -71,8 +71,8 @@ class NumericalModel extends Paramable {
     }
   }
 
-  public function results() {
-    return $this->hasMany('Result');
+  public function Results() {
+    return $this->hasMany('Result', 'Numerical_Model_Id');
   }
 
   /* XML */
@@ -86,34 +86,37 @@ class NumericalModel extends Paramable {
     $regions = [];
     $regionsNode = new DOMElement("regions");
     $parent->appendChild($regionsNode);
-    foreach ($this->regions as $region) {
-      $suppliedCount = isset($suppliedRegions[$region->name]) ? count($suppliedRegions[$region->name]) : 0;
+    foreach ($this->Regions as $region) {
+      $suppliedCount = isset($suppliedRegions[$region->Name]) ? count($suppliedRegions[$region->Name]) : 0;
       $pivot = $region->pivot;
 
-      if ($pivot->maximum !== null && $suppliedCount > $pivot->maximum)
-        $incompatibilities[] = "Too many region entries for $region->name (max $pivot->maximum, provided $suppliedCount)";
+      if (Config::get('gosmart.check_regions') !== false)
+      {
+        if ($pivot->Maximum !== null && $suppliedCount > $pivot->Maximum)
+          $incompatibilities[] = "Too many region entries for $region->Name (max $pivot->Maximum, provided $suppliedCount)";
 
-      if ($pivot->minimum !== null && $suppliedCount < $pivot->minimum)
-        $incompatibilities[] = "Too few region entries for $region->name (min $pivot->minimum, provided $suppliedCount)";
+        if ($pivot->Minimum !== null && $suppliedCount < $pivot->Minimum)
+          $incompatibilities[] = "Too few region entries for $region->Name (min $pivot->Minimum, provided $suppliedCount)";
+      }
 
       if ($suppliedCount) {
         $k = 0;
-        foreach ($suppliedRegions[$region->name] as $entry) {
+        foreach ($suppliedRegions[$region->Name] as $entry) {
           $regionNode = new DOMElement("region");
           $regionsNode->appendChild($regionNode);
-          $regionNode->setAttribute('id', $region->name . '-' . $k);
-          $regionNode->setAttribute('name', $region->name);
-          $regionNode->setAttribute('format', $region->format);
+          $regionNode->setAttribute('id', $region->Name . '-' . $k);
+          $regionNode->setAttribute('name', $region->Name);
+          $regionNode->setAttribute('format', $region->Format);
           $regionNode->setAttribute('input', $entry);
-          $regionNode->setAttribute('groups', $region->groups); /* groups should be a JSON array */
+          $regionNode->setAttribute('groups', $region->Groups); /* groups should be a JSON array */
           $k += 1;
         }
       }
-      unset($suppliedRegions[$region->name]);
+      unset($suppliedRegions[$region->Name]);
     }
 
     if (count($suppliedRegions))
-      $incompatibilities[] = "Unknown regions for model $this->name : " . implode(', ', array_keys($suppliedRegions));
+      $incompatibilities[] = "Unknown regions for model $this->Name : " . implode(', ', array_keys($suppliedRegions));
 
     $needlesNode = new DOMElement("needles");
     $parent->appendChild($needlesNode);
@@ -125,15 +128,15 @@ class NumericalModel extends Paramable {
       /* isset checks value whether NULL */
       if (isset($needleUserData[$needleIx]) && isset($needleUserData[$needleIx]['class']))
         $needleNode->setAttribute("class", $needleUserData[$needleIx]['class']);
-      else if (!empty($needle->class))
-        $needleNode->setAttribute("class", $needle->class);
+      else if (!empty($needle->Class))
+        $needleNode->setAttribute("class", $needle->Class);
       else
         $incompatibilities[] = "Needle class is not given for " . $needleIx;
 
       if (isset($needleUserData[$needleIx]) && isset($needleUserData[$needleIx]['file']))
         $needleNode->setAttribute("file", $needleUserData[$needleIx]['file']);
-      else if (!empty($needle->file))
-        $needleNode->setAttribute("file", $needle->file);
+      else if (!empty($needle->File))
+        $needleNode->setAttribute("file", $needle->File);
       else
         $incompatibilities[] = "Needle file is not given for " . $needleIx;
 
@@ -145,16 +148,16 @@ class NumericalModel extends Paramable {
     }
 
     $definition = new DOMElement("definition");
-    $definitionText = new DOMText($this->definition);
+    $definitionText = new DOMText($this->Definition);
     $parent->appendChild($definition);
-    $definition->setAttribute('family', $this->family);
+    $definition->setAttribute('family', $this->Family);
     $definition->appendChild($definitionText);
   }
 
   public function importSif($filename)
   {
-    if (empty($this->id))
-      throw Exception("Numerical model must have ID (i.e. be saved) before calling importSif");
+    if (empty($this->Id))
+      throw RuntimeException("Numerical model must have ID (i.e. be saved) before calling importSif");
 
     $sif = file_get_contents($filename);
 
@@ -170,5 +173,12 @@ class NumericalModel extends Paramable {
     }
 
     $this->save();
+  }
+
+  public function findUnique()
+  {
+    return self::whereName($this->Name)
+      ->whereFamily($this->Family)
+      ->first();
   }
 }

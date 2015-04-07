@@ -32,15 +32,15 @@ class CreateParametersTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('parameters', function($table)
+		Schema::create('Parameter', function($table)
                 {
-			$table->char('id', 36)->primary();
-		  $table->string('name')->unique();
-		  $table->string('type');
-		  $table->string('widget')->nullable();
-		  $table->string('description')->nullable();
-		  $table->string('units')->nullable();
-		  $table->char('priority', 36)->nullable();
+			$table->char('Id', 36)->primary();
+		  $table->string('Name')->unique();
+		  $table->string('Type');
+		  $table->string('Widget')->nullable();
+		  $table->string('Description')->nullable();
+		  $table->string('Units')->nullable();
+		  $table->char('Priority', 36)->nullable();
     });
 	}
 
@@ -51,7 +51,7 @@ class CreateParametersTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('parameters');
+		Schema::drop('Parameter');
 	}
 
 }

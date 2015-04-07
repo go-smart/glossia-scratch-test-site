@@ -32,12 +32,13 @@ class CreateProtocols extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('protocols', function(Blueprint $table)
+		Schema::create('Protocol', function(Blueprint $table)
 		{
-			$table->char('id', 36)->primary();
-      $table->char('modality_id', 36);
-      $table->foreign('modality_id')->references('id')->on('modalities');
-      $table->string('name');
+			$table->char('Id', 36)->primary();
+      $table->char('Modality_Id', 36);
+      $table->foreign('Modality_Id')->references('Id')->on('Modality');
+      $table->string('Name');
+      $table->unique(['Name', 'Modality_Id']);
 		});
 	}
 
@@ -48,7 +49,7 @@ class CreateProtocols extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('protocols');
+		Schema::drop('Protocol');
 	}
 
 }

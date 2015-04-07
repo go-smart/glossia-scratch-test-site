@@ -20,4 +20,13 @@
  */
 -->
 <constants class="NumericalModel" name="NUMA Cryoablation Basic SIF">
+    <constant name="metabolic heat" value="3.93" units="kg m^-1 s^-3" />
+    <constant name="thermal conductivity (tissue) (mushy)" value="1.25" />
+    <constant name="thermal conductivity (tissue) (frozen)" value="2.0" />
+    <constant name="thermal conductivity (tumour) (mushy)" value="1.25" />
+    <constant name="thermal conductivity (tumour) (frozen)" value="2.0" />
+    <constant name="specific heat capacity (tissue) (mushy)" value="1.25" />
+    <constant name="specific heat capacity (tissue) (frozen)" value="2.0" />
+    <constant name="specific heat capacity (tumour) (mushy)" value="1.25" />
+    <constant name="specific heat capacity (tumour) (frozen)" value="2.0" />
 </constants>

@@ -49,86 +49,86 @@ class BostonScientificCombinationSeeder extends Seeder {
     /* Add generators */
     $generator['rf3000'] = new PowerGenerator;
     $generator['rf3000']->fill(array(
-      'name' => 'RF3000',
-      'manufacturer' => 'Boston Scientific'
+      'Name' => 'RF3000',
+      'Manufacturer' => 'Boston Scientific'
     ));
-    $modality['rfa']->powerGenerators()->save($generator['rf3000']);
-    $generator['rf3000']->attribute(['name' => 'GENERATOR_WATTAGE', 'type' => 'float', 'value' => 200.0, 'widget' => 'textbox']);
-    $generator['rf3000']->attribute(['name' => 'INITIAL_POWER', 'type' => 'float', 'value' => 200.0, 'widget' => 'textbox']);
-    $generator['rf3000']->attribute(['name' => 'MAX_POWER', 'type' => 'float', 'value' => 200.0, 'widget' => 'textbox']);
+    $modality['rfa']->PowerGenerators()->save($generator['rf3000']);
+    $generator['rf3000']->attribute(['Name' => 'GENERATOR_WATTAGE', 'Type' => 'float', 'Value' => 200.0, 'Widget' => 'textbox']);
+    $generator['rf3000']->attribute(['Name' => 'INITIAL_POWER', 'Type' => 'float', 'Value' => 200.0, 'Widget' => 'textbox']);
+    $generator['rf3000']->attribute(['Name' => 'MAX_POWER', 'Type' => 'float', 'Value' => 200.0, 'Widget' => 'textbox']);
 
     /* Add needles */
     $needle['leveen std 3cm'] = new Needle;
     $needle['leveen std 3cm']->fill(array(
-      'name' => 'LeVeen Standard 3cm',
-      'manufacturer' => 'Boston Scientific',
-      'file' => 'library:umbrella tines',
-      'class' => 'point-sources'
+      'Name' => 'LeVeen Standard 3cm',
+      'Manufacturer' => 'Boston Scientific',
+      'File' => 'library:umbrella tines',
+      'Class' => 'point-sources'
     ));
-    $modality['rfa']->needles()->save($needle['leveen std 3cm']);
+    $modality['rfa']->Needles()->save($needle['leveen std 3cm']);
     $needle['leveen std 3cm']->powerGenerators()->attach($generator['rf3000']);
-    $needle['leveen std 3cm']->attribute(['name' => 'NEEDLE_EXTENSION', 'type' => 'float', 'value' => 3.0, 'widget' => 'textbox']);
+    $needle['leveen std 3cm']->attribute(['Name' => 'NEEDLE_EXTENSION', 'Type' => 'float', 'Value' => 3.0, 'Widget' => 'textbox']);
 
     $needle['leveen std 3.5cm'] = new Needle;
     $needle['leveen std 3.5cm']->fill(array(
-      'name' => 'LeVeen Standard 3.5cm',
-      'manufacturer' => 'Boston Scientific',
-      'file' => 'library:umbrella tines',
-      'class' => 'point-sources'
+      'Name' => 'LeVeen Standard 3.5cm',
+      'Manufacturer' => 'Boston Scientific',
+      'File' => 'library:umbrella tines',
+      'Class' => 'point-sources'
     ));
-    $modality['rfa']->needles()->save($needle['leveen std 3.5cm']);
+    $modality['rfa']->Needles()->save($needle['leveen std 3.5cm']);
     $needle['leveen std 3.5cm']->powerGenerators()->attach($generator['rf3000']);
-    $needle['leveen std 3.5cm']->attribute(['name' => 'NEEDLE_EXTENSION', 'type' => 'float', 'value' => 3.5, 'widget' => 'textbox']);
+    $needle['leveen std 3.5cm']->attribute(['Name' => 'NEEDLE_EXTENSION', 'Type' => 'float', 'Value' => 3.5, 'Widget' => 'textbox']);
 
     $needle['leveen std 4cm'] = new Needle;
     $needle['leveen std 4cm']->fill(array(
-      'name' => 'LeVeen Standard 4cm',
-      'manufacturer' => 'Boston Scientific',
-      'file' => 'library:umbrella tines',
-      'class' => 'point-sources'
+      'Name' => 'LeVeen Standard 4cm',
+      'Manufacturer' => 'Boston Scientific',
+      'File' => 'library:umbrella tines',
+      'Class' => 'point-sources'
     ));
-    $modality['rfa']->needles()->save($needle['leveen std 4cm']);
+    $modality['rfa']->Needles()->save($needle['leveen std 4cm']);
     $needle['leveen std 4cm']->powerGenerators()->attach($generator['rf3000']);
-    $needle['leveen std 4cm']->attribute(['name' => 'NEEDLE_EXTENSION', 'type' => 'float', 'value' => 4.0, 'widget' => 'textbox']);
+    $needle['leveen std 4cm']->attribute(['Name' => 'NEEDLE_EXTENSION', 'Type' => 'float', 'Value' => 4.0, 'Widget' => 'textbox']);
 
     $needle['leveen std 5cm'] = new Needle;
     $needle['leveen std 5cm']->fill(array(
-      'name' => 'LeVeen Standard 5cm',
-      'manufacturer' => 'Boston Scientific',
-      'file' => 'library:umbrella tines',
-      'class' => 'point-sources'
+      'Name' => 'LeVeen Standard 5cm',
+      'Manufacturer' => 'Boston Scientific',
+      'File' => 'library:umbrella tines',
+      'Class' => 'point-sources'
     ));
-    $modality['rfa']->needles()->save($needle['leveen std 5cm']);
+    $modality['rfa']->Needles()->save($needle['leveen std 5cm']);
     $needle['leveen std 5cm']->powerGenerators()->attach($generator['rf3000']);
-    $needle['leveen std 5cm']->attribute(['name' => 'NEEDLE_EXTENSION', 'type' => 'float', 'value' => 5.0, 'widget' => 'textbox']);
+    $needle['leveen std 5cm']->attribute(['Name' => 'NEEDLE_EXTENSION', 'Type' => 'float', 'Value' => 5.0, 'Widget' => 'textbox']);
 
     $needle['leveen super slim 2cm'] = new Needle;
     $needle['leveen super slim 2cm']->fill(array(
-      'name' => 'LeVeen Super Slim 2cm',
-      'manufacturer' => 'Boston Scientific',
-      'file' => 'library:umbrella tines',
-      'class' => 'point-sources'
+      'Name' => 'LeVeen Super Slim 2cm',
+      'Manufacturer' => 'Boston Scientific',
+      'File' => 'library:umbrella tines',
+      'Class' => 'point-sources'
     ));
-    $modality['rfa']->needles()->save($needle['leveen super slim 2cm']);
+    $modality['rfa']->Needles()->save($needle['leveen super slim 2cm']);
     $needle['leveen super slim 2cm']->powerGenerators()->attach($generator['rf3000']);
-    $needle['leveen super slim 2cm']->attribute(['name' => 'NEEDLE_EXTENSION', 'type' => 'float', 'value' => 2.0, 'widget' => 'textbox']);
+    $needle['leveen super slim 2cm']->attribute(['Name' => 'NEEDLE_EXTENSION', 'Type' => 'float', 'Value' => 2.0, 'Widget' => 'textbox']);
 
     $needle['leveen super slim 3cm'] = new Needle;
     $needle['leveen super slim 3cm']->fill(array(
-      'name' => 'LeVeen Super Slim 3cm',
-      'manufacturer' => 'Boston Scientific',
-      'file' => 'library:umbrella tines',
-      'class' => 'point-sources'
+      'Name' => 'LeVeen Super Slim 3cm',
+      'Manufacturer' => 'Boston Scientific',
+      'File' => 'library:umbrella tines',
+      'Class' => 'point-sources'
     ));
-    $modality['rfa']->needles()->save($needle['leveen super slim 3cm']);
+    $modality['rfa']->Needles()->save($needle['leveen super slim 3cm']);
     $needle['leveen super slim 3cm']->powerGenerators()->attach($generator['rf3000']);
-    $needle['leveen super slim 3cm']->attribute(['name' => 'NEEDLE_EXTENSION', 'type' => 'float', 'value' => 3.0, 'widget' => 'textbox']);
+    $needle['leveen super slim 3cm']->attribute(['Name' => 'NEEDLE_EXTENSION', 'Type' => 'float', 'Value' => 3.0, 'Widget' => 'textbox']);
 
     /* Add protocols */
     foreach (array('3cm', '3.5cm', '4cm', '5cm') as $n) {
       $protocol["leveen std $n"] = new Protocol;
       $protocol["leveen std $n"]->fill(array(
-        'name' => "LeVeen Standard $n Ablation Algorithm",
+        'Name' => "LeVeen Standard $n Ablation Algorithm",
       ));
       $modality['rfa']->protocols()->save($protocol["leveen std $n"]);
     }
@@ -136,7 +136,7 @@ class BostonScientificCombinationSeeder extends Seeder {
     foreach (array('2cm', '3cm') as $n) {
       $protocol["leveen super slim $n"] = new Protocol;
       $protocol["leveen super slim $n"]->fill(array(
-        'name' => "LeVeen Super Slim $n Ablation Algorithm",
+        'Name' => "LeVeen Super Slim $n Ablation Algorithm",
       ));
       $modality['rfa']->protocols()->save($protocol["leveen super slim $n"]);
     }
@@ -166,13 +166,13 @@ ENDLIPSUM2;
       $algorithm["$pn power"]->protocol()->associate($protocol[$pn]);
 
       $result = new Parameter;
-      $result->fill(['name' => 'INPUT_POWER', 'type' => 'float']);
+      $result->fill(['Name' => 'INPUT_POWER', 'Type' => 'float']);
       $result->save();
       $algorithm["$pn power"]->result()->associate($result);
       $algorithm["$pn power"]->save();
 
-      $algorithm["$pn power"]->attribute(['name' => 'NEEDLE_EXTENSION', 'type' => 'float', 'restriction' => 'needle']);
-      $algorithm["$pn power"]->attribute(['name' => 'INITIAL_POWER', 'type' => 'float', 'restriction' => 'generator']);
+      $algorithm["$pn power"]->attribute(['Name' => 'NEEDLE_EXTENSION', 'Type' => 'float', 'Restriction' => 'needle']);
+      $algorithm["$pn power"]->attribute(['Name' => 'INITIAL_POWER', 'Type' => 'float', 'Restriction' => 'generator']);
 
       $argument = new Argument;
       $argument->name = "Temperature";
@@ -187,7 +187,7 @@ ENDLIPSUM2;
      */
 
     foreach (array('kidney', 'liver', 'lung') as $organ) {
-      $o = Context::whereName($organ)->first();
+      $o = Context::byNameFamily($organ, 'organ');
 
       foreach (array('3cm', '3.5cm', '4cm', '5cm') as $n) {
         $c = new Combination;
@@ -196,18 +196,18 @@ ENDLIPSUM2;
         $c->numericalModel()->associate($model['rfa basic sif']);
         $c->context()->associate($o);
         $c->save();
-        $c->needles()->attach($needle['leveen std ' . $n]);
+        $c->Needles()->attach($needle['leveen std ' . $n]);
         $combination['bs-' . $n] = $c;
       }
 
       foreach (array('2cm', '3cm') as $n) {
         $c = new Combination;
-        $c->protocol()->associate($protocol['leveen super slim ' . $n]);
-        $c->powerGenerator()->associate($generator['rf3000']);
-        $c->numericalModel()->associate($model['rfa basic sif']);
-        $c->context()->associate($o);
+        $c->Protocol()->associate($protocol['leveen super slim ' . $n]);
+        $c->PowerGenerator()->associate($generator['rf3000']);
+        $c->NumericalModel()->associate($model['rfa basic sif']);
+        $c->Context()->associate($o);
         $c->save();
-        $c->needles()->attach($needle['leveen super slim ' . $n]);
+        $c->Needles()->attach($needle['leveen super slim ' . $n]);
         $combination['bs-' . $n] = $c;
       }
     }

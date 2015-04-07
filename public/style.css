@@ -84,3 +84,11 @@
 #algorithm-block {
   background-color: #cfc;
 }
+
+.simulations-table tbody tr:nth-child(odd) {
+  background-color: #ccf;
+}
+
+.simulations-table tbody tr:nth-child(even) {
+  background-color: #ccc;
+}

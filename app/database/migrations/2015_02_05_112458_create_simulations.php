@@ -32,15 +32,18 @@ class CreateSimulations extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('simulations', function(Blueprint $table)
+		Schema::create('Simulation', function(Blueprint $table)
 		{
-			$table->char('id', 36)->primary();
-      $table->char('combination_id', 36);
-      $table->foreign('combination_id')->references('id')->on('combinations');
-      $table->text('parameter_data');
-      $table->text('region_data');
-      $table->text('needle_data');
-			$table->timestamps();
+			$table->char('Id', 36)->primary();
+      $table->char('Combination_Id', 36);
+      $table->foreign('Combination_Id')->references('Id')->on('Combination');
+      $table->char('Patient_Id', 36);
+      $table->string('Caption');
+      $table->string('Progress');
+      $table->integer('State');
+      $table->integer('Segmentation_Type');
+      $table->integer('Color')->nullable();
+      $table->boolean('Active');
 		});
 	}
 
@@ -51,7 +54,7 @@ class CreateSimulations extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('simulations');
+		Schema::drop('Simulation');
 	}
 
 }

@@ -30,14 +30,16 @@ class Argument extends UuidModel {
    */
   public $timestamps = false;
 
+  protected static $updateByDefault = false;
+
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 'arguments';
+	protected $table = 'Argument';
 
-  public function argumentable()
+  public function Argumentable()
   {
     return $this->morphTo();
   }
@@ -46,6 +48,11 @@ class Argument extends UuidModel {
   {
     $argument = new DOMElement("argument");
     $parent->appendChild($argument);
-    $argument->setAttribute("name", $this->name);
+    $argument->setAttribute("name", $this->Name);
+  }
+
+  public function findUnique()
+  {
+    return false;
   }
 }

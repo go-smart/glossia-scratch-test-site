@@ -56,7 +56,7 @@ class AlgorithmSeeder extends Seeder {
         throw new Exception("Could not find modality! ($algorithmsXml)");
 
       $protocolName = $root->getAttribute('protocol');
-      $protocol = Protocol::whereName($protocolName)->whereModalityId($modality->id)->first();
+      $protocol = Protocol::whereName($protocolName)->whereModalityId($modality->Id)->first();
 
       if (empty($protocol))
         throw new Exception("Could not find protocol! ($algorithmsXml)");
@@ -74,7 +74,7 @@ class AlgorithmSeeder extends Seeder {
           foreach ($node->childNodes as $argument) {
             if (get_class($argument) == 'DOMText')
               continue;
-            $arguments[] = ['name' => $argument->getAttribute('name')];
+            $arguments[] = ['Name' => $argument->getAttribute('name')];
           }
           break;
         case 'parameters':
@@ -82,9 +82,9 @@ class AlgorithmSeeder extends Seeder {
             if (get_class($parameter) == 'DOMText')
               continue;
             $parameters[] = [
-                'name' => $parameter->getAttribute('name'),
-                'type' => $parameter->getAttribute('type'),
-                'value' => $parameter->hasAttribute('value') ? $parameter->getAttribute('value') : null
+                'Name' => $parameter->getAttribute('name'),
+                'Type' => $parameter->getAttribute('type'),
+                'Value' => $parameter->hasAttribute('value') ? $parameter->getAttribute('value') : null
             ];
           }
           break;
@@ -103,7 +103,7 @@ class AlgorithmSeeder extends Seeder {
       $result = Parameter::whereName($resultName)->first();
       if (empty($result))
       {
-        $result = Parameter::create(['name' => $resultName]);
+        $result = Parameter::create(['Name' => $resultName]);
       }
       $algorithm->result()->associate($result);
       $algorithm->protocol()->associate($protocol);

@@ -32,11 +32,12 @@ class CreateContexts extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('contexts', function(Blueprint $table)
+		Schema::create('Context', function(Blueprint $table)
 		{
-			$table->char('id', 36)->primary();
-      $table->string('name');
-      $table->string('family');
+			$table->char('Id', 36)->primary();
+      $table->string('Name');
+      $table->string('Family');
+      $table->unique(['Name', 'Family']);
 			$table->timestamps();
 		});
 	}
@@ -48,7 +49,7 @@ class CreateContexts extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('contexts');
+		Schema::drop('Context');
 	}
 
 }

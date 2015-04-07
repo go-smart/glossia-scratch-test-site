@@ -25,7 +25,6 @@ use \Seeder;
 use \Algorithm;
 use \Argument;
 use \Modality;
-use \Modality;
 use \Needle;
 use \NumericalModel;
 use \Parameter;
@@ -41,7 +40,7 @@ class RFAModalitySeeder extends Seeder {
    */
   public function run()
   {
-    $modality['mwa'] = Modality::create(array("name" => "RFA"));
+    $modality['mwa'] = Modality::create(array("Name" => "RFA"));
   }
 
 }

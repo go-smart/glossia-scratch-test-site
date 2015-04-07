@@ -37,7 +37,7 @@ class Parameter extends UuidModel {
 	 *
 	 * @var string
 	 */
-	protected $table = 'parameters';
+	protected $table = 'Parameter';
 
   /**
    * Polymorphic relationship
@@ -45,9 +45,9 @@ class Parameter extends UuidModel {
    * @var string
    */
 
-  public function parameterAttributions()
+  public function ParameterAttributions()
   {
-    return $this->hasManyThrough('ParameterAttribution', 'Algorithm');
+    return $this->hasMany('ParameterAttribution', 'Parameter_Id');
   }
 
 
@@ -57,40 +57,44 @@ class Parameter extends UuidModel {
 
   public function as_html()
   {
-    $combined = "<span class='parameter' title='Type: $this->type";
+    $combined = "<span class='parameter' title='Type: $this->Type";
 
-    if ($this->units)
+    if ($this->Units)
     {
-      $combined .= "; Units: " . $this->units;
+      $combined .= "; Units: " . $this->Units;
     }
 
-    if ($this->restriction)
-      $combined .= "; Must be from $this->restriction";
+    if ($this->Restriction)
+      $combined .= "; Must be from $this->Restriction";
 
-    if ($this->widget)
-      $combined .= "; Can be given by user using $this->widget";
+    if ($this->Widget)
+      $combined .= "; Can be given by user using $this->Widget";
 
-    if ($this->description)
-      $combined .= "; ($this->description)";
+    if ($this->Description)
+      $combined .= "; ($this->Description)";
 
-    $combined .= "'>$this->name</span>";
+    $combined .= "'>$this->Name</span>";
 
     return $combined;
   }
 
   /* More Presenter logic hack */
   public function xml($parent) {
-    $name = $this->name;
+    $name = $this->Name;
 
     $xml = new DOMElement("parameter");
     $parent->appendChild($xml);
-    $xml->setAttribute('name', $this->name);
+    $xml->setAttribute('name', $this->Name);
 
-    if ($this->value !== null)
-      $xml->setAttribute('value', $this->value);
+    if ($this->Value !== null)
+      $xml->setAttribute('value', $this->Value);
 
-    if (!empty($this->type))
-      $xml->setAttribute('type', $this->type);
+    if (!empty($this->Type))
+      $xml->setAttribute('type', $this->Type);
     return $xml;
+  }
+
+  public function findUnique() {
+    return self::whereName($this->Name)->first();
   }
 }

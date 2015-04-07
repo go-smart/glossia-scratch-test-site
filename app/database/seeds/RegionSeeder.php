@@ -35,12 +35,12 @@ class RegionSeeder extends Seeder {
   {
     Eloquent::unguard();
 
-    Region::create(['name' => 'organ', 'format' => 'surface', 'groups' => '["boundary"]', 'segmentation' => '']);
-    Region::create(['name' => 'veins', 'format' => 'surface', 'groups' => '["vessels", "veins"]', 'segmentation' => '']);
-    Region::create(['name' => 'arteries', 'format' => 'surface', 'groups' => '["vessels", "arteries"]', 'segmentation' => '']);
-    Region::create(['name' => 'vessels', 'format' => 'surface', 'groups' => '["vessels"]', 'segmentation' => '']); /* Generic vessels - could be veins/arteries */
-    Region::create(['name' => 'tumour', 'format' => 'surface', 'groups' => '["tumour"]', 'segmentation' => '']);
-    Region::create(['name' => 'bronchi', 'format' => 'surface', 'groups' => '["bronchi"]', 'segmentation' => '']);
+    Region::create(['Name' => 'organ', 'Format' => 'surface', 'Groups' => '["boundary"]', 'Segmentation' => '']);
+    Region::create(['Name' => 'veins', 'Format' => 'surface', 'Groups' => '["vessels", "veins"]', 'Segmentation' => '']);
+    Region::create(['Name' => 'arteries', 'Format' => 'surface', 'Groups' => '["vessels", "arteries"]', 'Segmentation' => '']);
+    Region::create(['Name' => 'vessels', 'Format' => 'surface', 'Groups' => '["vessels"]', 'Segmentation' => '']); /* Generic vessels - could be veins/arteries */
+    Region::create(['Name' => 'tumour', 'Format' => 'surface', 'Groups' => '["tumour"]', 'Segmentation' => '']);
+    Region::create(['Name' => 'bronchi', 'Format' => 'surface', 'Groups' => '["bronchi"]', 'Segmentation' => '']);
   }
 
 }

@@ -49,13 +49,13 @@ class AmicaCombinationSeeder extends Seeder {
     /* Add generators */
     $generator['amica-gen'] = new PowerGenerator;
     $generator['amica-gen']->fill(array(
-      'name' => 'AMICA-GEN AGN-H-1.0',
-      'manufacturer' => 'HS'
+      'Name' => 'AMICA-GEN AGN-H-1.0',
+      'Manufacturer' => 'HS'
     ));
     $modality['mwa']->powerGenerators()->save($generator['amica-gen']);
-    $generator['amica-gen']->attribute(['name' => 'GENERATOR_FREQUENCY', 'type' => 'float', 'value' => 2450.0, 'units' => 'MHz', 'widget' => 'textbox']);
-    $generator['amica-gen']->attribute(['name' => 'GENERATOR_MAX_WATT_CW', 'type' => 'float', 'value' => 140.0, 'units' => 'W', 'widget' => 'textbox']);
-    $result = $generator['amica-gen']->attribute(['name' => 'CONSTANT_INPUT_POWER', 'type' => 'float', 'widget' => 'points-over-time', 'value' => '120', 'units' => 'W']);
+    $generator['amica-gen']->attribute(['Name' => 'GENERATOR_FREQUENCY', 'Type' => 'float', 'Value' => 2450.0, 'Units' => 'MHz', 'Widget' => 'textbox']);
+    $generator['amica-gen']->attribute(['Name' => 'GENERATOR_MAX_WATT_CW', 'Type' => 'float', 'Value' => 140.0, 'Units' => 'W', 'Widget' => 'textbox']);
+    $result = $generator['amica-gen']->attribute(['Name' => 'CONSTANT_INPUT_POWER', 'Type' => 'float', 'Widget' => 'points-over-time', 'Value' => '120', 'Units' => 'W']);
 
     /* Add needles */
     $coaxial_cables = [[1.5, 105, 'S1.5'], [2.5, 90, '']];
@@ -70,29 +70,29 @@ class AmicaCombinationSeeder extends Seeder {
 
         $probe = new Needle;
         $probe->fill(array(
-          'name' => $name,
-          'manufacturer' => 'HS',
-          'file' => 'library:default',
-          'class' => 'axisymm-2d'
+          'Name' => $name,
+          'Manufacturer' => 'HS',
+          'File' => 'library:default',
+          'Class' => 'axisymm-2d'
         ));
         $modality['mwa']->needles()->save($probe);
         $probe->powerGenerators()->attach($generator['amica-gen']);
-        $probe->attribute(['name' => 'NEEDLE_GAUGE', 'type' => 'float', 'value' => "$probeA[0]", 'widget' => 'textbox']);
-        $probe->attribute(['name' => 'NEEDLE_LENGTH', 'type' => 'float', 'value' => "$probeA[1]", 'widget' => 'textbox']);
-        $probe->attribute(['name' => 'NEEDLE_COAXIAL_CABLE_LENGTH', 'type' => 'float', 'value' => $coax[0], 'widget' => 'textbox']);
-        $probe->attribute(['name' => 'NEEDLE_MAX_POWER_OUTPUT', 'type' => 'float', 'value' => $coax[1], 'widget' => 'textbox']);
+        $probe->attribute(['Name' => 'NEEDLE_GAUGE', 'Type' => 'float', 'Value' => "$probeA[0]", 'Widget' => 'textbox']);
+        $probe->attribute(['Name' => 'NEEDLE_LENGTH', 'Type' => 'float', 'Value' => "$probeA[1]", 'Widget' => 'textbox']);
+        $probe->attribute(['Name' => 'NEEDLE_COAXIAL_CABLE_LENGTH', 'Type' => 'float', 'Value' => $coax[0], 'Widget' => 'textbox']);
+        $probe->attribute(['Name' => 'NEEDLE_MAX_POWER_OUTPUT', 'Type' => 'float', 'Value' => $coax[1], 'Widget' => 'textbox']);
         //FIXME: check these true for all
-        $probe->attribute(['name' => 'NEEDLE_CHOKE', 'type' => 'boolean', 'value' => 'true', 'widget' => 'select']);
-        $probe->attribute(['name' => 'NEEDLE_RING_WIDTH', 'type' => 'float', 'value' => '5', 'units' => 'mm', 'widget' => 'select']);
-        $probe->attribute(['name' => 'NEEDLE_ACTIVE_REGION', 'type' => 'float', 'value' => '20', 'units' => 'mm', 'widget' => 'textbox']);
-        $probe->attribute(['name' => 'NEEDLE_COOLING', 'type' => 'boolean', 'value' => 'true', 'widget' => 'textbox']);
+        $probe->attribute(['Name' => 'NEEDLE_CHOKE', 'Type' => 'boolean', 'Value' => 'true', 'Widget' => 'select']);
+        $probe->attribute(['Name' => 'NEEDLE_RING_WIDTH', 'Type' => 'float', 'Value' => '5', 'Units' => 'mm', 'Widget' => 'select']);
+        $probe->attribute(['Name' => 'NEEDLE_ACTIVE_REGION', 'Type' => 'float', 'Value' => '20', 'Units' => 'mm', 'Widget' => 'textbox']);
+        $probe->attribute(['Name' => 'NEEDLE_COOLING', 'Type' => 'boolean', 'Value' => 'true', 'Widget' => 'textbox']);
         $needle[$name] = $probe;
       }
 
     /* Add protocols */
     $protocol['user-modified'] = new Protocol;
     $protocol['user-modified']->fill(array(
-      'name' => 'Generic modifiable power',
+      'Name' => 'Generic modifiable power',
     ));
     $modality['mwa']->protocols()->save($protocol['user-modified']);
 
@@ -107,7 +107,7 @@ ENDLIPSUM2;
     $algorithm["user-modified power"]->result()->associate($result);
     $algorithm["user-modified power"]->save();
 
-    $algorithm["user-modified power"]->attribute(['name' => 'NEEDLE_MAX_POWER_OUTPUT', 'type' => 'float', 'description' => 'Maximum power that can be output from this needle']);
+    $algorithm["user-modified power"]->attribute(['Name' => 'NEEDLE_MAX_POWER_OUTPUT', 'Type' => 'float', 'Description' => 'Maximum power that can be output from this needle']);
 
     $argument = new Argument;
     $argument->name = "Time";
@@ -117,7 +117,7 @@ ENDLIPSUM2;
     /* Add combinations */
     foreach (['liver', 'kidney', 'lung'] as $organ)
     {
-      $o = Context::whereName($organ)->first();
+      $o = Context::byNameFamily($organ, 'organ');
         foreach ($model as $m) {
           $c = new Combination;
           $c->protocol()->associate($protocol['user-modified']);

@@ -6,10 +6,10 @@
 
 <p>{{ link_to_route('protocol.create', 'Create') }}</p>
 @foreach ($modalities as $modality)
-  <h2>{{{ $modality->name }}}</h2>
+  <h2>{{{ $modality->Name }}}</h2>
   <table>
-  @foreach ($modality->protocols as $protocol)
-      <tr><td>{{ $protocol->name }}</td><td>{{ link_to_route('protocol.show', 'Show', array('id' => $protocol->id)) }}</td></tr>
+  @foreach ($modality->Protocols as $protocol)
+      <tr><td>{{ $protocol->Name }}</td><td>{{ link_to_route('protocol.show', 'Show', array('id' => $protocol->Id)) }}</td></tr>
   @endforeach
   </table>
 @endforeach

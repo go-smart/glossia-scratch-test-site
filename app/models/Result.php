@@ -35,6 +35,12 @@ class Result extends UuidModel {
 	 *
 	 * @var string
 	 */
-	protected $table = 'results';
+	protected $table = 'Result';
+
+  public function findUnique() {
+    return self::whereName($this->name)
+      ->whereNumericalModelId($this->Numerical_Model_Id)
+      ->first();
+  }
 
 }

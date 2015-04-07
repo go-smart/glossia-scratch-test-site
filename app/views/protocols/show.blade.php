@@ -2,7 +2,7 @@
 
 @section('content')
 
-<h1>{{{$protocol->modality->name}}}: {{{ $protocol->name }}}</h1>
+<h1>{{{$protocol->Modality->Name}}}: {{{ $protocol->Name }}}</h1>
 
 <p>{{ link_to_route('protocol.index', "Back to the index") }}</p>
 
@@ -19,32 +19,32 @@
     </tr>
   </thead>
   <tbody>
-@foreach ($protocol->combinations as $combination)
+@foreach ($protocol->Combinations as $combination)
     <tr>
-      <td>{{{ $combination->powerGenerator->name }}}</td>
+      <td>{{{ $combination->PowerGenerator->Name }}}</td>
       <td>
-        @foreach ($combination->needles as $needle)
-          {{{ $needle->name }}}<br/>
+        @foreach ($combination->Needles as $needle)
+          {{{ $needle->Name }}}<br/>
         @endforeach
       </td>
-      <td>{{{ $combination->numericalModel->name }}}</td>
-      <td>{{{ $combination->context->family }}} :: {{{ $combination->context->name }}}</td>
-      <td>{{ HTML::link(route('combination.show', [$combination->id, 'html' => 1]), "[XML]") }}</td>
+      <td>{{{ $combination->Numerical_Model->Name }}}</td>
+      <td>{{{ $combination->Context->Family }}} :: {{{ $combination->Context->Name }}}</td>
+      <td>{{ HTML::link(route('combination.show', [$combination->Id, 'html' => 1]), "[XML]") }}</td>
       <td>
-      @foreach ($combination->numericalModel->regions as $region)
+      @foreach ($combination->NumericalModel->Regions as $region)
         <span class='context-label'>[
-          @if ($region->pivot->minimum && $region->pivot->maximum)
-            @if ($region->pivot->minimum == $region->pivot->maximum)
-              ={{{ $region->pivot->minimum }}}
+          @if ($region->pivot->Minimum && $region->pivot->Maximum)
+            @if ($region->pivot->Minimum == $region->pivot->Maximum)
+              ={{{ $region->pivot->Minimum }}}
             @else
-              {{{ $region->pivot->minimum }}}-{{{ $region->pivot->maximum }}}
+              {{{ $region->pivot->Minimum }}}-{{{ $region->pivot->Maximum }}}
             @endif
-          @elseif ($region->pivot->minimum)
-            &gt;{{{ $region->pivot->minimum }}}
-          @elseif ($region->pivot->maximum)
-            &lt;{{{ $region->pivot->maximum }}}
+          @elseif ($region->pivot->Minimum)
+            &gt;{{{ $region->pivot->Minimum }}}
+          @elseif ($region->pivot->Maximum)
+            &lt;{{{ $region->pivot->Maximum }}}
           @endif
-        {{{ $region->name }}} ]</span>
+        {{{ $region->Name }}} ]</span>
       @endforeach
       </td>
     </tr>
@@ -55,11 +55,11 @@
 <p>This protocol is comprised of the following algorithms</p>
 
 <table class='protocol-algorithms-table'>
-@foreach ($protocol->algorithms as $algorithm)
+@foreach ($protocol->Algorithms as $algorithm)
   <tbody>
-    <tr><td class='algorithm-result'>{{ $algorithm->result->as_html() }}</td><td class='algorithm-arguments'>({{{ $algorithm->arguments_as_string() }}})</td></tr>
+    <tr><td class='algorithm-result'>{{ $algorithm->Result->as_html() }}</td><td class='algorithm-arguments'>({{{ $algorithm->arguments_as_string() }}})</td></tr>
     <tr><td class='algorithm-parameters' colspan=2><span class='inline-label'>&lt;Parameters&gt;</span> [{{ $algorithm->parameters_as_html() }}]</td></tr>
-    <tr><td class='padding'></td><td><pre class='algorithm-content'>{{{ $algorithm->content }}}</pre></td></tr>
+    <tr><td class='padding'></td><td><pre class='algorithm-content'>{{{ $algorithm->Content }}}</pre></td></tr>
   </tbody>
 @endforeach
 </table>

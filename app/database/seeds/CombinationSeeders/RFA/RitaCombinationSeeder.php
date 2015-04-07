@@ -48,88 +48,88 @@ class RitaCombinationSeeder extends Seeder {
     /* Add generators */
     $generator['rita 1500X rf'] = new PowerGenerator;
     $generator['rita 1500X rf']->fill(array(
-      'name' => '1500X RF',
-      'manufacturer' => 'RITA'
+      'Name' => '1500X RF',
+      'Manufacturer' => 'RITA'
     ));
     $generator['rf3000'] = new PowerGenerator;
     $generator['rf3000']->fill(array(
-      'name' => 'RF3000',
-      'manufacturer' => 'Boston Scientific'
+      'Name' => 'RF3000',
+      'Manufacturer' => 'Boston Scientific'
     ));
     $modality['rfa']->powerGenerators()->save($generator['rita 1500X rf']);
-    $generator['rita 1500X rf']->attribute(['name' => 'GENERATOR_WATTAGE', 'type' => 'float', 'value' => 250.0, 'widget' => 'textbox']);
-    $generator['rita 1500X rf']->attribute(['name' => 'INITIAL_POWER', 'type' => 'float', 'value' => 250.0, 'widget' => 'textbox']);
+    $generator['rita 1500X rf']->attribute(['Name' => 'GENERATOR_WATTAGE', 'Type' => 'float', 'Value' => 250.0, 'Widget' => 'textbox']);
+    $generator['rita 1500X rf']->attribute(['Name' => 'INITIAL_POWER', 'Type' => 'float', 'Value' => 250.0, 'Widget' => 'textbox']);
 
     /* Add needles */
     $needle['rita starburst xl'] = new Needle;
     $needle['rita starburst xl']->fill(array(
-      'name' => 'Starburst XL',
-      'manufacturer' => 'RITA',
-      'file' => 'library:straight tines',
-      'class' => 'point-sources'
+      'Name' => 'Starburst XL',
+      'Manufacturer' => 'RITA',
+      'File' => 'library:straight tines',
+      'Class' => 'point-sources'
     ));
     $modality['rfa']->needles()->save($needle['rita starburst xl']);
     $needle['rita starburst xl']->powerGenerators()->attach($generator['rita 1500X rf']);
-    $needle['rita starburst xl']->attribute(['name' => 'NEEDLE_MAX_EXTENSION', 'type' => 'float', 'value' => 5.0, 'widget' => 'textbox']);
-    $needle['rita starburst xl']->attribute(['name' => 'NEEDLE_MIN_EXTENSION', 'type' => 'float', 'value' => 2.0, 'widget' => 'textbox']);
+    $needle['rita starburst xl']->attribute(['Name' => 'NEEDLE_MAX_EXTENSION', 'Type' => 'float', 'Value' => 5.0, 'Widget' => 'textbox']);
+    $needle['rita starburst xl']->attribute(['Name' => 'NEEDLE_MIN_EXTENSION', 'Type' => 'float', 'Value' => 2.0, 'Widget' => 'textbox']);
 
     $needle['rita starburst semi-flex'] = new Needle;
     $needle['rita starburst semi-flex']->fill(array(
-      'name' => 'Starburst Semi-Flex',
-      'manufacturer' => 'RITA',
-      'file' => 'library:straight tines',
-      'class' => 'point-sources'
+      'Name' => 'Starburst Semi-Flex',
+      'Manufacturer' => 'RITA',
+      'File' => 'library:straight tines',
+      'Class' => 'point-sources'
     ));
     $modality['rfa']->needles()->save($needle['rita starburst semi-flex']);
     $needle['rita starburst semi-flex']->powerGenerators()->attach($generator['rita 1500X rf']);
-    $needle['rita starburst semi-flex']->attribute(['name' => 'NEEDLE_MAX_EXTENSION', 'type' => 'float', 'value' => 5.0, 'widget' => 'textbox']);
-    $needle['rita starburst semi-flex']->attribute(['name' => 'NEEDLE_MIN_EXTENSION', 'type' => 'float', 'value' => 2.0, 'widget' => 'textbox']);
+    $needle['rita starburst semi-flex']->attribute(['Name' => 'NEEDLE_MAX_EXTENSION', 'Type' => 'float', 'Value' => 5.0, 'Widget' => 'textbox']);
+    $needle['rita starburst semi-flex']->attribute(['Name' => 'NEEDLE_MIN_EXTENSION', 'Type' => 'float', 'Value' => 2.0, 'Widget' => 'textbox']);
 
     $needle['rita starburst mri'] = new Needle;
     $needle['rita starburst mri']->fill(array(
-      'name' => 'Starburst MRI',
-      'manufacturer' => 'RITA',
-      'file' => 'library:straight tines',
-      'class' => 'point-sources'
+      'Name' => 'Starburst MRI',
+      'Manufacturer' => 'RITA',
+      'File' => 'library:straight tines',
+      'Class' => 'point-sources'
     ));
     $modality['rfa']->needles()->save($needle['rita starburst mri']);
     $needle['rita starburst mri']->powerGenerators()->attach($generator['rita 1500X rf']);
-    $needle['rita starburst mri']->attribute(['name' => 'NEEDLE_MAX_EXTENSION', 'type' => 'float', 'value' => 5.0, 'widget' => 'textbox']);
-    $needle['rita starburst mri']->attribute(['name' => 'NEEDLE_MIN_EXTENSION', 'type' => 'float', 'value' => 2.0, 'widget' => 'textbox']);
+    $needle['rita starburst mri']->attribute(['Name' => 'NEEDLE_MAX_EXTENSION', 'Type' => 'float', 'Value' => 5.0, 'Widget' => 'textbox']);
+    $needle['rita starburst mri']->attribute(['Name' => 'NEEDLE_MIN_EXTENSION', 'Type' => 'float', 'Value' => 2.0, 'Widget' => 'textbox']);
 
     $needle['rita starburst sde'] = new Needle;
     $needle['rita starburst sde']->fill(array(
-      'name' => 'Starburst SDE',
-      'manufacturer' => 'RITA',
-      'file' => 'library:straight tines',
-      'class' => 'point-sources'
+      'Name' => 'Starburst SDE',
+      'Manufacturer' => 'RITA',
+      'File' => 'library:straight tines',
+      'Class' => 'point-sources'
     ));
     $modality['rfa']->needles()->save($needle['rita starburst sde']);
     $needle['rita starburst sde']->powerGenerators()->attach($generator['rita 1500X rf']);
-    $needle['rita starburst sde']->attribute(['name' => 'NEEDLE_EXTENSION', 'type' => 'float', 'value' => 2.0, 'widget' => 'textbox']);
+    $needle['rita starburst sde']->attribute(['Name' => 'NEEDLE_EXTENSION', 'Type' => 'float', 'Value' => 2.0, 'Widget' => 'textbox']);
 
     /* Add protocols */
     $protocol['rita starburst 2cm'] = new Protocol;
     $protocol['rita starburst 2cm']->fill(array(
-      'name' => 'RITA Starburst 2cm Protocol',
+      'Name' => 'RITA Starburst 2cm Protocol',
     ));
     $modality['rfa']->protocols()->save($protocol['rita starburst 2cm']);
 
     $protocol['rita starburst 3cm'] = new Protocol;
     $protocol['rita starburst 3cm']->fill(array(
-      'name' => 'RITA Starburst 3cm Protocol',
+      'Name' => 'RITA Starburst 3cm Protocol',
     ));
     $modality['rfa']->protocols()->save($protocol['rita starburst 3cm']);
 
     $protocol['rita starburst 4cm'] = new Protocol;
     $protocol['rita starburst 4cm']->fill(array(
-      'name' => 'RITA Starburst 4cm Protocol',
+      'Name' => 'RITA Starburst 4cm Protocol',
     ));
     $modality['rfa']->protocols()->save($protocol['rita starburst 4cm']);
 
     $protocol['rita starburst 5cm'] = new Protocol;
     $protocol['rita starburst 5cm']->fill(array(
-      'name' => 'RITA Starburst 5cm Protocol',
+      'Name' => 'RITA Starburst 5cm Protocol',
     ));
     $modality['rfa']->protocols()->save($protocol['rita starburst 5cm']);
 
@@ -161,7 +161,7 @@ ENDLIPSUM1;
       $algorithm["$pn extension"]->protocol()->associate($protocol[$pn]);
 
       $result = new Parameter;
-      $result->fill(['name' => 'ALGORITHM_NEEDLE_EXTENSION', 'type' => 'float']);
+      $result->fill(['Name' => 'ALGORITHM_NEEDLE_EXTENSION', 'Type' => 'float']);
       $result->save();
       $algorithm["$pn extension"]->result()->associate($result);
       $algorithm["$pn extension"]->save();
@@ -198,13 +198,13 @@ ENDLIPSUM2;
       $algorithm["$pn power"]->protocol()->associate($protocol[$pn]);
 
       $result = new Parameter;
-      $result->fill(['name' => 'INPUT_POWER', 'type' => 'float']);
+      $result->fill(['Name' => 'INPUT_POWER', 'Type' => 'float']);
       $result->save();
       $algorithm["$pn power"]->result()->associate($result);
       $algorithm["$pn power"]->save();
 
-      $algorithm["$pn power"]->attribute(['name' => 'NEEDLE_MAX_EXTENSION', 'type' => 'float']);
-      $algorithm["$pn power"]->attribute(['name' => 'INITIAL_POWER', 'type' => 'float']);
+      $algorithm["$pn power"]->attribute(['Name' => 'NEEDLE_MAX_EXTENSION', 'Type' => 'float']);
+      $algorithm["$pn power"]->attribute(['Name' => 'INITIAL_POWER', 'Type' => 'float']);
 
       $argument = new Argument;
       $argument->name = "Temperature";
@@ -219,7 +219,7 @@ ENDLIPSUM2;
      */
 
     foreach (array('kidney', 'liver', 'lung') as $organ) {
-      $o = Context::whereName($organ)->first();
+      $o = Context::byNameFamily($organ, 'organ');
 
       /* Add combinations */
         foreach (array('3cm', '4cm', '5cm') as $p) {

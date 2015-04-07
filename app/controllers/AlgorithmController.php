@@ -20,7 +20,7 @@ class AlgorithmController extends \BaseController {
 	 */
 	public function create()
 	{
-    $arguments = Input::get('arguments');
+    $arguments = Input::get('Arguments');
 
     $arguments = Argument::find($arguments);
 

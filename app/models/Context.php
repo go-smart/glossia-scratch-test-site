@@ -20,6 +20,14 @@
  */
 
 
+use Illuminate\Database\Eloquent\Collection;
+
+abstract class ContextEnum
+{
+  const Liver = 1;
+  const Lung = 2;
+  const Kidney = 3;
+}
 
 class Context extends Paramable {
 
@@ -35,5 +43,38 @@ class Context extends Paramable {
 	 *
 	 * @var string
 	 */
-	protected $table = 'contexts';
+	protected $table = 'Context';
+
+  public static function find($id, $columns = [])
+  {
+    if (Config::get('gosmart.context_as_enum'))
+    {
+      $context = new Context;
+      $id = train_case($id);
+      constant('ContextEnum::' . $id); // Check constant exists
+      $context->Id = $id;
+      $context->Name = $id;
+      $context->Family = "organ";
+      return $context;
+    }
+
+    return parent::find($id);
+  }
+
+  public static function byNameFamily($name, $family)
+  {
+    if (Config::get('gosmart.context_as_enum'))
+    {
+      return self::find($name);
+    }
+
+    return self::whereName($name)->whereFamily($family)->first();
+  }
+
+  public function findUnique()
+  {
+    return self::whereName($this->Name)
+      ->whereFamily($this->Family)
+      ->first();
+  }
 }

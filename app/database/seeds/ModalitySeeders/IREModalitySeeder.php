@@ -41,7 +41,7 @@ class IREModalitySeeder extends Seeder {
    */
   public function run()
   {
-    $modality['ire'] = Modality::create(array("name" => "IRE"));
+    $modality['ire'] = Modality::create(array("Name" => "IRE"));
   }
 
 }

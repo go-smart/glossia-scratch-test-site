@@ -9,13 +9,13 @@ class NeedleController extends \BaseController {
 	 */
 	public function index()
 	{
-    if (Input::has('power_generator'))
+    if (Input::has('Power_Generator'))
     {
       $needles = new \Illuminate\Database\Eloquent\Collection;
-      $generator = PowerGenerator::find(Input::get('power_generator'));
+      $generator = PowerGenerator::find(Input::get('Power_Generator'));
       if (!empty($generator))
       {
-        $needles = $generator->needles;
+        $needles = $generator->Needles;
       }
     }
     else
@@ -25,7 +25,7 @@ class NeedleController extends \BaseController {
 
     if (Request::ajax())
     {
-      return Response::json($needles->lists('name', 'id'));
+      return Response::json($needles->lists('Name', 'Id'));
     }
 
     return View::make('needles.index', compact('needles'));
@@ -38,7 +38,7 @@ class NeedleController extends \BaseController {
    */
   public function parameters()
   {
-    $needle = Needle::find(Input::get('id'));
+    $needle = Needle::find(Input::get('Id'));
 
     if (empty($needle))
     {
@@ -49,9 +49,9 @@ class NeedleController extends \BaseController {
 
     $parameters = $parameters->map(function ($parameter) {
       return array(
-        'id' => $parameter->id,
-        'name' => $parameter->name,
-        'type' => $parameter->type,
+        'Id' => $parameter->Id,
+        'Name' => $parameter->Name,
+        'Type' => $parameter->Type,
         'html' => $parameter->as_html()
       );
     });

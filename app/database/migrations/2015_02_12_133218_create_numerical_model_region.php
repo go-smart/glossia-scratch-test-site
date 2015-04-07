@@ -32,15 +32,15 @@ class CreateNumericalModelRegion extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('numerical_model_region', function(Blueprint $table)
+		Schema::create('Numerical_Model_Region', function(Blueprint $table)
 		{
-			$table->increments('id');
-			$table->char('numerical_model_id', 36);
-      $table->foreign('numerical_model_id')->references('id')->on('numerical_models');
-			$table->char('region_id', 36);
-      $table->foreign('region_id')->references('id')->on('regions');
-      $table->integer('minimum')->nullable();
-      $table->integer('maximum')->nullable();
+			$table->increments('Id');
+			$table->char('Numerical_Model_Id', 36);
+      $table->foreign('Numerical_Model_Id')->references('Id')->on('Numerical_Model');
+			$table->char('Region_Id', 36);
+      $table->foreign('Region_Id')->references('Id')->on('Region');
+      $table->integer('Minimum')->nullable();
+      $table->integer('Maximum')->nullable();
 		});
 	}
 
@@ -51,7 +51,7 @@ class CreateNumericalModelRegion extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('region_numerical_model');
+		Schema::drop('Numerical_Model_Region');
 	}
 
 }

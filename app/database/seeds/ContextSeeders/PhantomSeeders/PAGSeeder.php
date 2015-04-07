@@ -33,8 +33,8 @@ class PAGSeeder extends Seeder {
    */
   public function run()
   {
-    $pag = Context::create(['family' => 'phantom', 'name' => 'PAG']);
+    $pag = Context::create(['Family' => 'phantom', 'Name' => 'PAG']);
 
-    $pag->attribute(['name' => 'BODY_TEMPERATURE', 'type' => 'float', 'value' => '37.0', 'widget' => 'textbox']);
+    $pag->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'float', 'Value' => '37.0', 'Widget' => 'textbox']);
   }
 }

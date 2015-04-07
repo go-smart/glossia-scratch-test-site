@@ -23,7 +23,7 @@ class SimulationController extends \BaseController {
 	public function create()
 	{
     $contexts = Context::all()->lists('name', 'id');
-		return View::make('simulations.create', compact('contexts'));
+		return View::make('simulations.create', compact('Contexts'));
 	}
 
 
@@ -56,10 +56,19 @@ class SimulationController extends \BaseController {
     $incompatibilities = [];
 
     $userParameters = $simulation->parameters();
-    $regions = $simulation->regions();
-    $combination = $simulation->combination;
-    $needles = $simulation->needles();
-    $needleParameters = $simulation->needleParameters();
+    $regions = $simulation->Regions();
+    $combination = $simulation->Combination;
+    $needles = [];
+    $needleParameters = [];
+
+    foreach ($simulation->SimulationNeedles as $sn)
+    {
+      $needles[$sn->Id] = $sn->Needle;
+      $needleParameters[$sn->Id] = [];
+
+      foreach ($sn->Parameters as $snp)
+        $needleParameters[$sn->Id][$snp->Name] = $snp->pivot->ValueSet;
+    }
 
     $xml = $combination->xml($userParameters, $regions, $incompatibilities, $needles, $needleParameters);
 

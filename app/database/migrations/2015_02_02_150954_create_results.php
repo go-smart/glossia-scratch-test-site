@@ -32,16 +32,17 @@ class CreateResults extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('results', function(Blueprint $table)
+		Schema::create('Result', function(Blueprint $table)
 		{
-			$table->char('id', 36)->primary();
-      $table->char('numerical_model_id', 36);
-      $table->foreign('numerical_model_id')->references('id')->on('numerical_models');
-      $table->string('name');
-      $table->string('type');
-      $table->string('widget');
-      $table->string('short_description');
-      $table->text('help_text');
+			$table->char('Id', 36)->primary();
+      $table->char('Numerical_Model_Id', 36);
+      $table->foreign('Numerical_Model_Id')->references('Id')->on('Numerical_Model');
+      $table->string('Name');
+      $table->string('Type');
+      $table->string('Widget');
+      $table->string('Short_Description');
+      $table->text('Help_Text');
+      $table->unique(['Name', 'Numerical_Model_Id']);
 			$table->timestamps();
 		});
 	}
@@ -53,7 +54,7 @@ class CreateResults extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('results');
+		Schema::drop('Result');
 	}
 
 }

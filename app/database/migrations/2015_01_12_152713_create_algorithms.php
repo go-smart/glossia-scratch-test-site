@@ -32,14 +32,14 @@ class CreateAlgorithms extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('algorithms', function(Blueprint $table)
+		Schema::create('Algorithm', function(Blueprint $table)
 		{
-			$table->char('id', 36)->primary();
-      $table->char('protocol_id', 36);
-      $table->foreign('protocol_id')->references('id')->on('protocols');
-      $table->text('content');
-      $table->char('result_id', 36);
-      $table->foreign('result_id')->references('id')->on('parameters');
+			$table->char('Id', 36)->primary();
+      $table->char('Protocol_Id', 36);
+      $table->foreign('Protocol_Id')->references('Id')->on('Protocol');
+      $table->text('Content');
+      $table->char('Result_Id', 36);
+      $table->foreign('Result_Id')->references('Id')->on('Parameter');
 		});
 	}
 
@@ -50,7 +50,7 @@ class CreateAlgorithms extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('algorithms');
+		Schema::drop('Algorithm');
 	}
 
 }

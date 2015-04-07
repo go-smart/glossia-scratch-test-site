@@ -32,13 +32,13 @@ class CreateNeedlePowerGenerator extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('needle_power_generator', function(Blueprint $table)
+		Schema::create('Needle_Power_Generator', function(Blueprint $table)
 		{
-			$table->increments('id');
-			$table->char('needle_id', 36);
-      $table->foreign('needle_id')->references('id')->on('needles');
-			$table->char('power_generator_id', 36);
-      $table->foreign('power_generator_id')->references('id')->on('power_generators');
+			$table->increments('Id');
+			$table->char('Needle_Id', 36);
+      $table->foreign('Needle_Id')->references('Id')->on('Needle');
+			$table->char('Power_Generator_Id', 36);
+      $table->foreign('Power_Generator_Id')->references('Id')->on('Power_Generator');
 		});
 	}
 
@@ -49,7 +49,7 @@ class CreateNeedlePowerGenerator extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('needle_power_generator');
+		Schema::drop('Needle_Power_Generator');
 	}
 
 }

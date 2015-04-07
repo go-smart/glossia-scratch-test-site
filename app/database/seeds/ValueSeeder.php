@@ -55,15 +55,28 @@ class ValueSeeder extends Seeder {
       $root = $dom->documentElement;
       $class = $root->getAttribute('class');
 
-      /* Not very safe! */
-      $object = new $class;
       $name = $root->getAttribute('name');
-      $objectQuery = $object->whereName($name);
 
-      if ($root->hasAttribute('family'))
-        $objectQuery = $objectQuery->whereFamily($root->getAttribute('family'));
+      //FIXME: Not very safe!
+      if (Config::get('gosmart.context_as_enum') && $class == 'Context')
+      {
+        if ($root->hasAttribute('family'))
+          $family = $root->getAttribute('family');
+        else
+          $family = 'organ';
 
-      $target = $objectQuery->first();
+        $target = Context::byNameFamily($name, $family);
+      }
+      else
+      {
+        $object = new $class;
+        $objectQuery = $object->whereName($name);
+
+        if ($root->hasAttribute('family'))
+          $objectQuery = $objectQuery->whereFamily($root->getAttribute('family'));
+
+        $target = $objectQuery->first();
+      }
 
       if (empty($target))
         throw new Exception("Did not find object $name ($class) for $constantsXml");
@@ -79,28 +92,28 @@ class ValueSeeder extends Seeder {
         $parameterData = [];
 
         array_map(function ($a) use (&$parameterData, $constant) {
-          $parameterData[$a] = $constant->getAttribute($a);
+          $parameterData[train_case($a)] = $constant->getAttribute($a);
         }, $present);
 
         if (!$constant->hasAttribute('description'))
-          $parameterData['description'] = $parameterData['name'];
+          $parameterData['Description'] = $parameterData['Name'];
 
-        $parameterData['name'] = preg_replace('/[ -]/', '_', $parameterData['name']);
-        $parameterData['name'] = 'CONSTANT_' . strtoupper(preg_replace('/[[:^word:]]/', '', $parameterData['name']));
+        $parameterData['Name'] = preg_replace('/[ -]/', '_', $parameterData['Name']);
+        $parameterData['Name'] = 'CONSTANT_' . strtoupper(preg_replace('/[[:^word:]]/', '', $parameterData['Name']));
 
-        $parameter = Parameter::whereName($parameterData['name'])->first();
+        $parameter = Parameter::whereName($parameterData['Name'])->first();
         if (empty($parameter))
           $parameter = Parameter::create($parameterData);
-        $id_name = snake_case($class) . '_id';
-        $attributionData = [$id_name => $target->id, 'parameter_id' => $parameter->id];
+        $id_name = train_case($class) . '_Id';
+        $attributionData = [$id_name => $target->Id, 'Parameter_Id' => $parameter->Id];
 
         if ($constant->hasAttribute('context'))
-          $attributionData['context_id'] = Context::whereName($constant->getAttribute('context'))->first()->id;
+          $attributionData['Context_Id'] = Context::byNameFamily($constant->getAttribute('context'), $constant->getAttribute('contextFamily') ?: 'organ')->first()->id;
 
         if ($constant->hasAttribute('value'))
-          $attributionData['value'] = $constant->getAttribute('value');
+          $attributionData['Value'] = $constant->getAttribute('value');
         else
-          $attributionData['value'] = null;
+          $attributionData['Value'] = null;
 
         $attribution = ParameterAttribution::create($attributionData);
       }

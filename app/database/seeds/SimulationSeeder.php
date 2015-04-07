@@ -34,17 +34,17 @@ class SimulationSeeder extends Seeder {
    */
   public function run()
   {
-    $this->makeSimulation('NUMA RFA Basic SIF', 'RITA Starburst 5cm Protocol', [],
+    $this->makeSimulation('5cm RITA RFA', 'liver', 'NUMA RFA Basic SIF', 'RITA Starburst 5cm Protocol', [],
     [
-      'organ' => ["organ.vtp"],
-      'vessels' => ["vessels1.vtp"],
-      'tumour' => ["tumour.vtp"]
+      'Organ' => ["organ.vtp"],
+      'Vessels' => ["vessels1.vtp"],
+      'Tumour' => ["tumour.vtp"]
     ],
     [
       [
-        "manufacturer" => "RITA",
-        "name" => "Starburst MRI",
-        "parameters" => [
+        "Manufacturer" => "RITA",
+        "Name" => "Starburst MRI",
+        "Parameters" => [
           'NEEDLE_TIP_LOCATION' => '[0.8, 240.0, -177.6]',
           'NEEDLE_ENTRY_LOCATION' => '[0.0, 240.0, -177.6]'
         ]
@@ -52,17 +52,17 @@ class SimulationSeeder extends Seeder {
     ]
     );
 
-    $this->makeSimulation('NUMA MWA Nonlinear SIF', 'Generic modifiable power', [],
+    $this->makeSimulation('Amica MWA', 'kidney', 'NUMA MWA Nonlinear SIF', 'Generic modifiable power', [],
     [
-      'organ' => ["organ.vtp"],
-      'vessels' => ["vessels1.vtp"],
-      'tumour' => ["tumour.vtp"]
+      'Organ' => ["organ.vtp"],
+      'Vessels' => ["vessels1.vtp"],
+      'Tumour' => ["tumour.vtp"]
     ],
     [
       [
-        "manufacturer" => "HS",
-        "name" => "APK11150T19V5",
-        "parameters" => [
+        "Manufacturer" => "HS",
+        "Name" => "APK11150T19V5",
+        "Parameters" => [
           'NEEDLE_TIP_LOCATION' => '[0.8, 240.0, -177.6]',
           'NEEDLE_ENTRY_LOCATION' => '[0.0, 240.0, -177.6]'
         ]
@@ -71,36 +71,66 @@ class SimulationSeeder extends Seeder {
     );
   }
 
-  public function makeSimulation($model, $protocol, $parameterData, $regionData, $needles)
+  public function makePointSet($jsonArray)
+  {
+    $arr = json_decode($jsonArray);
+    $pointSet = PointSet::create(['X' => $arr[0], 'Y' => $arr[1], 'Z' => $arr[2]]);
+    return $pointSet;
+  }
+
+  public function makeSimulation($caption, $organ, $model, $protocol, $parameterData, $regionData, $needles)
   {
     $numerical_model = NumericalModel::whereName($model)->first();
     $protocol = Protocol::whereName($protocol)->first();
+    $context = Context::byNameFamily($organ, 'organ');
 
-    $combinations = $numerical_model->combinations()->whereProtocolId($protocol->id);
+    $combinations = $numerical_model
+      ->Combinations()
+      ->whereProtocolId($protocol->Id)
+      ->whereContextId($context->Id);
+
+    $simulation = Simulation::create([
+        'Combination_Id' => $combinations->first()->Id,
+        'Patient_Id' => 0,
+        'Caption' => 'Sample Simulation for ' . $caption,
+        'Progress' => '0',
+        'State' => 0,
+        'Color' => 0,
+        'Active' => 0
+    ]);
 
     $needleData = [];
     $n = 0;
     foreach ($needles as $needleConfig)
     {
       $n++;
-      $needle = Needle::whereManufacturer($needleConfig["manufacturer"])->whereName($needleConfig["name"])->first();
-      $needleData = [
-        "needle$n" => [
-          'id' => $needle->id,
-          'parameters' => $needleConfig["parameters"]
-        ]
-      ];
+
+      $needle = Needle::whereManufacturer($needleConfig["Manufacturer"])
+        ->whereName($needleConfig["Name"])
+        ->first();
+
+      $simulationNeedle = SimulationNeedle::create([
+        'Needle_Id' => $needle->Id,
+        'Simulation_Id' => $simulation->Id,
+        'Target_Id' => $this->makePointSet($needleConfig["Parameters"]["NEEDLE_TIP_LOCATION"])->Id,
+        'Entry_Id' => $this->makePointSet($needleConfig["Parameters"]["NEEDLE_ENTRY_LOCATION"])->Id
+      ]);
+      $simulationNeedleId = DB::getPdo()->lastInsertId();
+
+      foreach ($needleConfig["Parameters"] as $paramName => $paramValue)
+      {
+        $parameter = Parameter::whereName($paramName)->first();
+        $simulationNeedleParameter = DB::table('Simulation_Needle_Parameter')
+          ->insert([
+            'Simulation_Needle_Id' => $simulationNeedleId,
+            'Parameter_Id' => $parameter->Id,
+            'ValueSet' => $paramValue
+          ]);
+      }
     }
 
-    $simulation = Simulation::create([
-        'combination_id' => $combinations->first()->id,
-        'parameter_data' => json_encode($parameterData),
-        'region_data' => json_encode($regionData),
-        'needle_data' => json_encode($needleData)
-    ]);
-
     $this->r++;
-    print "Simulation #$this->r: " . $simulation->id . "\n";
+    print "Simulation #$this->r: " . $simulation->asString . "\n";
   }
 
 }

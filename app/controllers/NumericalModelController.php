@@ -9,9 +9,9 @@ class NumericalModelController extends \BaseController {
 	 */
 	public function index()
 	{
-    if (Input::has('modality'))
+    if (Input::has('Modality'))
     {
-      $models = NumericalModel::where('modality_id', '=', Input::get('modality'))->get();
+      $models = NumericalModel::where('Modality_Id', '=', Input::get('Modality'))->get();
     }
     else
     {
@@ -20,7 +20,7 @@ class NumericalModelController extends \BaseController {
 
     if (Request::ajax())
     {
-      return Response::json($models->lists('name', 'id'));
+      return Response::json($models->lists('Name', 'Id'));
     }
 
     return View::make('numerical_models.index', compact('models'));
@@ -33,14 +33,14 @@ class NumericalModelController extends \BaseController {
    */
   public function arguments()
   {
-    $numerical_model = NumericalModel::find(Input::get('id'));
+    $numerical_model = NumericalModel::find(Input::get('Id'));
 
     if (empty($numerical_model))
     {
       return Response::json(["error" => "Numerical model not found"]);
     }
 
-    $arguments = $numerical_model->arguments;
+    $arguments = $numerical_model->Arguments;
 
     return Response::json($arguments);
   }
@@ -52,7 +52,7 @@ class NumericalModelController extends \BaseController {
    */
   public function parameters()
   {
-    $numerical_model = NumericalModel::find(Input::get('id'));
+    $numerical_model = NumericalModel::find(Input::get('Id'));
 
     if (empty($numerical_model))
     {
@@ -63,9 +63,9 @@ class NumericalModelController extends \BaseController {
 
     $parameters = $parameters->map(function ($parameter) {
       return array(
-        'id' => $parameter->id,
-        'name' => $parameter->name,
-        'type' => $parameter->type,
+        'Id' => $parameter->Id,
+        'Name' => $parameter->Name,
+        'Type' => $parameter->Type,
         'html' => $parameter->as_html()
       );
     });

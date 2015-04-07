@@ -12,26 +12,34 @@ class DatabaseSeeder extends Seeder {
 	{
 		Eloquent::unguard();
 
-    DB::table('simulations')->delete();
-    DB::table('parameter_attributions')->delete();
-    DB::table('combination_needle')->delete();
-    DB::table('combinations')->delete();
-    DB::table('numerical_model_region')->delete();
-    DB::table('numerical_models')->delete();
-    DB::table('algorithms')->delete();
-    DB::table('protocols')->delete();
-    DB::table('contexts')->delete();
-    DB::table('needle_power_generator')->delete();
-    DB::table('needles')->delete();
-    DB::table('power_generators')->delete();
-    DB::table('modalities')->delete();
-    DB::table('parameters')->delete();
-    DB::table('arguments')->delete();
+    //DB::table('Simulation_Needle_Parameter')->delete();
+    //DB::table('Simulation_Needle')->delete();
+    //DB::table('PointSet')->delete();
+    //DB::table('Simulation')->delete();
+    //DB::table('Combination_Needle')->delete();
+    //DB::table('Combination')->delete();
+    DB::table('Parameter_Attribution')->delete();
+    DB::table('Numerical_Model_Region')->delete();
+    DB::table('Region')->delete();
+    //DB::table('Numerical_Model')->delete();
+    DB::table('Algorithm')->delete();
+    //DB::table('Protocol')->delete();
+    //DB::table('Context')->delete();
+    DB::table('Needle_Power_Generator')->delete();
+    //DB::table('Needle')->delete();
+    //DB::table('Power_Generator')->delete();
+    //DB::table('Modality')->delete();
+    DB::table('Argument')->delete();
+    //DB::table('Parameter')->delete();
 
 		$this->call('RegionSeeder');
-		$this->call('\ContextSeeders\ContextSeeder');
-		$this->call('\CombinationSeeders\CombinationSeeder');
-		$this->call('SimulationSeeder');
+    if (!Config::get('gosmart.context_as_enum'))
+      $this->call('\ContextSeeders\ContextSeeder');
+    $this->call('\CombinationSeeders\CombinationSeeder');
+
+    if (Simulation::count() == 0)
+      $this->call('SimulationSeeder');
+
 		$this->call('ValueSeeder');
 		$this->call('AlgorithmSeeder');
 	}

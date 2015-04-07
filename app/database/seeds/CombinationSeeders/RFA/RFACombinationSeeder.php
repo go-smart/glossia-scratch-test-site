@@ -42,17 +42,17 @@ class RFACombinationSeeder extends Seeder {
    */
   public function run()
   {
-    $modality['rfa'] = Modality::create(array("name" => "RFA"));
+    $modality['rfa'] = Modality::create(array("Name" => "RFA"));
 
     /* Add model */
     $model['rfa basic sif'] = new NumericalModel;
-    $model['rfa basic sif']->fill(array('name' => 'NUMA RFA Basic SIF', 'family' => 'elmer-libnuma'));
+    $model['rfa basic sif']->fill(array('Name' => 'NUMA RFA Basic SIF', 'Family' => 'elmer-libnuma'));
     $modality['rfa']->numericalModels()->save($model['rfa basic sif']);
     $model['rfa basic sif']->importSif(public_path() . '/templates/go-smart-template_ps.sif');
-    $model['rfa basic sif']->arguments()->save(new Argument(['name' => 'ObservedTemperature']));
-    $model['rfa basic sif']->arguments()->save(new Argument(['name' => 'Impedance']));
-    $model['rfa basic sif']->arguments()->save(new Argument(['name' => 'Phase']));
-    $model['rfa basic sif']->arguments()->save(new Argument(['name' => 'Time']));
+    $model['rfa basic sif']->arguments()->save(new Argument(['Name' => 'ObservedTemperature']));
+    $model['rfa basic sif']->arguments()->save(new Argument(['Name' => 'Impedance']));
+    $model['rfa basic sif']->arguments()->save(new Argument(['Name' => 'Phase']));
+    $model['rfa basic sif']->arguments()->save(new Argument(['Name' => 'Time']));
 
     $organ = Region::whereName('organ')->first();
     $vessels = Region::whereName('vessels')->first();
@@ -60,7 +60,7 @@ class RFACombinationSeeder extends Seeder {
     $veins = Region::whereName('arteries')->first();
     $bronchi = Region::whereName('bronchi')->first();
     $tumour = Region::whereName('tumour')->first();
-    $model['rfa basic sif']->regions()->attach($organ, ['minimum' => 1, 'maximum' => 1]);
+    $model['rfa basic sif']->regions()->attach($organ, ['Minimum' => 1, 'Maximum' => 1]);
     $model['rfa basic sif']->regions()->attach($vessels);
     $model['rfa basic sif']->regions()->attach($arteries);
     $model['rfa basic sif']->regions()->attach($veins);
@@ -68,17 +68,17 @@ class RFACombinationSeeder extends Seeder {
     $model['rfa basic sif']->regions()->attach($bronchi);
 
     /* Defaults */
-    $model['rfa basic sif']->attribute(['name' => 'SETTING_TIMESTEP_SIZE', 'type' => 'float', 'value' => '4', 'widget' => 'textbox']);
+    $model['rfa basic sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);
     // Allows an upper limit if protocol mucks up:
-    $model['rfa basic sif']->attribute(['name' => 'SETTING_FINAL_TIMESTEP', 'type' => 'int', 'value' => '10000', 'widget' => 'textbox']);
-    $model['rfa basic sif']->attribute(['name' => 'CENTRE_LOCATION', 'type' => 'string', 'value' => 'first-needle', 'widget' => 'textbox']);
-    $model['rfa basic sif']->attribute(['name' => 'SIMULATION_SCALING', 'type' => 'float', 'value' => '0.001', 'widget' => 'textbox']);
-    $model['rfa basic sif']->attribute(['name' => 'SIMULATION_DOMAIN_RADIUS', 'type' => 'float', 'value' => '40.0', 'widget' => 'textbox']);
+    $model['rfa basic sif']->attribute(['Name' => 'SETTING_FINAL_TIMESTEP', 'Type' => 'int', 'Value' => '10000', 'Widget' => 'textbox']);
+    $model['rfa basic sif']->attribute(['Name' => 'CENTRE_LOCATION', 'Type' => 'string', 'Value' => 'first-needle', 'Widget' => 'textbox']);
+    $model['rfa basic sif']->attribute(['Name' => 'SIMULATION_SCALING', 'Type' => 'float', 'Value' => '0.001', 'Widget' => 'textbox']);
+    $model['rfa basic sif']->attribute(['Name' => 'SIMULATION_DOMAIN_RADIUS', 'Type' => 'float', 'Value' => '40.0', 'Widget' => 'textbox']);
 
     /* Requirements */
-    $model['rfa basic sif']->attribute(['name' => 'BODY_TEMPERATURE', 'type' => 'float', 'value' => null, 'widget' => 'textbox']);
-    $model['rfa basic sif']->attribute(['name' => 'NEEDLE_TIP_LOCATION', 'type' => 'array(float)', 'value' => null, 'widget' => 'coordinate']);
-    $model['rfa basic sif']->attribute(['name' => 'NEEDLE_ENTRY_LOCATION', 'type' => 'array(float)', 'value' => null, 'widget' => 'coordinate']);
+    $model['rfa basic sif']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'float', 'Value' => null, 'Widget' => 'textbox']);
+    $model['rfa basic sif']->attribute(['Name' => 'NEEDLE_TIP_LOCATION', 'Type' => 'array(float)', 'Value' => null, 'Widget' => 'coordinate']);
+    $model['rfa basic sif']->attribute(['Name' => 'NEEDLE_ENTRY_LOCATION', 'Type' => 'array(float)', 'Value' => null, 'Widget' => 'coordinate']);
     $model['rfa basic sif']->updatePlaceholdersFromDefinition();
 
     $this->call('\CombinationSeeders\RFA\BostonScientificCombinationSeeder');

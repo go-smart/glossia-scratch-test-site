@@ -32,15 +32,16 @@ class CreateNeedlesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('needles', function(Blueprint $table)
+		Schema::create('Needle', function(Blueprint $table)
 		{
-			$table->char('id', 36)->primary();
-      $table->char('modality_id', 36);
-      $table->foreign('modality_id')->references('id')->on('modalities');
-			$table->string('name');
-			$table->string('manufacturer');
-			$table->string('class');
-			$table->string('file');
+			$table->char('Id', 36)->primary();
+      $table->char('Modality_Id', 36);
+      $table->foreign('Modality_Id')->references('Id')->on('Modality');
+			$table->string('Name');
+			$table->string('Manufacturer');
+			$table->string('Class');
+			$table->string('File');
+      $table->unique(['Name', 'Manufacturer', 'Class']);
 		});
 	}
 
@@ -51,7 +52,7 @@ class CreateNeedlesTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('needles');
+		Schema::drop('Needle');
 	}
 
 }

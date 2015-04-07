@@ -11,18 +11,18 @@ class CombinationController extends \BaseController {
 	{
     $combinations = Combination::with('PowerGenerator', 'Needle', 'Protocol');
 
-    if (Input::has('needle_id'))
-      $combinations->whereNeedleId(Input::get('needle_id'));
+    if (Input::has('Needle_Id'))
+      $combinations->whereNeedleId(Input::get('Needle_Id'));
 
-    if (Input::has('power_generator_id'))
-      $combinations->wherePowerGeneratorId(Input::get('power_generator_id'));
+    if (Input::has('Power_Generator_Id'))
+      $combinations->wherePowerGeneratorId(Input::get('Power_Generator_Id'));
 
-    if (Input::has('context_id'))
-      $combinations->whereContextId(Input::get('context_id'));
+    if (Input::has('Context_Id'))
+      $combinations->whereContextId(Input::get('Context_Id'));
 
-    if (Input::has('modality_id')) {
-      $modality_id = Input::get('modality_id');
-      $combinations->whereHas('powerGenerator', function($query) use ($modality_id) {
+    if (Input::has('Modality_Id')) {
+      $modality_id = Input::get('Modality_Id');
+      $combinations->whereHas('PowerGenerator', function($query) use ($modality_id) {
         $query->whereModalityId($modality_id);
       });
     }
@@ -30,23 +30,23 @@ class CombinationController extends \BaseController {
     if (Input::has('output')) {
       switch (Input::get('output')) {
       case 'Needle':
-        $output_ids = array_unique($combinations->get()->lists('needle_id'));
-        return Needle::find($output_ids)->lists('name', 'id');
+        $output_ids = array_unique($combinations->get()->lists('Needle_Id'));
+        return Needle::find($output_ids)->lists('Name', 'Id');
       case 'PowerGenerator':
-        $output_ids = array_unique($combinations->get()->lists('power_generator_id'));
-        return PowerGenerator::find($output_ids)->lists('name', 'id');
+        $output_ids = array_unique($combinations->get()->lists('Power_Generator_Id'));
+        return PowerGenerator::find($output_ids)->lists('Name', 'Id');
       case 'NumericalModel':
-        $output_ids = array_unique($combinations->get()->lists('numerical_model_id'));
-        return NumericalModel::find($output_ids)->lists('name', 'id');
+        $output_ids = array_unique($combinations->get()->lists('Numerical_Model_Id'));
+        return NumericalModel::find($output_ids)->lists('Name', 'Id');
       case 'Context':
-        $output_ids = array_unique($combinations->get()->lists('context_id'));
-        return Context::find($output_ids)->lists('name', 'id');
+        $output_ids = array_unique($combinations->get()->lists('Context_Id'));
+        return Context::find($output_ids)->lists('Name', 'Id');
       case 'Modality':
         $combinations= $combinations
-          ->join('power_generators', 'power_generators.id', '=', 'combinations.power_generator_id')
-          ->select('power_generators.modality_id AS modality_id');
-        $output_ids = array_unique($combinations->get()->lists('modality_id'));
-        return Modality::find($output_ids)->lists('name', 'id');
+          ->join('Power_Generator', 'Power_Generator.Id', '=', 'Combination.Power_Generator_Id')
+          ->select('Power_Generator.Modality_Id AS Modality_Id');
+        $output_ids = array_unique($combinations->get()->lists('Modality_Id'));
+        return Modality::find($output_ids)->lists('Name', 'Id');
       }
 
       return $combinations;
@@ -135,7 +135,7 @@ class CombinationController extends \BaseController {
     $parameter = $combination->retrieveParameter($name);
 
     if ($parameter)
-      return $parameter->value;
+      return $parameter->Value;
 
     return null;
   }

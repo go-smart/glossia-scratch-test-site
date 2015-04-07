@@ -32,6 +32,23 @@ class CombinationSeeder extends Seeder {
    */
   public function run()
   {
+    $lockedCombinations = \Combination::whereExists(function ($q) {
+      $q->select(DB::raw(1))
+        ->from('Simulation')
+        ->whereRaw('Simulation.Combination_Id = Combination.Id');
+    })->get();
+
+    if (!$lockedCombinations->isEmpty())
+      $this->command->info("The following combinations are locked for removal by simulations\n  * " .
+        $lockedCombinations->implode('asString', "\n  * ")
+      );
+
+    \Combination::whereNotExists(function ($q) {
+      $q->select(DB::raw(1))
+        ->from('Simulation')
+        ->whereRaw('Simulation.Combination_Id = Combination.Id');
+    })->delete();
+
     $this->call('\CombinationSeeders\RFA\RFACombinationSeeder');
     $this->call('\CombinationSeeders\MWA\MWACombinationSeeder');
     $this->call('\CombinationSeeders\Cryoablation\CryoablationCombinationSeeder');

@@ -35,21 +35,25 @@ class Modality extends UuidModel {
 	 *
 	 * @var string
 	 */
-	protected $table = 'modalities';
+	protected $table = 'Modality';
 
-  public function protocols() {
-    return $this->hasMany('Protocol');
+  public function Protocols() {
+    return $this->hasMany('Protocol', 'Modality_Id');
   }
 
-  public function needles() {
-    return $this->hasMany('Needle');
+  public function Needles() {
+    return $this->hasMany('Needle', 'Modality_Id');
   }
 
-  public function powerGenerators() {
-    return $this->hasMany('PowerGenerator');
+  public function PowerGenerators() {
+    return $this->hasMany('PowerGenerator', 'Modality_Id');
   }
 
-  public function numericalModels() {
-    return $this->hasMany('NumericalModel');
+  public function NumericalModels() {
+    return $this->hasMany('NumericalModel', 'Modality_Id');
+  }
+
+  public function findUnique() {
+    return self::whereName($this->Name)->first();
   }
 }

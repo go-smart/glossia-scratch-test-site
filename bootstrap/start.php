@@ -59,6 +59,9 @@ $framework = $app['path.base'].
 
 require $framework.'/Illuminate/Foundation/start.php';
 
+/* Include very simple, generic global helper functions */
+require __DIR__.'/../app/tools.php';
+
 /*
 |--------------------------------------------------------------------------
 | Return The Application

@@ -33,9 +33,9 @@ class LungSeeder extends Seeder {
    */
   public function run()
   {
-    $lung = Context::create(['family' => 'organ', 'name' => 'lung']);
+    $lung = Context::create(['Family' => 'organ', 'Name' => 'lung']);
 
-    $lung->attribute(['name' => 'BODY_TEMPERATURE', 'type' => 'float', 'value' => '37.0', 'widget' => 'textbox']);
+    $lung->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'float', 'Value' => '37.0', 'Widget' => 'textbox']);
   }
 
 }

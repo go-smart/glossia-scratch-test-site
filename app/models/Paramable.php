@@ -29,42 +29,42 @@ abstract class Paramable extends UuidModel
    */
   public function placeholder($name, $context = null) {
     /* Convention over configuration */
-    $id_name = snake_case(get_class($this)) . '_id';
+    $id_name = train_case(get_class($this)) . '_Id';
 
-    $parameterClause = ParameterAttribution::where($id_name, '=', $this->id);
+    $parameterClause = ParameterAttribution::where($id_name, '=', $this->Id);
 
     if ($context !== null)
-      $parameterClause = $parameterClause->where('context_id', '=', $context->id);
+      $parameterClause = $parameterClause->where('Context_Id', '=', $context->Id);
 
     $placeholderExists = ($parameterClause
       ->whereHas('parameter', function ($q) use ($name) {
-        $q->where('name', '=', $name);
+        $q->where('Name', '=', $name);
       })->count() > 0);
 
     if (!$placeholderExists) {
       $parameter = Parameter::whereName($name)->first();
 
       if (empty($parameter))
-        $parameter = Parameter::create(['name' => $name]);
+        $parameter = Parameter::create(['Name' => $name]);
 
-      $attribution = [$id_name => $this->id, 'parameter_id' => $parameter->id, 'value' => null];
+      $attribution = [$id_name => $this->Id, 'Parameter_Id' => $parameter->Id, 'Value' => null];
 
       $parameterAttribution = ParameterAttribution::create($attribution);
     }
   }
 
   public function attribute($data, $context = null) {
-    if (array_key_exists('value', $data))
+    if (array_key_exists('Value', $data))
     {
-      $value = $data['value'];
-      unset($data['value']);
+      $value = $data['Value'];
+      unset($data['Value']);
     }
     else
     {
       $value = null;
     }
 
-    $parameter = Parameter::whereName($data['name'])->first();
+    $parameter = Parameter::whereName($data['Name'])->first();
 
     if (empty($parameter))
       $parameter = Parameter::create($data);
@@ -72,11 +72,11 @@ abstract class Paramable extends UuidModel
       $parameter->update(array_filter($data));
 
     /* Convention over configuration */
-    $id_name = snake_case(get_class($this)) . '_id';
-    $attribution = [$id_name => $this->id, 'parameter_id' => $parameter->id, 'value' => $value];
+    $id_name = train_case(get_class($this)) . '_Id';
+    $attribution = [$id_name => $this->Id, 'Parameter_Id' => $parameter->Id, 'Value' => $value];
 
     if ($context !== null)
-      $attribution['context_id'] = $context->id;
+      $attribution['Context_Id'] = $context->Id;
 
     $parameterAttribution = ParameterAttribution::create($attribution);
 
@@ -84,12 +84,12 @@ abstract class Paramable extends UuidModel
     return $parameter;
   }
 
-  public function parameterAttributions() {
-    return $this->hasMany('ParameterAttribution');
+  public function ParameterAttribution() {
+    return $this->hasMany('ParameterAttribution', train_case(get_class()) . '_Id');
   }
 
   /* If this gets called more than once in a request, it makes more sense to cache */
-  public function parameterAttributionsByName() {
+  public function ParameterAttributionsByName() {
     $parameterAttributions = [];
 
     foreach ($this->parameterAttributions as $a) {
@@ -102,14 +102,14 @@ abstract class Paramable extends UuidModel
     return $parameterAttributions;
   }
 
-  public function parameters() {
-    $id_name = snake_case(get_class($this)) . '_id';
-    return Parameter::join('parameter_attributions', 'parameters.id', '=', 'parameter_attributions.parameter_id')
-      ->where('parameter_attributions.' . $id_name, '=', $this->id);
+  public function Parameter() {
+    $id_name = train_case(get_class($this)) . '_Id';
+    return Parameter::join('Parameter_Attribution', 'Parameter.Id', '=', 'Parameter_Attribution.Parameter_Id')
+      ->where('Parameter_Attribution.' . $id_name, '=', $this->Id);
   }
 
   public function parameters_as_html() {
-    $parameters_as_html = $this->parameters()->get()->map(function ($parameter) {
+    $parameters_as_html = $this->parameter()->get()->map(function ($parameter) {
       return $parameter->as_html();
     });
     return implode(', ', $parameters_as_html->all());

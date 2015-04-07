@@ -41,7 +41,7 @@ class CryablationModalitySeeder extends Seeder {
    */
   public function run()
   {
-    $modality['mwa'] = Modality::create(array("name" => "Cryoablation"));
+    $modality['mwa'] = Modality::create(array("Name" => "Cryoablation"));
   }
 
 }

@@ -30,7 +30,7 @@ class Combination extends UuidModel {
    *
    * @var array(string)
    */
-  protected $attributingFields = ['protocol', 'power_generator', 'numerical_model', 'context'];
+  protected $attributingFields = ['Protocol', 'Power_Generator', 'Numerical_Model', 'Context'];
 
   /**
    * Look after created_at and modified_at properties automatically
@@ -44,32 +44,43 @@ class Combination extends UuidModel {
 	 *
 	 * @var string
 	 */
-	protected $table = 'combinations';
+	protected $table = 'Combination';
 
   protected $cachedParameterTable = null;
 
-  public function simulations() {
-    return $this->hasMany('Simulation');
+  public function Simulations() {
+    return $this->hasMany('Simulation', 'Combination_Id');
   }
 
-  public function powerGenerator() {
-    return $this->belongsTo('PowerGenerator');
+  public function PowerGenerator() {
+    return $this->belongsTo('PowerGenerator', 'Power_Generator_Id');
   }
 
-  public function needles() {
-    return $this->belongsToMany('Needle');
+  public function Needles() {
+    return $this->belongsToMany('Needle', 'Combination_Needle', 'Combination_Id', 'Needle_Id');
   }
 
-  public function protocol() {
-    return $this->belongsTo('Protocol');
+  public function Protocol() {
+    return $this->belongsTo('Protocol', 'Protocol_Id');
   }
 
-  public function context() {
-    return $this->belongsTo('Context');
+  public function Context() {
+    return $this->belongsTo('Context', 'Context_Id');
   }
 
-  public function numericalModel() {
-    return $this->belongsTo('NumericalModel');
+  public function NumericalModel() {
+    return $this->belongsTo('NumericalModel', 'Numerical_Model_Id');
+  }
+
+  public function getContextAttribute() {
+    return Context::find($this->Context_Id);
+  }
+
+  public function getAsStringAttribute() {
+    return $this->NumericalModel->Name .
+      ' - ' . $this->PowerGenerator->Name .
+      ' - ' . $this->Protocol->Name .
+      ' - ' . $this->Context->Name;
   }
 
   /**
@@ -99,47 +110,47 @@ class Combination extends UuidModel {
    * the number and type of needles is simulation-dependent)
    */
   public function retrieveCoreParameters(&$missing) {
-    $attributions = ParameterAttribution::join("parameters", "parameters.id", "=", "parameter_attributions.parameter_id")
-      ->addSelect("parameter_attributions.*", "parameters.name AS parameterName", "parameter_attributions.value AS parameterValue");
+    $attributions = ParameterAttribution::join("Parameter", "Parameter.Id", "=", "Parameter_Attribution.Parameter_Id")
+      ->addSelect("Parameter_Attribution.*", "Parameter.Name AS parameterName", "Parameter_Attribution.Value AS parameterValue");
 
-    $automaticFields = array_diff($this->attributingFields, ['protocol']);
+    $automaticFields = array_diff($this->attributingFields, ['Protocol']);
     foreach ($automaticFields as $field) {
-      $property = camel_case($field);
+      $property = train_case($field);
       $attributionsWithoutNeedle = $attributions->where(function ($q) use ($field, $property) {
-        $q->whereNull("${field}_id")
-          ->orWhere("${field}_id", "=", $this->$property->id);
+        $q->whereNull("${field}_Id")
+          ->orWhere("${field}_Id", "=", $this->$property->Id);
       });
     }
 
     $resultList = new Collection;
-    if (in_array('protocol', $this->attributingFields))
+    if (in_array('Protocol', $this->attributingFields))
     {
-      $algorithms = $this->protocol->algorithms;
+      $algorithms = $this->Protocol->Algorithms;
       $attributionsWithoutNeedle = $attributionsWithoutNeedle->where(function ($q) use ($algorithms) {
-        $q->whereNull("algorithm_id");
+        $q->whereNull("Algorithm_Id");
         foreach ($algorithms as $algorithm)
-          $q->orWhere("algorithm_id", "=", $algorithm->id);
+          $q->orWhere("Algorithm_Id", "=", $algorithm->Id);
       });
-      $resultList = $resultList->merge($algorithms->lists('result'));
+      $resultList = $resultList->merge($algorithms->lists('Result'));
     }
 
-    $requirements = with(clone $attributions)->whereNull("parameter_attributions.value");
-    $supplies = with(clone $attributions)->whereNotNull("parameter_attributions.value");
+    $requirements = with(clone $attributions)->whereNull("Parameter_Attribution.Value");
+    $supplies = with(clone $attributions)->whereNotNull("Parameter_Attribution.Value");
 
     $requirements = $requirements->groupBy("parameterName")->lists("parameterName");
     $supplyList = $supplies->groupBy("parameterName")->lists("parameterName");
 
     $undefinedList = array_diff($requirements, $supplyList);
-    $undefinedList = array_diff($undefinedList, $resultList->lists("name"));
+    $undefinedList = array_diff($undefinedList, $resultList->lists("Name"));
 
     foreach ($undefinedList as $missingParameterName)
       $missing[] = $missingParameterName;
 
-    $supplies = $attributionsWithoutNeedle->whereNull("needle_id")->whereNotNull("parameter_attributions.value");
+    $supplies = $attributionsWithoutNeedle->whereNull("Needle_Id")->whereNotNull("Parameter_Attribution.Value");
 
     $attributions = [];
     foreach ($supplies->get() as $attribution) {
-      $name = $attribution->parameter->name;
+      $name = $attribution->Parameter->Name;
       if (!isset($attributions[$name]))
         $attributions[$name] = [];
       $attributions[$name][] = $attribution;
@@ -154,33 +165,33 @@ class Combination extends UuidModel {
 
   public function compileParameters($userSupplied, $needles, $needleUserParameters, &$incompatibilities = array()) {
     $needlesCollection = new Collection($needles);
-    $disallowedNeedles = $needlesCollection->diff($this->needles);
+    $disallowedNeedles = $needlesCollection->diff($this->Needles);
     foreach ($disallowedNeedles as $needle)
-      $incompatibilities[] = "Needle $needle->name is not marked for use in this combination";
+      $incompatibilities[] = "Needle $needle->Name is not marked for use in this combination";
 
-    $allowedNeedles = $needlesCollection->intersect($this->needles);
+    $allowedNeedles = $needlesCollection->intersect($this->Needles);
 
-    $attributions = ParameterAttribution::join("parameters", "parameters.id", "=", "parameter_attributions.parameter_id")
-      ->addSelect("parameter_attributions.*", "parameters.name AS parameterName", "parameter_attributions.value AS parameterValue");
+    $attributions = ParameterAttribution::join("Parameter", "Parameter.Id", "=", "Parameter_Attribution.Parameter_Id")
+      ->addSelect("Parameter_Attribution.*", "Parameter.Name AS parameterName", "Parameter_Attribution.Value AS parameterValue");
 
-    $automaticFields = array_diff($this->attributingFields, ['protocol']);
+    $automaticFields = array_diff($this->attributingFields, ['Protocol']);
     foreach ($automaticFields as $field) {
-      $property = camel_case($field);
+      $property = train_case($field);
       $attributionsWithoutNeedle = $attributions->where(function ($q) use ($field, $property) {
-        $q->whereNull("${field}_id")
-          ->orWhere("${field}_id", "=", $this->$property->id);
+        $q->whereNull("${field}_Id")
+          ->orWhere("${field}_Id", "=", $this->$property->Id);
       });
     }
 
     $resultList = new Collection;
-    if (in_array('protocol', $this->attributingFields))
-      $resultList = $resultList->merge($this->protocol->algorithms->lists('result'));
-      foreach ($this->protocol->algorithms as $algorithm) {
-        $algorithms = $this->protocol->algorithms;
+    if (in_array('Protocol', $this->attributingFields))
+      $resultList = $resultList->merge($this->Protocol->Algorithms->lists('Result'));
+      foreach ($this->Protocol->Algorithms as $algorithm) {
+        $algorithms = $this->Protocol->Algorithms;
         $attributionsWithoutNeedle = $attributionsWithoutNeedle->where(function ($q) use ($algorithms) {
-          $q->whereNull("algorithm_id");
+          $q->whereNull("Algorithm_Id");
           foreach ($algorithms as $algorithm)
-            $q->orWhere("algorithm_id", "=", $algorithm->id);
+            $q->orWhere("Algorithm_Id", "=", $algorithm->Id);
         });
       }
 
@@ -192,16 +203,16 @@ class Combination extends UuidModel {
 
         $attributions = with(clone $attributionsWithoutNeedle)
           ->where(function ($q) use ($needle) {
-            $q = $q->whereNull("needle_id");
-            $q = $q->orWhere("needle_id", "=", $needle->id);
+            $q = $q->whereNull("Needle_Id");
+            $q = $q->orWhere("Needle_Id", "=", $needle->Id);
           });
 
-        $requirements = with(clone $attributions)->whereNull("parameter_attributions.value");
-        $supplies = with(clone $attributions)->whereNotNull("parameter_attributions.value");
+        $requirements = with(clone $attributions)->whereNull("Parameter_Attribution.Value");
+        $supplies = with(clone $attributions)->whereNotNull("Parameter_Attribution.Value");
 
         $needleParameters = [];
         foreach ($supplies->get() as $a) {
-          $name = $a->parameter->name;
+          $name = $a->Parameter->Name;
           if (!isset($needleParameters[$name]))
             $needleParameters[$name] = [];
           $needleParameters[$name][] = $a;
@@ -210,7 +221,7 @@ class Combination extends UuidModel {
         array_walk($needleParameters, function (&$v, $name) {
           /* Remove any redundant parameters - only needle parameters and parameters
            * overriding a needle-specific parameter count */
-          if (!count(array_filter($v, function ($n) { return $n->needle_id !== null; }))) {
+          if (!count(array_filter($v, function ($n) { return $n->Needle_Id !== null; }))) {
             $v = false;
           }
           else {
@@ -223,8 +234,8 @@ class Combination extends UuidModel {
         $needleUser = isset($needleUserParameters[$needleIx]) ? $needleUserParameters[$needleIx] : [];
         foreach ($needleUser as $name => $value) {
           $v = new Parameter;
-          $v->name = $name;
-          $v->value = $needleUser[$name];
+          $v->Name = $name;
+          $v->Value = $needleUser[$name];
           $needleParameters[$name] = $v;
         }
 
@@ -238,30 +249,31 @@ class Combination extends UuidModel {
           $needleUserSupplied = array_keys($needleUserParameters[$needleIx]);
 
         $undefinedList = array_diff($requirements, $supplyList, $needleUserSupplied, array_keys($userSupplied));
-        $undefinedList = array_diff($undefinedList, $resultList->lists("name"));
+        $undefinedList = array_diff($undefinedList, $resultList->lists("Name"));
 
         foreach ($undefinedList as $missingParameterName)
           $incompatibilities[] = "Parameter $missingParameterName is missing";
       }
     }
     else {
-      $requirements = with(clone $attributions)->whereNull("parameter_attributions.value");
-      $supplies = with(clone $attributions)->whereNotNull("parameter_attributions.value");
+      $requirements = with(clone $attributions)->whereNull("Parameter_Attribution.Value");
+      $supplies = with(clone $attributions)->whereNotNull("Parameter_Attribution.Value");
 
       $requirements = $requirements->groupBy("parameterName")->lists("parameterName");
       $supplyList = $supplies->groupBy("parameterName")->lists("parameterName");
 
       $undefinedList = array_diff($requirements, $supplyList, array_keys($userSupplied));
+      $undefinedList = array_diff($undefinedList, $resultList->lists("Name"));
 
       foreach ($undefinedList as $missingParameterName)
         $incompatibilities[] = "Parameter $missingParameterName is missing";
     }
 
-    $supplies = $attributionsWithoutNeedle->whereNull("needle_id")->whereNotNull("parameter_attributions.value");
+    $supplies = $attributionsWithoutNeedle->whereNull("Needle_Id")->whereNotNull("Parameter_Attribution.Value");
 
     $attributions = [];
     foreach ($supplies->get() as $attribution) {
-      $name = $attribution->parameter->name;
+      $name = $attribution->Parameter->Name;
       if (!isset($attributions[$name]))
         $attributions[$name] = [];
       $attributions[$name][] = $attribution;
@@ -273,8 +285,8 @@ class Combination extends UuidModel {
 
     foreach ($userSupplied as $name => $value) {
       $v = new Parameter;
-      $v->name = $name;
-      $v->value = $value;
+      $v->Name = $name;
+      $v->Value = $value;
       $parameters[$name] = $v;
     }
 
@@ -288,19 +300,19 @@ class Combination extends UuidModel {
 
     if (count($attributions) == 1)
     {
-      $parameter = $attributions[0]->parameter;
-      $parameter->value = $attributions[0]->value;
+      $parameter = $attributions[0]->Parameter;
+      $parameter->Value = $attributions[0]->Value;
       return $parameter;
     }
 
     $winningAttribution = $attributions[0];
-    $winningPriority = $winningAttribution->priority();
-    $winningSpecificity = $winningAttribution->specificity();
+    $winningPriority = $winningAttribution->Priority();
+    $winningSpecificity = $winningAttribution->Specificity();
 
     $swap = true;
     foreach ($attributions as $attribution) {
       /* Primary criterion */
-      $priority = $winningAttribution->priority();
+      $priority = $winningAttribution->Priority();
       if ($swap === null) {
         if ($priority < $winningPriority)
           $swap = true;
@@ -309,7 +321,7 @@ class Combination extends UuidModel {
       }
 
       /* Secondary criterion */
-      $specificity = $attribution->specificity();
+      $specificity = $attribution->Specificity();
       if ($swap === null) {
         if ($winningSpecificity < $specificity)
           $swap = true;
@@ -326,8 +338,8 @@ class Combination extends UuidModel {
       $swap = null;
     }
 
-    $parameter = $winningAttribution->parameter;
-    $parameter->value = $winningAttribution->value;
+    $parameter = $winningAttribution->Parameter;
+    $parameter->Value = $winningAttribution->Value;
     return $parameter;
   }
 
@@ -348,7 +360,7 @@ class Combination extends UuidModel {
       $root->appendChild($parametersNode);
     }
 
-    $algorithms = $this->protocol->algorithms;
+    $algorithms = $this->Protocol->Algorithms;
     $algorithmsNode = $xml->createElement("algorithms");
     foreach ($algorithms as $algorithm) {
       $algorithm->xml($algorithmsNode);
@@ -356,9 +368,18 @@ class Combination extends UuidModel {
     $root->appendChild($algorithmsNode);
 
     $numericalModelNode = $xml->createElement("numericalModel");
-    $this->numericalModel->xml($numericalModelNode, $suppliedRegions, $incompatibilities, $needles, $needleParameters);
+    $this->NumericalModel->xml($numericalModelNode, $suppliedRegions, $incompatibilities, $needles, $needleParameters);
     $root->appendChild($numericalModelNode);
 
     return $xml;
+  }
+
+  public function findUnique()
+  {
+    return self::whereNumericalModelId($this->Numerical_Model_Id)
+      ->whereProtocolId($this->Protocol_Id)
+      ->wherePowerGeneratorId($this->Power_Generator_Id)
+      ->whereContextId($this->Context_Id)
+      ->first();
   }
 }

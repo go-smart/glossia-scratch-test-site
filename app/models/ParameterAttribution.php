@@ -34,12 +34,14 @@ class ParameterAttribution extends UuidModel {
 
   protected $specifyingFields = ['needle', 'algorithm', 'power_generator', 'numerical_model', 'context'];
 
+  protected static $updateByDefault = false;
+
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 'parameter_attributions';
+	protected $table = 'Parameter_Attribution';
 
   public function __construct(array $attributes = []) {
     parent::__construct($attributes);
@@ -50,31 +52,31 @@ class ParameterAttribution extends UuidModel {
       $this->priorityList[$field] = $idx;
   }
 
-  public function parameter() {
-    return $this->belongsTo('Parameter');
+  public function Parameter() {
+    return $this->belongsTo('Parameter', 'Parameter_Id');
   }
 
-  public function powerGenerator() {
-    return $this->belongsTo('PowerGenerator');
+  public function PowerGenerator() {
+    return $this->belongsTo('PowerGenerator', 'Power_Generator_Id');
   }
 
-  public function needle() {
-    return $this->belongsTo('Needle');
+  public function Needle() {
+    return $this->belongsTo('Needle', 'Needle_Id');
   }
 
-  public function protocol() {
-    return $this->belongsTo('Protocol');
+  public function Protocol() {
+    return $this->belongsTo('Protocol', 'Protocol_Id');
   }
 
-  public function algorithm() {
-    return $this->belongsTo('Algorithm');
+  public function Algorithm() {
+    return $this->belongsTo('Algorithm', 'Algorithm_Id');
   }
 
-  public function numericalModel() {
-    return $this->belongsTo('NumericalModel');
+  public function NumericalModel() {
+    return $this->belongsTo('NumericalModel', 'Numerical_Model_Id');
   }
 
-  public function specificity() {
+  public function Specificity() {
     return count(array_filter(array_map([$this, 'getAttribute'], $this->specifyingFields)));
   }
 
@@ -84,7 +86,7 @@ class ParameterAttribution extends UuidModel {
     });
   }
 
-  public function priority() {
+  public function Priority() {
     $fields = $this->activeFields();
 
     if (!count($fields))
@@ -95,4 +97,7 @@ class ParameterAttribution extends UuidModel {
     }, $fields));
   }
 
+  public function findUnique() {
+    return false;
+  }
 }

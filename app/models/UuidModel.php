@@ -22,8 +22,12 @@
 
 use Rhumsaa\Uuid\Uuid;
 
-class UuidModel extends Eloquent {
+abstract class UuidModel extends Eloquent {
   public $incrementing = false;
+
+  protected $primaryKey = 'Id';
+
+  protected static $updateByDefault = true;
 
   public static function boot() {
     parent::boot();
@@ -36,4 +40,36 @@ class UuidModel extends Eloquent {
   public function generateUuid() {
     return Uuid::uuid4();
   }
+
+  public function save(array $options = [])
+  {
+    if (!$this->exists)
+    {
+      $existing = $this->findUnique();
+      if ($existing)
+      {
+        $this->Id = $existing->Id;
+        $this->exists = true;
+      }
+    }
+
+    return parent::save($options);
+  }
+
+  public static function create(array $attributes) {
+    if (static::$updateByDefault)
+    {
+      $model = new static($attributes);
+      $existing = $model->findUnique();
+      if ($existing)
+      {
+        $existing->fill($attributes);
+        $existing->save();
+        return $existing;
+      }
+    }
+    return parent::create($attributes);
+  }
+
+  public abstract function findUnique();
 }

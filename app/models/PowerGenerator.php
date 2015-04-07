@@ -34,15 +34,15 @@ class PowerGenerator extends Paramable {
 	 *
 	 * @var string
 	 */
-	protected $table = 'power_generators';
+	protected $table = 'Power_Generator';
 
   /**
    * The needles available for this generator.
    *
    * @var string
    */
-  public function needles() {
-    return $this->belongsToMany('Needle');
+  public function Needles() {
+    return $this->belongsToMany('Needle', 'Needle_Power_Generator', 'Power_Generator_Id', 'Needle_Id');
   }
 
   /**
@@ -50,11 +50,17 @@ class PowerGenerator extends Paramable {
    *
    * @var string
    */
-  public function modality() {
-    return $this->belongsTo('Modality');
+  public function Modality() {
+    return $this->belongsTo('Modality', 'Modality_Id');
   }
 
-  public function combinations() {
-    return $this->hasMany('Combination');
+  public function Combinations() {
+    return $this->hasMany('Combination', 'Power_Generator_Id');
+  }
+
+  public function findUnique() {
+    return self::whereName($this->Name)
+      ->whereManufacturer($this->Manufacturer)
+      ->first();
   }
 }

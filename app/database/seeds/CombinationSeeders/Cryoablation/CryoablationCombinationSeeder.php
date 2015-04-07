@@ -42,38 +42,38 @@ class CryoablationCombinationSeeder extends Seeder {
    */
   public function run()
   {
-    $modality['cryo'] = Modality::create(array("name" => "Cryoablation"));
+    $modality['Cryo'] = Modality::create(array("Name" => "Cryoablation"));
 
     /* Add model */
     $model['numa sif'] = new NumericalModel;
-    $model['numa sif']->fill(array('name' => 'NUMA Cryoablation Basic SIF', 'family' => 'elmer-libnuma', 'definition' => 'lorem ipsum'));
-    $model['numa sif']->attribute(['name' => 'SETTING_TIMESTEP_SIZE', 'type' => 'float', 'value' => '4', 'widget' => 'textbox']);
-    $modality['cryo']->numericalModels()->save($model['numa sif']);
-    $model['numa sif']->arguments()->save(new Argument(['name' => 'Temperature']));
-    $model['numa sif']->arguments()->save(new Argument(['name' => 'Time']));
-    $model['numa sif']->attribute(['name' => 'BODY_TEMPERATURE', 'type' => 'float', 'value' => null, 'widget' => 'textbox']);
+    $model['numa sif']->fill(array('Name' => 'NUMA Cryoablation Basic SIF', 'Family' => 'elmer-libnuma', 'Definition' => 'lorem ipsum'));
+    $model['numa sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'Float', 'Value' => '4', 'Widget' => 'Textbox']);
+    $modality['Cryo']->numericalModels()->save($model['numa sif']);
+    $model['numa sif']->arguments()->save(new Argument(['Name' => 'Temperature']));
+    $model['numa sif']->arguments()->save(new Argument(['Name' => 'Time']));
+    $model['numa sif']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'Float', 'Value' => null, 'Widget' => 'Textbox']);
 
-    $organ = Region::whereName('organ')->first();
-    $vessels = Region::whereName('vessels')->first();
-    $veins = Region::whereName('veins')->first();
-    $arteries = Region::whereName('arteries')->first();
-    $tumour = Region::whereName('tumour')->first();
-    $model['numa sif']->regions()->attach($organ, ['minimum' => 1, 'maximum' => 1]);
+    $organ = Region::whereName('Organ')->first();
+    $vessels = Region::whereName('Vessels')->first();
+    $veins = Region::whereName('Veins')->first();
+    $arteries = Region::whereName('Arteries')->first();
+    $tumour = Region::whereName('Tumour')->first();
+    $model['numa sif']->regions()->attach($organ, ['Minimum' => 1, 'Maximum' => 1]);
     $model['numa sif']->regions()->attach($vessels);
     $model['numa sif']->regions()->attach($veins);
     $model['numa sif']->regions()->attach($arteries);
     $model['numa sif']->regions()->attach($tumour);
 
-    $model['galilfoam'] = new NumericalModel;
-    $model['galilfoam']->fill(array('name' => 'Galil OpenFOAM', 'family' => 'elmer-libnuma', 'definition' => 'lorem ipsum'));
-    $modality['cryo']->numericalModels()->save($model['galilfoam']);
-    $model['galilfoam']->arguments()->save(new Argument(['name' => 'Temperature']));
-    $model['galilfoam']->arguments()->save(new Argument(['name' => 'Time']));
-    $model['galilfoam']->attribute(['name' => 'BODY_TEMPERATURE', 'type' => 'float', 'value' => null, 'widget' => 'textbox']);
+    $model['Galilfoam'] = new NumericalModel;
+    $model['Galilfoam']->fill(array('Name' => 'Galil OpenFOAM', 'Family' => 'elmer-libnuma', 'Definition' => 'lorem ipsum'));
+    $modality['Cryo']->numericalModels()->save($model['Galilfoam']);
+    $model['Galilfoam']->arguments()->save(new Argument(['Name' => 'Temperature']));
+    $model['Galilfoam']->arguments()->save(new Argument(['Name' => 'Time']));
+    $model['Galilfoam']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'Float', 'Value' => null, 'Widget' => 'Textbox']);
 
-    $model['galilfoam']->regions()->attach($organ, ['minimum' => 1, 'maximum' => 1]);
-    $model['galilfoam']->regions()->attach($vessels);
-    $model['galilfoam']->regions()->attach($tumour);
+    $model['Galilfoam']->regions()->attach($organ, ['Minimum' => 1, 'Maximum' => 1]);
+    $model['Galilfoam']->regions()->attach($vessels);
+    $model['Galilfoam']->regions()->attach($tumour);
 
     $this->call('\CombinationSeeders\Cryoablation\GalilCombinationSeeder');
   }

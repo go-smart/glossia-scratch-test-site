@@ -24,13 +24,19 @@ class Simulation extends UuidModel {
 
   protected $cachedParameters = null;
 
-  public function combination() {
-    return $this->belongsTo('Combination');
+  public $timestamps = false;
+
+  protected $table = "Simulation";
+
+  protected static $updateByDefault = false;
+
+  public function Combination() {
+    return $this->belongsTo('Combination', 'Combination_Id');
   }
 
   /* This actually hydrates and then stringifies the parameter value again, but if the Parameter
    * object starts to store values as non-strings this is where it should change */
-  public function parameters() {
+  public function Parameters() {
     if (empty($this->parameter_data))
       return [];
 
@@ -45,34 +51,25 @@ class Simulation extends UuidModel {
     return $this->cachedParameters;
   }
 
-  public function regions() {
+  public function Regions() {
     $regions = json_decode($this->region_data, $assoc=true);
     if (empty($regions))
       return [];
     return $regions;
   }
 
-  public function needleParameters() {
-    $needles = json_decode($this->needle_data, $assoc=true);
-    if (empty($needles))
-      return [];
-
-    array_walk($needles, function (&$n, $ix) {
-      $n = $n['parameters'];
-    });
-
-    return $needles;
+  public function SimulationNeedles() {
+    return $this->hasMany('SimulationNeedle', 'Simulation_Id');
   }
 
-  public function needles() {
-    $needles = json_decode($this->needle_data, $assoc=true);
-    if (empty($needles))
-      return [];
-
-    array_walk($needles, function (&$n, $ix) {
-      $n = Needle::find($n['id']);
-    });
-
-    return $needles;
+  public function findUnique()
+  {
+    return false;
   }
+
+  public function getAsStringAttribute()
+  {
+    return $this->Combination->asString . ' (' . $this->Id . ')';
+  }
+
 }

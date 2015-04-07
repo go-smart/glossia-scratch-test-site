@@ -32,13 +32,14 @@ class CreatePowerGeneratorsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('power_generators', function(Blueprint $table)
+		Schema::create('Power_Generator', function(Blueprint $table)
 		{
-			$table->char('id', 36)->primary();
-      $table->char('modality_id', 36);
-      $table->foreign('modality_id')->references('id')->on('modalities');
-      $table->string('name');
-      $table->string('manufacturer');
+			$table->char('Id', 36)->primary();
+      $table->char('Modality_Id', 36);
+      $table->foreign('Modality_Id')->references('Id')->on('Modality');
+      $table->string('Name');
+      $table->string('Manufacturer');
+      $table->unique(['Name', 'Manufacturer']);
 		});
 	}
 
@@ -49,7 +50,7 @@ class CreatePowerGeneratorsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('power_generators');
+		Schema::drop('Power_Generator');
 	}
 
 }

@@ -34,7 +34,7 @@ class User extends UuidModel implements UserInterface, RemindableInterface {
 	 *
 	 * @var string
 	 */
-	protected $table = 'users';
+	protected $table = 'User';
 
 	/**
 	 * The attributes excluded from the model's JSON form.

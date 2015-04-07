@@ -32,17 +32,19 @@ class CreateCombinationsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('combinations', function(Blueprint $table)
+		Schema::create('Combination', function(Blueprint $table)
 		{
-			$table->char('id', 36)->primary();
-			$table->char('numerical_model_id', 36);
-      $table->foreign('numerical_model_id')->references('id')->on('numerical_models');
-			$table->char('power_generator_id', 36);
-      $table->foreign('power_generator_id')->references('id')->on('power_generators');
-			$table->char('protocol_id', 36);
-      $table->foreign('protocol_id')->references('id')->on('protocols');
-			$table->char('context_id', 36);
-      $table->foreign('context_id')->references('id')->on('contexts');
+			$table->char('Id', 36)->primary();
+			$table->char('Numerical_Model_Id', 36);
+      $table->foreign('Numerical_Model_Id')->references('Id')->on('Numerical_Model');
+			$table->char('Power_Generator_Id', 36);
+      $table->foreign('Power_Generator_Id')->references('Id')->on('Power_Generator');
+			$table->char('Protocol_Id', 36);
+      $table->foreign('Protocol_Id')->references('Id')->on('Protocol');
+			$table->char('Context_Id', 36);
+      if (!Config::get('gosmart.context_as_enum'))
+        $table->foreign('Context_Id')->references('Id')->on('Context');
+      $table->unique(['Numerical_Model_Id', 'Power_Generator_Id', 'Protocol_Id', 'Context_Id'], 'core_unique');
 		});
 	}
 
@@ -53,7 +55,7 @@ class CreateCombinationsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('combinations');
+		Schema::drop('Combination');
 	}
 
 }

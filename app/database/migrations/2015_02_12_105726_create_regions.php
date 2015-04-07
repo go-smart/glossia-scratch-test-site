@@ -32,13 +32,14 @@ class CreateRegions extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('regions', function(Blueprint $table)
+		Schema::create('Region', function(Blueprint $table)
 		{
-			$table->char('id', 36)->primary();
-      $table->string('name');
-      $table->string('format');
-      $table->string('groups'); /* JSON array of region groups */
-      $table->string('segmentation');
+			$table->char('Id', 36)->primary();
+      $table->string('Name');
+      $table->string('Format');
+      $table->string('Groups'); /* JSON array of region groups */
+      $table->string('Segmentation');
+      $table->unique(['Name', 'Format']);
 			$table->timestamps();
 		});
 	}
@@ -50,7 +51,7 @@ class CreateRegions extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('regions');
+		Schema::drop('Region');
 	}
 
 }

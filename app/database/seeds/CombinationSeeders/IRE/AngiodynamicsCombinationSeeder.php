@@ -49,23 +49,23 @@ class AngiodynamicsCombinationSeeder extends Seeder {
 
     /* Add generators */
     $generator = new PowerGenerator([
-      'name' => 'Angiodynamics',
-      'manufacturer' => 'Angiodynamics'
+      'Name' => 'Angiodynamics',
+      'Manufacturer' => 'Angiodynamics'
     ]);
     $modality['ire']->powerGenerators()->save($generator);
 
     /* Add needles */
-    $probe = new Needle(['name' => 'Basic', 'manufacturer' => 'Angiodynamics', 'file' => 'library:rfa-cylinder-1', 'class' => 'solid-boundary']);
+    $probe = new Needle(['Name' => 'Basic', 'Manufacturer' => 'Angiodynamics', 'File' => 'library:rfa-cylinder-1', 'Class' => 'solid-boundary']);
     $modality['ire']->needles()->save($probe);
 
-    $probe->attribute(['name' => 'NEEDLE_GAUGE', 'type' => 'float', 'value' => "A", 'widget' => 'textbox']);
-    $probe->attribute(['name' => 'NEEDLE_SHAFT_LENGTH', 'type' => 'float', 'value' => "B", 'widget' => 'textbox']);
+    $probe->attribute(['Name' => 'NEEDLE_GAUGE', 'Type' => 'float', 'Value' => "A", 'Widget' => 'textbox']);
+    $probe->attribute(['Name' => 'NEEDLE_SHAFT_LENGTH', 'Type' => 'float', 'Value' => "B", 'Widget' => 'textbox']);
     $probe->powerGenerators()->attach($generator);
 
     /* Add protocols */
     $protocol['6-node'] = new Protocol;
     $protocol['6-node']->fill(array(
-      'name' => 'Empty'
+      'Name' => 'Empty'
     ));
     $modality['ire']->protocols()->save($protocol['6-node']);
 
@@ -75,7 +75,7 @@ class AngiodynamicsCombinationSeeder extends Seeder {
 ENDLIPSUM2;
     $algorithm["anodes"]->protocol()->associate($protocol['6-node']);
 
-    $result = Parameter::create(['name' => 'ANODE_SEQUENCE', 'type' => 'integer', 'widget' => 'needle-sequence[9]']);
+    $result = Parameter::create(['Name' => 'ANODE_SEQUENCE', 'Type' => 'integer', 'Widget' => 'needle-sequence[9]']);
     $algorithm["anodes"]->result()->associate($result);
     $algorithm["anodes"]->save();
 
@@ -85,7 +85,7 @@ ENDLIPSUM2;
 ENDLIPSUM2;
     $algorithm["cathodes"]->protocol()->associate($protocol['6-node']);
 
-    $result = Parameter::create(['name' => 'CATHODE_SEQUENCE', 'type' => 'integer', 'widget' => 'needle-sequence[9]']);
+    $result = Parameter::create(['Name' => 'CATHODE_SEQUENCE', 'Type' => 'integer', 'Widget' => 'needle-sequence[9]']);
     $algorithm["cathodes"]->result()->associate($result);
     $algorithm["cathodes"]->save();
 
@@ -94,7 +94,7 @@ ENDLIPSUM2;
     $c->protocol()->associate($protocol['6-node']);
     $c->powerGenerator()->associate($generator);
     $c->numericalModel()->associate($m);
-    $c->context()->associate(Context::whereName('liver')->first());
+    $c->context()->associate(Context::byNameFamily('liver', 'organ'));
     $c->save();
     $c->needles()->attach($probe);
   }

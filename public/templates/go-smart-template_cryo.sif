@@ -1,23 +1,3 @@
-! /**
-!  * This file is part of the Go-Smart Simulation Architecture (GSSA).
-!  * Go-Smart is an EU-FP7 project, funded by the European Commission.
-!  *
-!  * Copyright (C) 2013-  NUMA Engineering Ltd. (see AUTHORS file)
-!  *
-!  * This program is free software: you can redistribute it and/or modify
-!  * it under the terms of the GNU Affero General Public License as
-!  * published by the Free Software Foundation, either version 3 of the
-!  * License, or (at your option) any later version.
-!  *
-!  * This program is distributed in the hope that it will be useful,
-!  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-!  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!  * GNU General Public License for more details.
-!  *
-!  * You should have received a copy of the GNU Affero General Public License
-!  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-!  */
-! 
 !====================================================================
 !  - Complete model with 3 solvers:
 !    - Heat Solver
@@ -32,7 +12,7 @@ Header
 !====================================================================
 !  Computational mesh directory (also used to save the vtu files):
 !--------------------------------------------------------------------
-  Mesh DB "." "$MESHLOCATION_MESHER"                                   ![H1]!
+  Mesh DB "." "$MESHLOCATION_MESHER"           ![H1]! 
   Include Path ""
   Results Directory ""
 !====================================================================
@@ -44,11 +24,11 @@ Simulation
 !====================================================================
   ! Test name:
   !--------------------------------------------------------------------
-  Test Name = String "$RUNNAME"                                        ![Si1]!
+  Test Name = String "$RUNNAME"          ![Si1]!
   !--------------------------------------------------------------------
   ! Simulation length (number of timesteps):
   !--------------------------------------------------------------------
-  Timestep intervals = Integer $SETTING_FINAL_TIMESTEP                ![Si2]!
+  Timestep intervals = Integer $SETTING_FINAL_TIMESTEP    ![Si2]!
   !--------------------------------------------------------------------
   ! Problem characteristics:
   !--------------------------------------------------------------------
@@ -58,23 +38,13 @@ Simulation
   ! Timestepping scheme:
   !--------------------------------------------------------------------
   Timestep Sizes = Real $SETTING_TIMESTEP_SIZE
-  !--------------------------------------------------------------------
-  ! Electric sources:
-  !--------------------------------------------------------------------
-  ! Sources coordinates (text files):
-  !--------------------------------------------------------------------
-  Electric Tips Filename Root = String "$RUNNAME-probe-locations"          ![Si5]!
-  !--------------------------------------------------------------------
-  ! Variable Sources coordinates in time:
-  !--------------------------------------------------------------------
-  !--------------------------------------------------------------------
-  ! Electric power over time (text file):
-  !--------------------------------------------------------------------
-  Electric Power Filename = String "$RUNNAME-power-over-time"          ![Si5]!
-  Multi Electric Tips Location = Logical True
-  Electric Tips Location Times Nb = Integer $PROBELOCATIONS_COUNT
-  Multi Electric Tips Location Times($PROBELOCATIONS_COUNT) = Real $PROBELOCATIONS
-
+  Timestepping Method = BDF
+  BDF Order = 1
+!  Output File = "cryo_test.result"
+!  Post File = "cryo_test.ep"  
+!  Restart File = "cryo_test.result"
+!  Restart Position = 389
+!  Restart Time = 390    
 !====================================================================
 End
 !====================================================================
@@ -109,37 +79,45 @@ End
 !====================================================================
 Equation 1
 !====================================================================
-  Name = "NUMA RFA Point Sources"
-  Active Solvers(4) = Integer 1 2 3 4
+  Name = "NUMA Cryoablation"
+  Heat Equation = True
+  Phase Change Model = temporal
+!  Check Latent Heat Release = True
+  Active Solvers(3) = Integer 1 2 3
 !====================================================================
 End
 !====================================================================
 
+Solver 1
+    Equation = String "Switching Dirichet"
+    Procedure = File "libnuma-alternatebc" "AlternatingBCSolver"
+
+End
+
 !====================================================================
-Solver 1 ! Heat solver (tissue temperatures)
+Solver 2 ! Heat solver (tissue temperatures)
 !====================================================================
   Equation = String "heatequation"
   Procedure = File "libnuma-eheatsolver" "HeatSolver"
 
   Update Exported Variables = Logical True
-  Nonlinear Update Exported Variables = Logical True
-  Exported Variable 1 = String "Electric Power"
+  Nonlinear Update Exported Variables = Logical True      
+  Exported Variable 1 = Lesion
+  Exported Variable 2 = LesionPrevious
   Variable = String "Temperature"
   Variable DOFs = Integer 1
-
-  Cell Death Modelling = Logical True
-  Perfusion Visualization = Logical True
+  Cell Death Modelling = Logical False
 
   Linear System Solver = "Iterative"
-  Linear System Iterative Method = "BiCGStabL"
+  Linear System Iterative Method = "GMRES"
   Linear System Max Iterations = 350
-  Linear System Convergence Tolerance = 1.0e-10
+  Linear System Convergence Tolerance = 1.0e-5
   Linear System Abort Not Converged = True
   !Linear System Preconditioning = "ILU0"
   Linear System Residual Output = 1
-  Steady State Convergence Tolerance = 1.0e-03
+  Steady State Convergence Tolerance = 1.0e-04
   Stabilize = True
-  Nonlinear System Convergence Tolerance = 1.0e+2
+  Nonlinear System Convergence Tolerance = 1.0e-4 
   Nonlinear System Max Iterations = 500
   Nonlinear System Newton After Iterations = 3
   Nonlinear System Newton After Tolerance = 1.0e-02
@@ -149,61 +127,16 @@ End
 !====================================================================
 
 !====================================================================
-Solver 2 ! Cells state
-!====================================================================
-  Equation = String "cellstate"
-  Procedure = File "libnuma-cellstate" "NumaCellStateSolver"
-
-  Variable = String "CellState[Alive :1 Dead:1]"
-  Variable DOFs = Integer 2
-  Forward Rate = Real $CONSTANT_FORWARD_RATE
-  Backward Rate = Real $CONSTANT_BACKWARD_RATE
-  Exponential Rate = Real $CONSTANT_EXPONENTIAL_RATE
-  Nonlinear System Max Iterations = 500
-  Nonlinear System Convergence Tolerance = 1.0e-9
-!====================================================================
-End
-!====================================================================
-
-!====================================================================
-Solver 3
-!====================================================================
-  Equation = String "powergenerator"
-  Exec Solver = String "Before timestep"
-  Procedure = File "libnuma-powergenerator" "NumaPowerGeneratorSolver"
-  Update Exported Variables = Logical True
-  Present Phase = $PHASE
-  Nonlinear Update Exported Variables = Logical True
-  Variable = String "SAR"
-  Impedance Voltage = Real 300.0
-  Temperature Controlled Electric Power = Logical True
-  Proportional Gain For Electric Power Control = Real $CONSTANT_PID_CONTROLLER_PROPORTIONAL_GAIN
-  Target Temperature = $TARGET_TEMPERATURE
-  Electric Power = $CONSTANT_INPUT_POWER
-  Linear System Solver = "Iterative"
-  Linear System Iterative Method = "BiCGStabL"
-  !Linear System Use TrilinosKokkos = Logical True
-  !TrilinosKokkos Parameter File = String belos_ifpack.xml
-  Linear System Max Iterations = 350
-  Linear System Convergence Tolerance = 1.0e-10
-  Linear System Abort Not Converged = True
-  !Linear System Preconditioning = "ILU0"
-  Linear System Residual Output = 1
-  Steady State Convergence Tolerance = 1.0e-03
-End
-
-!====================================================================
-Solver 4 ! VTU Output writer
+Solver 3 ! VTU Output writer
 !====================================================================
   Equation = String "vtuoutput"
   Exec Solver = String "After timestep"
   Procedure = File "ResultOutputSolve" "ResultOutputSolver"
-  Output Format = String "vtu"
-  Vtu Format = Logical True
+  !Fileindex offset = Integer 390  
 !--------------------------------------------------------------------
 !  Frequency of output (in timesteps):
 !--------------------------------------------------------------------
-   Output Frequency = Integer 1                         ![So1]!
+  Output Frequency = Integer 1       ![So1]!
 !====================================================================
 End
 !====================================================================
@@ -211,9 +144,27 @@ End
 !====================================================================
 Body Force 1
 !====================================================================
-  Heat Source = Equals SAR
-  Volumetric Heat Source = Logical True
-  Perfusion Rate = Real $CONSTANT_PERFUSION_RATE
+  ! (Null in frozen tissue)
+  Heat Source = Variable Temperature
+    Real 
+      0.0 0.0
+      271.0 0.0
+      272.0 $CONSTANT_METABOLIC_HEAT
+      500.0 $CONSTANT_METABOLIC_HEAT
+    End
+  Lesion = Variable Temperature, Time
+    Real Procedure "libnuma-lesion" "LesionExtract"
+  !--------------------------------------------------------------------
+  ! Perfusion rate in tissue (s^-1):
+  ! (Null in frozen tissue)
+  !--------------------------------------------------------------------
+  Perfusion Rate = Variable Temperature
+  Real 
+    0.0 0.0
+    271.0 0.0
+    272.0 $CONSTANT_PERFUSION_RATE
+    500.0 $CONSTANT_PERFUSION_RATE
+  End
   Perfusion Density = Real $CONSTANT_PERFUSION_DENSITY
   Perfusion Heat Capacity = Real $CONSTANT_PERFUSION_HEAT_CAPACITY
   Perfusion Reference Temperature = Real $CONSTANT_PERFUSION_REFERENCE_TEMPERATURE
@@ -227,15 +178,42 @@ Material 1 ! Body
   Name = "Tissue"
 
   Body Temperature = Real $CONSTANT_BODY_TEMPERATURE
-  Heat Conductivity = Real $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE
+  Heat Conductivity = Real 
   Heat Capacity = Real $CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE
   Density = Real $CONSTANT_DENSITY_TISSUE
-  Vapourization Cut Off = Real $CONSTANT_VAPOURIZATION_CUT_OFF_TISSUE
-  !Vapourization Minimum Deposition = Real $CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TISSUE
-  !Vapourization Gradient = Real $CONSTANT_VAPOURIZATION_GRADIENT_TISSUE
-  !Coagulation Cut Off = Real $CONSTANT_COAGULATION_CUT_OFF_TISSUE
-  !Coagulation Minimum Deposition = Real $CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TISSUE
-  !Coagulation Gradient = Real $CONSTANT_COAGULATION_GRADIENT_TISSUE
+  Heat Conductivity = Variable Temperature
+  Real 
+    0.0 $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE_FROZEN
+    265.0 $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE_FROZEN
+    266.0 $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE_MUSHY
+    271.0 $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE_MUSHY
+    272.0 $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE
+    500.0 $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE
+  End
+
+  !--------------------------------------------------------------------
+  ! Heat capacity of Tissue (m^2.s^-2.K^-1):
+  !--------------------------------------------------------------------   
+  Heat Capacity = Variable Temperature
+  Real 
+    0.0 1860.0
+    265.0 1860.0
+    266.0 3087.0
+    271.0 3087.0
+    272.0 3600.0
+    500.0 3600.0
+  End
+
+  !--------------------------------------------------------------------
+  ! Enthalpy of Tissue (m^2.s^-2): -->[J/kg]
+  !--------------------------------------------------------------------
+  Specific Enthalpy = Variable Temperature
+  Real
+    0         -0.120900
+    265.0     0.0
+    272.0     250000.019110
+    500.0     250000.826890
+  End
 !====================================================================
 End
 !====================================================================
@@ -244,16 +222,38 @@ End
 Material 2 ! Tumour
 !====================================================================
   Body Temperature = Real $CONSTANT_BODY_TEMPERATURE
-  Heat Conductivity = Real $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR
-  Heat Capacity = Real $CONSTANT_SPECIFIC_HEAT_CAPACITY_TUMOUR
+  Heat Conductivity = Variable Temperature
+  Real
+    0.0 $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR_FROZEN
+    265.0 $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR_FROZEN
+    266.0 $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR_MUSHY
+    271.0 $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR_MUSHY
+    272.0 $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR
+    500.0 $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR
+  End
+
+  Heat Capacity = Variable Temperature
+  Real 
+    0.0 1860.0
+    265.0 1860.0
+    266.0 3087.0
+    271.0 3087.0
+    272.0 3600.0
+    500.0 3600.0
+  End
+
+  !--------------------------------------------------------------------
+  ! Enthalpy of Tissue (m^2.s^-2): -->[J/kg]
+  !--------------------------------------------------------------------
+  Specific Enthalpy = Variable Temperature
+  Real
+    0         -0.120900
+    265.0     0.0
+    272.0     250000.019110
+    500.0     250000.826890
+  End
   Density = Real $CONSTANT_DENSITY_TUMOUR
 
-    Vapourization Cut Off = Real $CONSTANT_VAPOURIZATION_CUT_OFF_TUMOUR
-    !Vapourization Minimum Deposition = Real $CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TUMOUR
-    !Vapourization Gradient = Real $CONSTANT_VAPOURIZATION_GRADIENT_TUMOUR
-    !Coagulation Cut Off = Real $CONSTANT_COAGULATION_CUT_OFF_TUMOUR
-    !Coagulation Minimum Deposition = Real $CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TUMOUR
-    !Coagulation Gradient = Real $CONSTANT_COAGULATION_GRADIENT_TUMOUR
 !====================================================================
 End
 !====================================================================
@@ -308,13 +308,53 @@ End
 !====================================================================
 
 !====================================================================
-Boundary Condition 4 !Bronchi
+Boundary Condition 4 !Probe
 !====================================================================
-  $REGIONS_BRONCHI
+  $REGIONS_NEEDLES
+  Procedure = File "libnuma-alternatebc" "AlternatingBCSolver"
+  Body Id = Integer 1
+  BoundaryCheck = Variable Time
+  Real 
+    0.0 1
+    599 1
+    600 -1
+    719 -1
+    720 1
+    779 1
+    780 1
+    1379 1
+    1380 -1
+    1499 -1
+    1500 1
+    1560 1
+  End
+  Temperature = Variable Time
+  Real 
+    0.0 133
+    599 133
+    600 0.0
+    719 0.0
+    720 288
+    779 288
+    780 133
+    1379 133
+    1380 0.0
+    1499 0.0
+    1500 288.0
+    1560 288.0
+  End
+====================================================================
+End
+!====================================================================
+
+!====================================================================
+Boundary Condition 5 !Probe
+!====================================================================
+  $REGIONS_NEEDLES_INACTIVE
   Heat Flux BC = Logical True
+  Heat Flux = Real 0.0
   Flow Pressure = Real -0.00000000
-  Heat Transfer Coefficient = Real $CONSTANT_BRONCHI_HEAT_TRANSFER_COEFFICIENT
-  External Temperature = Real $CONSTANT_BODY_TEMPERATURE
+
 !====================================================================
 End
 !====================================================================
@@ -325,7 +365,7 @@ Initial Condition 1
 
   Temperature = Real $CONSTANT_BODY_TEMPERATURE
 
-  CellState(2) = Real $CONSTANT_INITIAL_CELLS_ALIVE $CONSTANT_INITIAL_CELLS_DEAD
+  LesionPrevious = Real $CONSTANT_BODY_TEMPERATURE
 !====================================================================
 End
 !====================================================================

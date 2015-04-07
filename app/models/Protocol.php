@@ -35,26 +35,32 @@ class Protocol extends Paramable {
 	 *
 	 * @var string
 	 */
-	protected $table = 'protocols';
+	protected $table = 'Protocol';
 
   /**
    * The modality that this applies to.
    *
    * @var string
    */
-  public function modality() {
-    return $this->belongsTo('Modality');
+  public function Modality() {
+    return $this->belongsTo('Modality', 'Modality_Id');
   }
 
-  public function combinations() {
-    return $this->hasMany('Combination');
+  public function Combinations() {
+    return $this->hasMany('Combination', 'Protocol_Id');
   }
 
-  public function algorithms() {
-    return $this->hasMany('Algorithm');
+  public function Algorithms() {
+    return $this->hasMany('Algorithm', 'Protocol_Id');
   }
 
-  public function parameterAttributions() {
-    return $this->hasManyThrough('ParameterAttribution', 'Algorithm');
+  public function ParameterAttributions() {
+    return $this->hasManyThrough('ParameterAttribution', 'Algorithm', 'Protocol_Id', 'Algorithm_Id');
+  }
+
+  public function findUnique() {
+    return self::whereName($this->Name)
+      ->whereModalityId($this->Modality->Id)
+      ->first();
   }
 }

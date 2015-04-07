@@ -41,7 +41,7 @@ class MWAModalitySeeder extends Seeder {
    */
   public function run()
   {
-    $modality['mwa'] = Modality::create(array("name" => "MWA"));
+    $modality['mwa'] = Modality::create(array("Name" => "MWA"));
   }
 
 }

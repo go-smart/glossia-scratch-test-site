@@ -33,9 +33,9 @@ class KidneySeeder extends Seeder {
    */
   public function run()
   {
-    $kidney = Context::create(['family' => 'organ', 'name' => 'kidney']);
+    $kidney = Context::create(['Family' => 'organ', 'Name' => 'kidney']);
 
-    $kidney->attribute(['name' => 'BODY_TEMPERATURE', 'type' => 'float', 'value' => '37.0', 'widget' => 'textbox']);
+    $kidney->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'float', 'Value' => '37.0', 'Widget' => 'textbox']);
   }
 
 }

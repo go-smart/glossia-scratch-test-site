@@ -35,10 +35,15 @@ class Region extends UuidModel {
 	 *
 	 * @var string
 	 */
-	protected $table = 'regions';
+	protected $table = 'Region';
 
-  public function numericalModels() {
-    return $this->belongsToMany('NumericalModel')->withPivot('maximum', 'minimum');
+  public function NumericalModels() {
+    return $this->belongsToMany('NumericalModel', 'Numerical_Model_Region', 'Region_Id', 'Numerical_Model_Id')->withPivot('Maximum', 'Minimum');
   }
 
+  public function findUnique() {
+    return self::whereName($this->Name)
+      ->whereFormat($this->Format)
+      ->first();
+  }
 }

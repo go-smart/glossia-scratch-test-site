@@ -9,9 +9,9 @@ class PowerGeneratorController extends \BaseController {
 	 */
 	public function index()
 	{
-    if (Input::has('modality'))
+    if (Input::has('Modality'))
     {
-      $generators = PowerGenerator::where('modality_id', '=', Input::get('modality'))->get();
+      $generators = PowerGenerator::where('Modality_Id', '=', Input::get('Modality'))->get();
     }
     else
     {
@@ -20,7 +20,7 @@ class PowerGeneratorController extends \BaseController {
 
     if (Request::ajax())
     {
-      return Response::json($generators->lists('name', 'id'));
+      return Response::json($generators->lists('Name', 'Id'));
     }
 
     return View::make('power_generators.index', compact('generators'));
@@ -33,7 +33,7 @@ class PowerGeneratorController extends \BaseController {
    */
   public function parameters()
   {
-    $power_generator = PowerGenerator::find(Input::get('id'));
+    $power_generator = PowerGenerator::find(Input::get('Id'));
 
     if (empty($power_generator))
     {
@@ -44,9 +44,9 @@ class PowerGeneratorController extends \BaseController {
 
     $parameters = $parameters->map(function ($parameter) {
       return array(
-        'id' => $parameter->id,
-        'name' => $parameter->name,
-        'type' => $parameter->type,
+        'Id' => $parameter->Id,
+        'Name' => $parameter->Name,
+        'Type' => $parameter->Type,
         'html' => $parameter->as_html()
       );
     });

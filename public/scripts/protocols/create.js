@@ -2,41 +2,41 @@ var available_arguments = [];
 
 $(function () {
   $('#modality-choice').change(function(ev) {
-    var id = $(this).val();
-    if (id < 0)
+    var Id = $(this).val();
+    if (Id < 0)
       return;
 
-    $.getJSON('/power_generator', { modality: id }, function(data) {
+    $.getJSON('/power_generator', { Modality: Id }, function(data) {
       entries = "<option value='-1' disabled selected>Please select</option>";
-      $.each(data, function (id, generator) {
-        entries += "<option value='" + id + "'>" + generator + "</option>\n";
+      $.each(data, function (Id, generator) {
+        entries += "<option value='" + Id + "'>" + generator + "</option>\n";
       });
       $('#power-generator-choice').html(entries);
       $('#needle-choice').html("<option value='-1' disabled selected>Choose generator first</option>");
     });
 
-    $.getJSON('/numerical_model', { modality: id }, function(data) {
+    $.getJSON('/numerical_model', { Modality: Id }, function(data) {
       entries = "<option value='-1' disabled selected>Please select</option>";
-      $.each(data, function (id, model) {
-        entries += "<option value='" + id + "'>" + model + "</option>\n";
+      $.each(data, function (Id, model) {
+        entries += "<option value='" + Id + "'>" + model + "</option>\n";
       });
       $('#numerical-model-choice').html(entries);
     });
   });
 
   $('#power-generator-choice').change(function(ev) {
-    var id = $(this).val();
-    if (id < 0)
+    var Id = $(this).val();
+    if (Id < 0)
       return;
 
-    $.getJSON('/needle', { power_generator: id }, function(data) {
+    $.getJSON('/needle', { Power_Generator: Id }, function(data) {
       entries = "<option value='-1' disabled selected>Please select</option>";
-      $.each(data, function (id, needle) {
-        entries += "<option value='" + id + "'>" + needle + "</option>\n";
+      $.each(data, function (Id, needle) {
+        entries += "<option value='" + Id + "'>" + needle + "</option>\n";
       });
       $('#needle-choice').html(entries);
     });
-    update_parameters('power_generator', id, '#parameters-generator');
+    update_parameters('Power_Generator', Id, '#parameters-generator');
   });
 
   $('#numerical-model-choice').change(function(ev) {
@@ -46,17 +46,17 @@ $(function () {
     if (current < 0)
       return;
 
-    $.getJSON('/numerical_model/arguments', { id: current }, function(data) {
+    $.getJSON('/numerical_model/arguments', { Id: current }, function(data) {
       available_arguments = [];
       $.each(data, function (idx, entry) {
-        available_arguments.push(entry.id);
+        available_arguments.push(entry.Id);
       });
     });
   });
 
   $('#needle-choice').change(function(ev) {
-    var id = $(this).val();
-    update_parameters('needle', id, '#parameters-needle');
+    var Id = $(this).val();
+    update_parameters('needle', Id, '#parameters-needle');
   });
 });
 
@@ -65,10 +65,10 @@ function update_parameters(type, current, target) {
     return;
 
   var url = '/' + type + '/parameters';
-  $.getJSON(url, { id: current }, function(data) {
+  $.getJSON(url, { Id: current }, function(data) {
     entries = "";
     $.each(data, function (idx, entry) {
-      entries += "<li><input type='checkbox' value='" + entry.id + "' name='parameters[]'>" + entry.html + " (" + entry.type + ")" + "</li>\n";
+      entries += "<li><input type='checkbox' value='" + entry.Id + "' name='parameters[]'>" + entry.Html + " (" + entry.Type + ")" + "</li>\n";
     });
     $(target).html(entries);
   });

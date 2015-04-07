@@ -32,12 +32,12 @@ class CreateArguments extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('arguments', function(Blueprint $table)
+		Schema::create('Argument', function(Blueprint $table)
 		{
-			$table->char('id', 36)->primary();
-      $table->string('name');
-      $table->char('argumentable_id', 36);
-      $table->string('argumentable_type');
+			$table->char('Id', 36)->primary();
+      $table->string('Name');
+      $table->char('Argumentable_Id', 36);
+      $table->string('Argumentable_Type');
 		});
 	}
 
@@ -48,7 +48,7 @@ class CreateArguments extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('arguments');
+		Schema::drop('Argument');
 	}
 
 }

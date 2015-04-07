@@ -4,7 +4,7 @@
   </thead>
   <tbody>
 @foreach ($needles as $needle)
-    <tr><td>{{ $needle->id }}</td><td>{{ $needle->modality->name }}</td><td>{{ $needle->manufacturer }}</td><td>{{ $needle->name }}</td></tr>
+    <tr><td>{{ $needle->Id }}</td><td>{{ $needle->Modality->Name }}</td><td>{{ $needle->Manufacturer }}</td><td>{{ $needle->Name }}</td></tr>
 @endforeach
   </tbody>
 </table>

@@ -35,15 +35,15 @@ class Needle extends Paramable {
 	 *
 	 * @var string
 	 */
-	protected $table = 'needles';
+	protected $table = 'Needle';
 
   /**
    * The generators allowed for this needle.
    *
    * @var string
    */
-  public function powerGenerators() {
-    return $this->belongsToMany('PowerGenerator');
+  public function PowerGenerators() {
+    return $this->belongsToMany('PowerGenerator', 'Needle_Power_Generator', 'Needle_Id', 'Power_Generator_Id');
   }
 
   /**
@@ -51,11 +51,23 @@ class Needle extends Paramable {
    *
    * @var string
    */
-  public function modality() {
-    return $this->belongsTo('Modality');
+  public function Modality() {
+    return $this->belongsTo('Modality', 'Modality_Id');
   }
 
-  public function combinations() {
-    return $this->belongsToMany('Combination');
+  public function Combinations() {
+    return $this->belongsToMany('Combination', 'Combination_Needle', 'Needle_Id', 'Combination_Id');
+  }
+
+  public function SimulationNeedles() {
+    return $this->hasMany('SimulationNeedle', 'Needle_Id');
+  }
+
+  public function findUnique()
+  {
+    return self::whereName($this->Name)
+      ->whereManufacturer($this->Manufacturer)
+      ->whereClass($this->Class)
+      ->first();
   }
 }

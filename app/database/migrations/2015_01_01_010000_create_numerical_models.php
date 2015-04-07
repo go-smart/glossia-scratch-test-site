@@ -32,14 +32,15 @@ class CreateNumericalModels extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('numerical_models', function(Blueprint $table)
+		Schema::create('Numerical_Model', function(Blueprint $table)
 		{
-			$table->char('id', 36)->primary();
-			$table->char('modality_id', 36);
-      $table->foreign('modality_id')->references('id')->on('modalities');
-			$table->string('name');
-			$table->string('family');
-      $table->text('definition');
+			$table->char('Id', 36)->primary();
+			$table->char('Modality_Id', 36);
+      $table->foreign('Modality_Id')->references('Id')->on('Modality');
+			$table->string('Name');
+			$table->string('Family');
+      $table->text('Definition');
+      $table->unique(['Name', 'Family']);
 		});
 	}
 
@@ -50,7 +51,7 @@ class CreateNumericalModels extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('numerical_models');
+		Schema::drop('Numerical_Model');
 	}
 
 }
