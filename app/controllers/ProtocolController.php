@@ -54,7 +54,7 @@ class ProtocolController extends \BaseController {
       return Redirect::route('protocol.index')->withError("Protocol not found");
     }
 
-    $protocol->combinations->load('PowerGenerator', 'NumericalModel', 'Context');
+    $protocol->combinations->load('PowerGenerator', 'NumericalModel');
 
 		return View::make('protocols.show', compact('protocol'));
 		//

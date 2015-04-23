@@ -30,6 +30,8 @@ class Protocol extends Paramable {
    */
   public $timestamps = false;
 
+  public static $idField = 'Protocol_Id';
+
 	/**
 	 * The database table used by the model.
 	 *

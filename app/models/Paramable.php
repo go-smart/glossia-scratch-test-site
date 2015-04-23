@@ -27,14 +27,14 @@ abstract class Paramable extends UuidModel
    * (or more specific) on this parameter. If none exists,
    * it adds it
    */
-  public function placeholder($name, $context = null) {
+  public function placeholder($name, $context = null, $type = '') {
     /* Convention over configuration */
     $id_name = train_case(get_class($this)) . '_Id';
 
     $parameterClause = ParameterAttribution::where($id_name, '=', $this->Id);
 
     if ($context !== null)
-      $parameterClause = $parameterClause->where('Context_Id', '=', $context->Id);
+      $parameterClause = $parameterClause->where(Context::$idContext, '=', $context->Id);
 
     $placeholderExists = ($parameterClause
       ->whereHas('parameter', function ($q) use ($name) {
@@ -45,9 +45,11 @@ abstract class Paramable extends UuidModel
       $parameter = Parameter::whereName($name)->first();
 
       if (empty($parameter))
-        $parameter = Parameter::create(['Name' => $name]);
+        $parameter = Parameter::create(['Name' => $name, 'Type' => $type]);
+      else if (empty($parameter->Type))
+        $parameter->update(['Type' => $type]);
 
-      $attribution = [$id_name => $this->Id, 'Parameter_Id' => $parameter->Id, 'Value' => null];
+      $attribution = [$id_name => $this->Id, 'Parameter_Id' => $parameter->Id, 'Value' => null, 'Format' => $type];
 
       $parameterAttribution = ParameterAttribution::create($attribution);
     }
@@ -73,10 +75,13 @@ abstract class Paramable extends UuidModel
 
     /* Convention over configuration */
     $id_name = train_case(get_class($this)) . '_Id';
-    $attribution = [$id_name => $this->Id, 'Parameter_Id' => $parameter->Id, 'Value' => $value];
+
+    $type = array_key_exists('Type', $data) ? $data['Type'] : $parameter->Type;
+
+    $attribution = [$id_name => $this->Id, 'Parameter_Id' => $parameter->Id, 'Value' => $value, 'Format' => $type];
 
     if ($context !== null)
-      $attribution['Context_Id'] = $context->Id;
+      $attribution[Context::$idContext] = $context->Id;
 
     $parameterAttribution = ParameterAttribution::create($attribution);
 
@@ -85,7 +90,7 @@ abstract class Paramable extends UuidModel
   }
 
   public function ParameterAttribution() {
-    return $this->hasMany('ParameterAttribution', train_case(get_class()) . '_Id');
+    return $this->hasMany('ParameterAttribution', train_case(get_class($this)) . '_Id');
   }
 
   /* If this gets called more than once in a request, it makes more sense to cache */
@@ -102,16 +107,16 @@ abstract class Paramable extends UuidModel
     return $parameterAttributions;
   }
 
-  public function Parameter() {
+  public function Parameters() {
     $id_name = train_case(get_class($this)) . '_Id';
     return Parameter::join('Parameter_Attribution', 'Parameter.Id', '=', 'Parameter_Attribution.Parameter_Id')
       ->where('Parameter_Attribution.' . $id_name, '=', $this->Id);
   }
 
   public function parameters_as_html() {
-    $parameters_as_html = $this->parameter()->get()->map(function ($parameter) {
-      return $parameter->as_html();
-    });
-    return implode(', ', $parameters_as_html->all());
+    //$parameters_as_html = $this->parameter()->get()->map(function ($parameter) {
+    //  return $parameter->as_html();
+    //});
+    return $this->ParameterAttribution->implode('asHtml', ', ');
   }
 }

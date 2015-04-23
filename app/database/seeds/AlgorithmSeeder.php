@@ -110,7 +110,7 @@ class AlgorithmSeeder extends Seeder {
       $algorithm->save();
 
       foreach ($arguments as $argument)
-        $algorithm->arguments()->save(new Argument($argument));
+        $algorithm->arguments()->attach(Argument::create($argument));
 
       foreach ($parameters as $parameter)
         $algorithm->attribute($parameter);

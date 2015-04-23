@@ -11,10 +11,10 @@
 |
 */
 
-Route::get('/', function()
+Route::get('/', ['as' => 'home', function()
 {
 	return View::make('hello');
-});
+}]);
 
 /* Needles */
 Route::get('needle/parameters', 'NeedleController@parameters');

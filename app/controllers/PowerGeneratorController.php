@@ -47,7 +47,7 @@ class PowerGeneratorController extends \BaseController {
         'Id' => $parameter->Id,
         'Name' => $parameter->Name,
         'Type' => $parameter->Type,
-        'html' => $parameter->as_html()
+        'Html' => $parameter->as_html()
       );
     });
 

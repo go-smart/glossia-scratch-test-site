@@ -48,7 +48,7 @@ Simulation
         !--------------------------------------------------------------------
         ! Simulation length (number of timesteps):
         !--------------------------------------------------------------------
-        Timestep intervals = Integer $SETTING_FINAL_TIMESTEP                ![Si2]!
+        Timestep intervals = $SETTING_FINAL_TIMESTEP:int                ![Si2]!
         !--------------------------------------------------------------------
         ! Problem characteristics:
         !--------------------------------------------------------------------
@@ -57,9 +57,9 @@ Simulation
         !--------------------------------------------------------------------
         ! Timestepping scheme:
         !--------------------------------------------------------------------
-        Timestep Sizes = Real $SETTING_TIMESTEP_SIZE
+        Timestep Sizes = $SETTING_TIMESTEP_SIZE:float
 
-        Angular Frequency = Real $$ 2 * 3.14159265357589 * $CONSTANT_INPUT_FREQUENCY $$
+        Angular Frequency = Real $$ 2 * 3.14159265357589 * $CONSTANT_INPUT_FREQUENCY:float $$
         Steady State Max Iterations = Integer 10
 
 !====================================================================
@@ -280,9 +280,9 @@ Solver 7 ! Cells state
 
     Variable = String "CellState[Alive :1 Dead:1]"
     Variable DOFs = Integer 2
-    Forward Rate = Real $CONSTANT_FORWARD_RATE
-    Backward Rate = Real $CONSTANT_BACKWARD_RATE
-    Exponential Rate = Real $CONSTANT_EXPONENTIAL_RATE
+    Forward Rate = $CONSTANT_FORWARD_RATE:float
+    Backward Rate = $CONSTANT_BACKWARD_RATE:float
+    Exponential Rate = $CONSTANT_EXPONENTIAL_RATE:float
     Nonlinear System Max Iterations = 500
     Nonlinear System Convergence Tolerance = 1.0e-9
 !====================================================================
@@ -301,7 +301,7 @@ Solver 8
     Transformation Matrix(9) = Real $CALCULATED_ROTATION_MATRIX
     Translation(3) = Real $$ $NEEDLE_SCALED_X $NEEDLE_SCALED_Y $NEEDLE_SCALED_Z * 1 $$
 
-    Minimum Value = Real $CONSTANT_BODY_TEMPERATURE
+    Minimum Value = $CONSTANT_BODY_TEMPERATURE:float
 
    Update Exported Variables = Logical True
    Nonlinear Update Exported Variables = Logical True
@@ -349,10 +349,10 @@ Body Force 1
 !====================================================================
     Heat Source = Equals Electromagnetic Energy Axisymmetric Coarse
     Volumetric Heat Source = Logical True
-    Perfusion Rate = Real $CONSTANT_PERFUSION_RATE
-    Perfusion Density = Real $CONSTANT_PERFUSION_DENSITY
-    Perfusion Heat Capacity = Real $CONSTANT_PERFUSION_HEAT_CAPACITY
-    Perfusion Reference Temperature = Real $CONSTANT_PERFUSION_REFERENCE_TEMPERATURE
+    Perfusion Rate = $CONSTANT_PERFUSION_RATE:float
+    Perfusion Density = $CONSTANT_PERFUSION_DENSITY:float
+    Perfusion Heat Capacity = $CONSTANT_PERFUSION_HEAT_CAPACITY:float
+    Perfusion Reference Temperature = $CONSTANT_PERFUSION_REFERENCE_TEMPERATURE:float
   MyRelativePermittivity = Variable "ITemperature"
     Real Procedure "mwa_RelPerm" "RelPermNL"
   MyElectricConductivity = Variable "ITemperature"
@@ -366,20 +366,20 @@ Material 1 ! Body
 !====================================================================
   Name = "Tissue"
 
-  Body Temperature = Real $CONSTANT_BODY_TEMPERATURE
-  Heat Conductivity = Real $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE
-  Heat Capacity = Real $CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE
-  Density = Real $CONSTANT_DENSITY_TISSUE
+  Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  Heat Conductivity = $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE:float
+  Heat Capacity = $CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE:float
+  Density = $CONSTANT_DENSITY_TISSUE:float
   In Tissue = Real 1.0
   Relative Permittivity = Equals MyRelativePermittivity
   Electric Conductivity = Equals MyElectricConductivity
-  Relative Permeability = $CONSTANT_MW_RELATIVE_PERMEABILITY_TISSUE
-  Vapourization Cut Off = Real $CONSTANT_VAPOURIZATION_CUT_OFF_TISSUE
-  !Vapourization Minimum Deposition = Real $CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TISSUE
-  !Vapourization Gradient = Real $CONSTANT_VAPOURIZATION_GRADIENT_TISSUE
-  !Coagulation Cut Off = Real $CONSTANT_COAGULATION_CUT_OFF_TISSUE
-  !Coagulation Minimum Deposition = Real $CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TISSUE
-  !Coagulation Gradient = Real $CONSTANT_COAGULATION_GRADIENT_TISSUE
+  Relative Permeability = $CONSTANT_MW_RELATIVE_PERMEABILITY_TISSUE:float
+  Vapourization Cut Off = $CONSTANT_VAPOURIZATION_CUT_OFF_TISSUE:float
+  !Vapourization Minimum Deposition = $CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TISSUE:float
+  !Vapourization Gradient = $CONSTANT_VAPOURIZATION_GRADIENT_TISSUE:float
+  !Coagulation Cut Off = $CONSTANT_COAGULATION_CUT_OFF_TISSUE:float
+  !Coagulation Minimum Deposition = $CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TISSUE:float
+  !Coagulation Gradient = $CONSTANT_COAGULATION_GRADIENT_TISSUE:float
 !====================================================================
 End
 !====================================================================
@@ -390,12 +390,12 @@ Material 2
   Name = "Slot"
 
   In Tissue = Real 0.0
-  Electric Conductivity = $CONSTANT_MW_ELECTRIC_CONDUCTIVITY_AIR
-  Relative Permeability = $CONSTANT_MW_RELATIVE_PERMEABILITY_AIR
-  Relative Permittivity = $CONSTANT_MW_RELATIVE_PERMITTIVITY_AIR
-  Heat Capacity = Real $CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE
-  Heat Conductivity = Real $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE
-  Density = Real $CONSTANT_DENSITY_TISSUE
+  Electric Conductivity = $CONSTANT_MW_ELECTRIC_CONDUCTIVITY_AIR:float
+  Relative Permeability = $CONSTANT_MW_RELATIVE_PERMEABILITY_AIR:float
+  Relative Permittivity = $CONSTANT_MW_RELATIVE_PERMITTIVITY_AIR:float
+  Heat Capacity = $CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE:float
+  Heat Conductivity = $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE:float
+  Density = $CONSTANT_DENSITY_TISSUE:float
 !====================================================================
 End
 !====================================================================
@@ -406,12 +406,12 @@ Material 3
   Name = "Dielectric Cable"
 
   In Tissue = Real 0.0
-  Electric Conductivity = $CONSTANT_MW_ELECTRIC_CONDUCTIVITY_DIELECTRIC_CABLE
-  Relative Permeability = $CONSTANT_MW_RELATIVE_PERMEABILITY_DIELECTRIC_CABLE
-  Relative Permittivity = $CONSTANT_MW_RELATIVE_PERMITTIVITY_DIELECTRIC_CABLE
-  Heat Capacity = Real $CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE
-  Heat Conductivity = Real $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE
-  Density = Real $CONSTANT_DENSITY_TISSUE
+  Electric Conductivity = $CONSTANT_MW_ELECTRIC_CONDUCTIVITY_DIELECTRIC_CABLE:float
+  Relative Permeability = $CONSTANT_MW_RELATIVE_PERMEABILITY_DIELECTRIC_CABLE:float
+  Relative Permittivity = $CONSTANT_MW_RELATIVE_PERMITTIVITY_DIELECTRIC_CABLE:float
+  Heat Capacity = $CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE:float
+  Heat Conductivity = $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE:float
+  Density = $CONSTANT_DENSITY_TISSUE:float
 !====================================================================
 End
 !====================================================================
@@ -422,12 +422,12 @@ Material 4
   Name = "Catheter"
 
   In Tissue = Real 0.0
-  Electric Conductivity = $CONSTANT_MW_ELECTRIC_CONDUCTIVITY_CATHETER
-  Relative Permeability = $CONSTANT_MW_RELATIVE_PERMEABILITY_CATHETER
-  Relative Permittivity = $CONSTANT_MW_RELATIVE_PERMITTIVITY_CATHETER
-  Heat Capacity = Real $CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE
-  Heat Conductivity = Real $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE
-  Density = Real $CONSTANT_DENSITY_TISSUE
+  Electric Conductivity = $CONSTANT_MW_ELECTRIC_CONDUCTIVITY_CATHETER:float
+  Relative Permeability = $CONSTANT_MW_RELATIVE_PERMEABILITY_CATHETER:float
+  Relative Permittivity = $CONSTANT_MW_RELATIVE_PERMITTIVITY_CATHETER:float
+  Heat Capacity = $CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE:float
+  Heat Conductivity = $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE:float
+  Density = $CONSTANT_DENSITY_TISSUE:float
 !====================================================================
 End
 !====================================================================
@@ -435,22 +435,22 @@ End
 !====================================================================
 Material 5 ! Tumour
 !====================================================================
-    Body Temperature = Real $CONSTANT_BODY_TEMPERATURE
-    Heat Conductivity = Real $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR
-    Heat Capacity = Real $CONSTANT_SPECIFIC_HEAT_CAPACITY_TUMOUR
-    Density = Real $CONSTANT_DENSITY_TUMOUR
+    Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
+    Heat Conductivity = $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR:float
+    Heat Capacity = $CONSTANT_SPECIFIC_HEAT_CAPACITY_TUMOUR:float
+    Density = $CONSTANT_DENSITY_TUMOUR:float
 
     In Tissue = Real 1.0
     Electric Conductivity = Equals MyElectricConductivity
-    Relative Permeability = $CONSTANT_MW_RELATIVE_PERMEABILITY_TUMOUR
+    Relative Permeability = $CONSTANT_MW_RELATIVE_PERMEABILITY_TUMOUR:float
     Relative Permittivity = Equals MyRelativePermittivity
 
-    Vapourization Cut Off = Real $CONSTANT_VAPOURIZATION_CUT_OFF_TUMOUR
-    !Vapourization Minimum Deposition = Real $CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TUMOUR
-    !Vapourization Gradient = Real $CONSTANT_VAPOURIZATION_GRADIENT_TUMOUR
-    !Coagulation Cut Off = Real $CONSTANT_COAGULATION_CUT_OFF_TUMOUR
-    !Coagulation Minimum Deposition = Real $CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TUMOUR
-    !Coagulation Gradient = Real $CONSTANT_COAGULATION_GRADIENT_TUMOUR
+    Vapourization Cut Off = $CONSTANT_VAPOURIZATION_CUT_OFF_TUMOUR:float
+    !Vapourization Minimum Deposition = $CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TUMOUR:float
+    !Vapourization Gradient = $CONSTANT_VAPOURIZATION_GRADIENT_TUMOUR:float
+    !Coagulation Cut Off = $CONSTANT_COAGULATION_CUT_OFF_TUMOUR:float
+    !Coagulation Minimum Deposition = $CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TUMOUR:float
+    !Coagulation Gradient = $CONSTANT_COAGULATION_GRADIENT_TUMOUR:float
 !====================================================================
 End
 !====================================================================
@@ -488,9 +488,9 @@ Boundary Condition 4
   Matched BC = Logical True
   Port = Logical True
 
-  R1 = Real $CONSTANT_MW_DIELECTRIC_RADIUS_INNER
-  R2 = Real $CONSTANT_MW_DIELECTRIC_RADIUS_OUTER
-Input Power = $CONSTANT_INPUT_POWER
+  R1 = $CONSTANT_MW_DIELECTRIC_RADIUS_INNER:float
+  R2 = $CONSTANT_MW_DIELECTRIC_RADIUS_OUTER:float
+Input Power = $CONSTANT_INPUT_POWER:float
 !====================================================================
 End
 !====================================================================
@@ -499,7 +499,7 @@ End
 Boundary Condition 5
 !====================================================================
     $REGIONS_BOUNDARY
-    Temperature = Real $CONSTANT_BODY_TEMPERATURE
+    Temperature = $CONSTANT_BODY_TEMPERATURE:float
 !====================================================================
 End
 !====================================================================
@@ -510,8 +510,8 @@ Boundary Condition 6
     $REGIONS_VEINS
     Flow Pressure = Real -0.00000000    
     Heat Flux BC = Logical True    
-    Heat Transfer Coefficient = Real $CONSTANT_VENOUS_HEAT_TRANSFER_COEFFICIENT
-    External Temperature = Real $CONSTANT_BODY_TEMPERATURE
+    Heat Transfer Coefficient = $CONSTANT_VENOUS_HEAT_TRANSFER_COEFFICIENT:float
+    External Temperature = $CONSTANT_BODY_TEMPERATURE:float
 !====================================================================
 End
 !====================================================================
@@ -521,7 +521,7 @@ Boundary Condition 7
 !====================================================================
     $REGIONS_ARTERIES
     Flow Pressure = Real 0.00000000    
-    Temperature = Real $CONSTANT_BODY_TEMPERATURE
+    Temperature = $CONSTANT_BODY_TEMPERATURE:float
 !====================================================================
 End
 !====================================================================
@@ -540,8 +540,8 @@ Boundary Condition 9
     $REGIONS_BRONCHI
     Flow Pressure = Real -0.00000000
     Heat Flux BC = Logical True
-    Heat Transfer Coefficient = Real $CONSTANT_BRONCHI_HEAT_TRANSFER_COEFFICIENT
-    External Temperature = Real $CONSTANT_BODY_TEMPERATURE
+    Heat Transfer Coefficient = $CONSTANT_BRONCHI_HEAT_TRANSFER_COEFFICIENT:float
+    External Temperature = $CONSTANT_BODY_TEMPERATURE:float
 !====================================================================
 End
 !====================================================================
@@ -550,11 +550,11 @@ End
 Initial Condition 1
 !====================================================================
 
-    Temperature = Real $CONSTANT_BODY_TEMPERATURE
-    ITemperature = Real $CONSTANT_BODY_TEMPERATURE
-    CellState(2) = Real $CONSTANT_INITIAL_CELLS_ALIVE $CONSTANT_INITIAL_CELLS_DEAD
-    MyElectricConductivity = Real $CONSTANT_MW_EFFECTIVE_ELECTRIC_CONDUCTIVITY_TISSUE
-    MyRelativePermittivity = Real $CONSTANT_MW_RELATIVE_PERMITTIVITY_TISSUE
+    Temperature = $CONSTANT_BODY_TEMPERATURE:float
+    ITemperature = $CONSTANT_BODY_TEMPERATURE:float
+    CellState(2) = Real $CONSTANT_INITIAL_CELLS_ALIVE:float $CONSTANT_INITIAL_CELLS_DEAD:float
+    MyElectricConductivity = $CONSTANT_MW_EFFECTIVE_ELECTRIC_CONDUCTIVITY_TISSUE:float
+    MyRelativePermittivity = $CONSTANT_MW_RELATIVE_PERMITTIVITY_TISSUE:float
 
 !====================================================================
 End

@@ -27,6 +27,22 @@ abstract class ContextEnum
   const Liver = 1;
   const Lung = 2;
   const Kidney = 3;
+  const Prostate = 4;
+  static $all = [1 => 'Liver', 2 => 'Lung', 3 => 'Kidney', 4 => 'Prostate'];
+
+  public static function get($id)
+  {
+    if (is_numeric($id))
+      return self::$all[$id];
+    $id = train_case($id);
+    try {
+      constant('ContextEnum::' . $id); // Check constant exists
+    }
+    catch (ErrorException $e) {
+      return null;
+    }
+    return $id;
+  }
 }
 
 class Context extends Paramable {
@@ -37,6 +53,9 @@ class Context extends Paramable {
    * @var boolean
    */
   public $timestamps = false;
+
+  public static $whereContext = "whereOrganType";
+  public static $idField = "OrganType";
 
 	/**
 	 * The database table used by the model.
@@ -50,12 +69,17 @@ class Context extends Paramable {
     if (Config::get('gosmart.context_as_enum'))
     {
       $context = new Context;
-      $id = train_case($id);
-      constant('ContextEnum::' . $id); // Check constant exists
-      $context->Id = $id;
-      $context->Name = $id;
-      $context->Family = "organ";
-      return $context;
+      if ($label = ContextEnum::get($id))
+      {
+        $context->Id = constant('ContextEnum::' . $label);
+        $context->Name = $label;
+        $context->Family = "organ";
+        return $context;
+      }
+      else
+      {
+        return null;
+      }
     }
 
     return parent::find($id);

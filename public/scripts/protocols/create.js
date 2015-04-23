@@ -36,7 +36,7 @@ $(function () {
       });
       $('#needle-choice').html(entries);
     });
-    update_parameters('Power_Generator', Id, '#parameters-generator');
+    update_parameters('power_generator', Id, '#parameters-generator');
   });
 
   $('#numerical-model-choice').change(function(ev) {

@@ -1,0 +1,9 @@
+<ol>
+  <li>Copy all but first and last characters of FIT SQL to new file and add those two chars in manually.</li>
+  <li>Connect to Sql Server with SquirrelSQL and run 'DROP DATABASE GoSmart0407';</li>
+  <li>Open the SQL from above and select all, then hit Ctrl+Enter</li>
+  <li>Reconnect to the DB and select GoSmart0407 from the Catalog dropdown</li>
+  <li>Run /home/pweir/prepmig.sql (only for first FIT dump)</li>
+  <li>Run php artisan migrate</li>
+  <li>Run php artisan db:seed</li>
+</ol>

@@ -80,6 +80,14 @@ class ParameterAttribution extends UuidModel {
     return count(array_filter(array_map([$this, 'getAttribute'], $this->specifyingFields)));
   }
 
+  public function getContextAttribute() {
+    return Context::find($this->{Context::$idField});
+  }
+
+  public function Context() {
+    return $this->belongsTo('Context', Context::$idField);
+  }
+
   public function activeFields() {
     return array_filter($this->specifyingFields, function ($field) {
       return !empty($this->$field);
@@ -99,5 +107,9 @@ class ParameterAttribution extends UuidModel {
 
   public function findUnique() {
     return false;
+  }
+
+  public function getAsHtmlAttribute() {
+    return "[" . $this->Parameter->as_html() . ":" . ($this->Value ?: "!") . ":" . $this->Format . "]";
   }
 }

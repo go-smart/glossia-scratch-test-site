@@ -23,7 +23,6 @@
 use \Seeder;
 
 use \Algorithm;
-use \Argument;
 use \Combination;
 use \Modality;
 use \Needle;
@@ -55,7 +54,7 @@ class AngiodynamicsCombinationSeeder extends Seeder {
     $modality['ire']->powerGenerators()->save($generator);
 
     /* Add needles */
-    $probe = new Needle(['Name' => 'Basic', 'Manufacturer' => 'Angiodynamics', 'File' => 'library:rfa-cylinder-1', 'Class' => 'solid-boundary']);
+    $probe = new Needle(['Name' => 'Basic', 'Manufacturer' => 'Angiodynamics', 'File' => '', 'Geometry' => 'library:rfa-cylinder-1', 'Class' => 'solid-boundary']);
     $modality['ire']->needles()->save($probe);
 
     $probe->attribute(['Name' => 'NEEDLE_GAUGE', 'Type' => 'float', 'Value' => "A", 'Widget' => 'textbox']);
@@ -91,6 +90,7 @@ ENDLIPSUM2;
 
     /* Add combinations */
     $c = new Combination;
+    $c->isPublic = true;
     $c->protocol()->associate($protocol['6-node']);
     $c->powerGenerator()->associate($generator);
     $c->numericalModel()->associate($m);

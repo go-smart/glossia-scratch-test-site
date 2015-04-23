@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Eloquent\Collection;
+
 class SimulationController extends \BaseController {
 
 	/**
@@ -55,19 +57,53 @@ class SimulationController extends \BaseController {
 
     $incompatibilities = [];
 
-    $userParameters = $simulation->parameters();
-    $regions = $simulation->Regions();
+    $userParameters = $simulation->Parameters;
+    //$regions = $simulation->Regions;
+    $regions = $simulation->Segmentations;
     $combination = $simulation->Combination;
     $needles = [];
     $needleParameters = [];
 
     foreach ($simulation->SimulationNeedles as $sn)
     {
-      $needles[$sn->Id] = $sn->Needle;
-      $needleParameters[$sn->Id] = [];
+      $t = (string)$sn->Id;
+      $needles[$t] = $sn->Needle;
+      $needleParameters[$t] = new Collection;
+
+      /* Check in MySQL
+      var_dump($sn->Id === '236548FB-F08A-4420-A922-E1806C61A19B');
+      var_dump(mb_detect_encoding($sn->Id));
+      //dd(gettype($sn->Id));
+      $t = (string)($sn->Id);
+      var_dump(mb_detect_encoding($t));
+      var_dump($t);
+      var_dump($sn->Id);
+      //var_dump($t[0]);
+      //$t[0] = 'E';
+      //var_dump($t);
+      var_dump($sn->Id);
+      $needleParameters[$t] = $needleParameters[$sn->Id];
+      dd($needleParameters);
+      */
 
       foreach ($sn->Parameters as $snp)
-        $needleParameters[$sn->Id][$snp->Name] = $snp->pivot->ValueSet;
+      {
+        $needleParameters[$t][$snp->Name] = $snp;
+        $needleParameters[$t][$snp->Name]->Value = $snp->pivot->ValueSet;
+      }
+
+      foreach (["NEEDLE_TIP_LOCATION" => $sn->Target, "NEEDLE_ENTRY_LOCATION" => $sn->Entry] as $name => $pointSet)
+      {
+        $location = new Parameter;
+        $location->Name = $name;
+        $location->Type = "array(float)";
+        $location->Value = json_encode([
+          (float)$pointSet->X,
+          (float)$pointSet->Y,
+          (float)$pointSet->Z
+        ]);
+        $needleParameters[$t][$name] = $location;
+      }
     }
 
     $xml = $combination->xml($userParameters, $regions, $incompatibilities, $needles, $needleParameters);
@@ -98,7 +134,10 @@ class SimulationController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		//
+    $simulation = Simulation::find($id);
+    $needles = $simulation->Combination->Needles;
+    $regions = $simulation->Combination->NumericalModel->Regions;
+		return View::make('simulations.edit', compact('simulation', 'needles', 'regions'));
 	}
 
 
@@ -110,7 +149,48 @@ class SimulationController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+    $simulation = Simulation::find($id);
+
+    if (Input::get('removing'))
+    {
+      if (Input::get('simulation-needle-id'))
+      {
+        $simulationNeedle = SimulationNeedle::find(Input::get('simulation-needle-id'));
+        $simulationNeedle->delete();
+      }
+
+      if (Input::get('region-remove-id'))
+      {
+        $region = Region::find(Input::get('region-remove-id'));
+        if (Input::get('region-remove-location'))
+          $simulation->Regions()->newPivotStatementForId($region->Id)->where('Location', '=', Input::get('region-remove-location'))->delete();
+        else
+          $simulation->Regions()->newPivotStatementForId($region->Id)->whereNull('Location')->delete();
+      }
+    }
+    else {
+      if (Input::get('needle-id'))
+      {
+        $needle = Needle::find(Input::get('needle-id'));
+        $simulationNeedle = new SimulationNeedle;
+        $simulationNeedle->Simulation_Id = $simulation->Id;
+        $simulationNeedle->Needle_Id = $needle->Id;
+        $target = json_decode(Input::get('needle-target'));
+        $simulationNeedle->Target_Id = PointSet::create(['X' => $target[0], 'Y' => $target[1], 'Z' => $target[2]])->Id;
+        $entry = json_decode(Input::get('needle-entry'));
+        $simulationNeedle->Entry_Id = PointSet::create(['X' => $entry[0], 'Y' => $entry[1], 'Z' => $entry[2]])->Id;
+        $simulationNeedle->save();
+      }
+
+      if (Input::get('region-id'))
+      {
+        $region = Region::find(Input::get('region-id'));
+        $simulation->Regions()->attach($region, ['Location' => Input::get('region-location')]);
+        $simulation->save();
+      }
+    }
+
+    return Redirect::route('simulation.edit', $id);
 	}
 
 

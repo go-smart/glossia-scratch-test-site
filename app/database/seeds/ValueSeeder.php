@@ -23,7 +23,6 @@
 use \Seeder;
 
 use \Algorithm;
-use \Argument;
 use \Combination;
 use \Modality;
 use \Needle;
@@ -101,14 +100,22 @@ class ValueSeeder extends Seeder {
         $parameterData['Name'] = preg_replace('/[ -]/', '_', $parameterData['Name']);
         $parameterData['Name'] = 'CONSTANT_' . strtoupper(preg_replace('/[[:^word:]]/', '', $parameterData['Name']));
 
+        if (!$constant->hasAttribute('Type'))
+          $parameterData['Type'] = 'float';
+
         $parameter = Parameter::whereName($parameterData['Name'])->first();
         if (empty($parameter))
           $parameter = Parameter::create($parameterData);
+        else
+          $parameter->fill($parameterData)->save();
+
         $id_name = train_case($class) . '_Id';
+        if ($id_name == "Context_Id")
+          $id_name = Context::$idField;
         $attributionData = [$id_name => $target->Id, 'Parameter_Id' => $parameter->Id];
 
         if ($constant->hasAttribute('context'))
-          $attributionData['Context_Id'] = Context::byNameFamily($constant->getAttribute('context'), $constant->getAttribute('contextFamily') ?: 'organ')->first()->id;
+          $attributionData[Context::$idField] = Context::byNameFamily($constant->getAttribute('context'), $constant->getAttribute('contextFamily') ?: 'organ')->first()->id;
 
         if ($constant->hasAttribute('value'))
           $attributionData['Value'] = $constant->getAttribute('value');

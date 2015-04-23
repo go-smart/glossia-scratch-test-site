@@ -89,7 +89,9 @@ class Parameter extends UuidModel {
     if ($this->Value !== null)
       $xml->setAttribute('value', $this->Value);
 
-    if (!empty($this->Type))
+    if (!empty($this->Format))
+      $xml->setAttribute('type', $this->Format);
+    else if (!empty($this->Type))
       $xml->setAttribute('type', $this->Type);
     return $xml;
   }

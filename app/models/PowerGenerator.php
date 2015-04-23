@@ -36,6 +36,8 @@ class PowerGenerator extends Paramable {
 	 */
 	protected $table = 'Power_Generator';
 
+  public static $idField = 'Power_Generator_Id';
+
   /**
    * The needles available for this generator.
    *

@@ -37,8 +37,8 @@ class CreateCombinationNeedle extends Migration {
 			$table->increments('Id');
       $table->char('Needle_Id', 36);
       $table->foreign('Needle_Id')->references('Id')->on('Needle')->onDelete('cascade');
-      $table->char('Combination_Id', 36);
-      $table->foreign('Combination_Id')->references('Id')->on('Combination')->onDelete('cascade');
+      $table->char('Id', 36);
+      $table->foreign('Combination_Id')->references('Combination_Id')->on('Combination')->onDelete('cascade');
 		});
 	}
 

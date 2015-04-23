@@ -23,7 +23,6 @@
 use \Seeder;
 
 use \Algorithm;
-use \Argument;
 use \Combination;
 use \Modality;
 use \Needle;
@@ -55,7 +54,7 @@ class AmicaCombinationSeeder extends Seeder {
     $modality['mwa']->powerGenerators()->save($generator['amica-gen']);
     $generator['amica-gen']->attribute(['Name' => 'GENERATOR_FREQUENCY', 'Type' => 'float', 'Value' => 2450.0, 'Units' => 'MHz', 'Widget' => 'textbox']);
     $generator['amica-gen']->attribute(['Name' => 'GENERATOR_MAX_WATT_CW', 'Type' => 'float', 'Value' => 140.0, 'Units' => 'W', 'Widget' => 'textbox']);
-    $result = $generator['amica-gen']->attribute(['Name' => 'CONSTANT_INPUT_POWER', 'Type' => 'float', 'Widget' => 'points-over-time', 'Value' => '120', 'Units' => 'W']);
+    $result = $generator['amica-gen']->attribute(['Name' => 'CONSTANT_DUMMY', 'Type' => 'float', 'Widget' => 'points-over-time', 'Value' => '120', 'Units' => 'W']);
 
     /* Add needles */
     $coaxial_cables = [[1.5, 105, 'S1.5'], [2.5, 90, '']];
@@ -72,7 +71,8 @@ class AmicaCombinationSeeder extends Seeder {
         $probe->fill(array(
           'Name' => $name,
           'Manufacturer' => 'HS',
-          'File' => 'library:default',
+          'File' => '',
+          'Geometry' => 'library:default',
           'Class' => 'axisymm-2d'
         ));
         $modality['mwa']->needles()->save($probe);
@@ -95,17 +95,14 @@ class AmicaCombinationSeeder extends Seeder {
       'Name' => 'Generic modifiable power',
     ));
     $modality['mwa']->protocols()->save($protocol['user-modified']);
-
+/*
     $algorithm["user-modified power"] = new Algorithm;
     $algorithm["user-modified power"]->content = <<<ENDLIPSUM2
-! Because the type of the result parameter has a widget points-over-time,
-! this can be overridden by doctors via their graph.
-! If they don't, clearly we need a default...
-return \$NEEDLE_MAX_POWER_OUTPUT;
 ENDLIPSUM2;
     $algorithm["user-modified power"]->protocol()->associate($protocol['user-modified']);
     $algorithm["user-modified power"]->result()->associate($result);
     $algorithm["user-modified power"]->save();
+    $algorithm["user-modified power"]->attribute(['Name' => 'CONSTANT_INPUT_POWER', 'Type' => 'array(Time,float)', 'Value' => '{"0.0": 150, "2.0": 300}']);
 
     $algorithm["user-modified power"]->attribute(['Name' => 'NEEDLE_MAX_POWER_OUTPUT', 'Type' => 'float', 'Description' => 'Maximum power that can be output from this needle']);
 
@@ -113,6 +110,7 @@ ENDLIPSUM2;
     $argument->name = "Time";
     $argument->argumentable()->associate($algorithm["user-modified power"]);
     $argument->save();
+*/
 
     /* Add combinations */
     foreach (['liver', 'kidney', 'lung'] as $organ)
@@ -120,6 +118,7 @@ ENDLIPSUM2;
       $o = Context::byNameFamily($organ, 'organ');
         foreach ($model as $m) {
           $c = new Combination;
+          $c->isPublic = ($m->Name == 'NUMA MWA Nonlinear SIF');
           $c->protocol()->associate($protocol['user-modified']);
           $c->powerGenerator()->associate($generator['amica-gen']);
           $c->numericalModel()->associate($m);

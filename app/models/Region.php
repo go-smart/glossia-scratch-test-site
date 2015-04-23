@@ -21,6 +21,46 @@
 
 
 
+abstract class SegmentationTypeEnum
+{
+  const Liver = 0;
+  const Lung = 1;
+  const Kidney = 2;
+  const Prostate = 3;
+  const Vessels = 4;
+  const Tumor = 5;
+  const Bronchi = 6;
+  const Lesion = 7;
+  const Simulation = 8;
+
+  static $all = [
+    0 => 'Liver',
+    1 => 'Lung',
+    2 => 'Kidney',
+    3 => 'Prostate',
+    4 => 'Vessels',
+    5 => 'Tumor',
+    6 => 'Bronchi',
+    7 => 'Lesion',
+    8 => 'Simulation'
+  ];
+
+  public static function get($id)
+  {
+    if (is_numeric($id))
+      return self::$all[$id];
+    $id = train_case($id);
+    try {
+      constant('SegmentationTypeEnum::' . $id); // Check constant exists
+    }
+    catch (ErrorException $e) {
+      return null;
+    }
+    return $id;
+  }
+}
+
+
 class Region extends UuidModel {
 
   /**
@@ -45,5 +85,17 @@ class Region extends UuidModel {
     return self::whereName($this->Name)
       ->whereFormat($this->Format)
       ->first();
+  }
+
+  public function getSegmentationTypesAttribute() {
+    return DB::table('Region_SegmentationType')->whereRegionId($this->Id)->lists('SegmentationType');
+  }
+
+  public function addSegmentationType($typ) {
+    if (!in_array($typ, $this->SegmentationTypes))
+      DB::insert('insert into Region_SegmentationType (Region_Id, SegmentationType) values (:reg, :seg)',
+        ['reg' => $this->Id, 'seg' => $typ]
+      );
+    return $this;
   }
 }

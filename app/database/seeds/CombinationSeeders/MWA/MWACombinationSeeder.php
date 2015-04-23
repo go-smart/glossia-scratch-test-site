@@ -49,8 +49,8 @@ class MWACombinationSeeder extends Seeder {
     $model['mwa linear sif']->fill(array('Name' => 'NUMA MWA Linear SIF', 'Family' => 'elmer-libnuma'));
     $modality['mwa']->numericalModels()->save($model['mwa linear sif']);
     $model['mwa linear sif']->importSif(public_path() . '/templates/go-smart-template_mwa-l.sif');
-    $model['mwa linear sif']->arguments()->save(new Argument(['Name' => 'Temperature']));
-    $model['mwa linear sif']->arguments()->save(new Argument(['Name' => 'Time']));
+    $model['mwa linear sif']->arguments()->attach(Argument::create(['Name' => 'Temperature']));
+    $model['mwa linear sif']->arguments()->attach(Argument::create(['Name' => 'Time']));
     $model['mwa linear sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);
     $model['mwa linear sif']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'float', 'Value' => null, 'Widget' => 'textbox']);
 
@@ -68,8 +68,8 @@ class MWACombinationSeeder extends Seeder {
     $model['mwa nonlinear sif']->fill(array('Name' => 'NUMA MWA Nonlinear SIF', 'Family' => 'elmer-libnuma'));
     $modality['mwa']->numericalModels()->save($model['mwa nonlinear sif']);
     $model['mwa nonlinear sif']->importSif(public_path() . '/templates/go-smart-template_mwa-nl.sif');
-    $model['mwa nonlinear sif']->arguments()->save(new Argument(['Name' => 'Temperature']));
-    $model['mwa nonlinear sif']->arguments()->save(new Argument(['Name' => 'Time']));
+    $model['mwa nonlinear sif']->arguments()->attach(Argument::create(['Name' => 'Temperature']));
+    $model['mwa nonlinear sif']->arguments()->attach(Argument::create(['Name' => 'Time']));
     $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);
     $model['mwa nonlinear sif']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'float', 'Value' => null, 'Widget' => 'textbox']);
 

@@ -36,6 +36,8 @@ class NumericalModel extends Paramable {
 	 */
 	protected $table = 'Numerical_Model';
 
+  public static $idField = 'Numerical_Model_Id';
+
   /**
    * The modality that this applies to.
    *
@@ -43,6 +45,10 @@ class NumericalModel extends Paramable {
    */
   public function Modality() {
     return $this->belongsTo('Modality', 'Modality_Id');
+  }
+
+  public function ParameterAttributions() {
+    return $this->hasMany('ParameterAttribution', 'Numerical_Model_Id');
   }
 
   public function Regions() {
@@ -54,20 +60,27 @@ class NumericalModel extends Paramable {
   }
 
   public function Arguments() {
-    return $this->morphMany('Argument', 'argumentable');
+    return $this->belongsToMany('Argument', 'Numerical_Model_Argument', 'Numerical_Model_Id', 'Argument_Id');
   }
 
-  public function updatePlaceholdersFromDefinition() {
+  public function loadDefinitionFromString($definition) {
     $parameterRegex = Config::get('gosmart.parameterRegex');
 
     if (empty($parameterRegex))
-      $parameterRegex = '/\$((CONSTANT|SETTING)_[A-Z_]+)/';
+      $parameterRegex = '/\$((CONSTANT|SETTING)_[A-Z_]+):?([a-z0-9\(\)A-Z_]*)/';
 
+    $this->updatePlaceholdersFromString($parameterRegex, $definition);
+    $definition = preg_replace($parameterRegex, '\$${1}', $definition);
+
+    $this->Definition = $definition;
+  }
+
+  public function updatePlaceholdersFromString($parameterRegex, $definition) {
     $matches = [];
-    preg_match_all($parameterRegex, $this->definition, $matches, PREG_PATTERN_ORDER);
+    preg_match_all($parameterRegex, $definition, $matches, PREG_SET_ORDER);
 
-    foreach ($matches[1] as $match) {
-      $this->placeholder($match);
+    foreach ($matches as $match) {
+      $this->placeholder($match[1], null, $match[3]);
     }
   }
 
@@ -87,7 +100,9 @@ class NumericalModel extends Paramable {
     $regionsNode = new DOMElement("regions");
     $parent->appendChild($regionsNode);
     foreach ($this->Regions as $region) {
-      $suppliedCount = isset($suppliedRegions[$region->Name]) ? count($suppliedRegions[$region->Name]) : 0;
+      $entries = $suppliedRegions->filter(function ($r) use ($region) { return in_array($r->SegmentationType, $region->SegmentationTypes); });
+      $entries->each(function($e) { $e->Location = $e->FileName . '.' . $e->Extension; });
+      $suppliedCount = $entries->count();
       $pivot = $region->pivot;
 
       if (Config::get('gosmart.check_regions') !== false)
@@ -98,25 +113,33 @@ class NumericalModel extends Paramable {
         if ($pivot->Minimum !== null && $suppliedCount < $pivot->Minimum)
           $incompatibilities[] = "Too few region entries for $region->Name (min $pivot->Minimum, provided $suppliedCount)";
       }
-
-      if ($suppliedCount) {
-        $k = 0;
-        foreach ($suppliedRegions[$region->Name] as $entry) {
-          $regionNode = new DOMElement("region");
-          $regionsNode->appendChild($regionNode);
-          $regionNode->setAttribute('id', $region->Name . '-' . $k);
-          $regionNode->setAttribute('name', $region->Name);
-          $regionNode->setAttribute('format', $region->Format);
-          $regionNode->setAttribute('input', $entry);
-          $regionNode->setAttribute('groups', $region->Groups); /* groups should be a JSON array */
-          $k += 1;
+      else if ($pivot->Minimum)
+      {
+        for ($k = 0 ; $k < $pivot->Minimum - $entries->count() ; $k++)
+        {
+          $entry = clone $region;
+          $entries[] = $entry;
+          $entry->Location = $region->Name . '.vtp';
         }
       }
-      unset($suppliedRegions[$region->Name]);
+      $k = 0;
+      foreach ($entries as $entry) {
+        $regionNode = new DOMElement("region");
+        $regionsNode->appendChild($regionNode);
+        $regionNode->setAttribute('id', $region->Name . '-' . $k);
+        $regionNode->setAttribute('name', $region->Name);
+        $regionNode->setAttribute('format', $region->Format);
+        $regionNode->setAttribute('input', $entry->Location);
+        $regionNode->setAttribute('groups', $region->Groups); /* groups should be a JSON array */
+        $k += 1;
+      }
+      $suppliedRegions = $suppliedRegions->reject(function ($r) use ($region) {
+        return $r->SegmentationType == $region->SegmentationType;
+      });
     }
 
-    if (count($suppliedRegions))
-      $incompatibilities[] = "Unknown regions for model $this->Name : " . implode(', ', array_keys($suppliedRegions));
+    //if (count($suppliedRegions))
+    //  $incompatibilities[] = "Unknown regions for model $this->Name : " . implode(', ', $suppliedRegions->lists('Name'));
 
     $needlesNode = new DOMElement("needles");
     $parent->appendChild($needlesNode);
@@ -161,6 +184,7 @@ class NumericalModel extends Paramable {
 
     $sif = file_get_contents($filename);
 
+    /*
     $matches = [];
     preg_match_all("/\\$([_a-zA-Z][_a-zA-Z0-9]*)/", $sif, $matches);
 
@@ -171,6 +195,8 @@ class NumericalModel extends Paramable {
       if (strpos($key, 'CONSTANT_') === 0 || strpos($key, 'SETTING_') === 0)
         $this->placeholder($key);
     }
+     */
+    $this->loadDefinitionFromString($sif);
 
     $this->save();
   }

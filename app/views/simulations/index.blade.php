@@ -2,6 +2,9 @@
 
 @section('content')
 
+<h1>Simulations</h1>
+<p>{{ link_to_route('home', '&rarr; to index') }}</p>
+
 <script>
 var simulations = {
 @foreach ($simulations as $simulation)
@@ -29,9 +32,10 @@ function updateParameters()
 <table class='simulations-table'>
 @foreach ($simulations as $simulation)
   <tr id='{{ $simulation->Id }}' class='simulations'>
-    <td>{{ $simulation->asString }}</td>
+    <td>{{ $simulation->asHtml }}</td>
     <td>{{ link_to_route('simulation.show', '[XML]', $simulation->Id) }}</td>
-    <td>{{ link_to_route('simulation.show', '[HTML]', $simulation->Id, ['html' => 1]) }}</td>
+    <td>{{ link_to_route('simulation.show', '[HTML]', [$simulation->Id, 'html' => 1]) }}</td>
+    <td>{{ link_to_route('simulation.edit', '[edit]', $simulation->Id) }}</td>
     <td id='simulation-{{ $simulation->Id }}-parameter' class='combination-parameters'></td>
   </tr>
 @endforeach

@@ -36,7 +36,7 @@ class CreateSimulations extends Migration {
 		{
 			$table->char('Id', 36)->primary();
       $table->char('Combination_Id', 36);
-      $table->foreign('Combination_Id')->references('Id')->on('Combination');
+      $table->foreign('Combination_Id')->references('Combination_Id')->on('Combination');
       $table->char('Patient_Id', 36);
       $table->string('Caption');
       $table->string('Progress');

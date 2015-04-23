@@ -23,7 +23,6 @@
 use \Seeder;
 
 use \Algorithm;
-use \Argument;
 use \Combination;
 use \Modality;
 use \Needle;
@@ -86,7 +85,7 @@ class GalilCombinationSeeder extends Seeder {
     /* Add needles */
     foreach ($probes as $name => $probeA)
     {
-      $probe = new Needle(['Name' => $name, 'Manufacturer' => 'Galil Medical', 'File' => 'library:cryo-two-part-cylinder-1', 'Class' => 'solid-boundary']);
+      $probe = new Needle(['Name' => $name, 'Manufacturer' => 'Galil Medical', 'File' => '', 'Geometry' => 'library:cryo-two-part-cylinder-1', 'Class' => 'solid-boundary']);
       $modality['Cryo']->needles()->save($probe);
 
       foreach ($generator as $g)
@@ -111,6 +110,7 @@ class GalilCombinationSeeder extends Seeder {
      foreach ($model as $m)
       foreach ($generator as $g) {
         $c = new Combination;
+        $c->isPublic = true;
         $c->protocol()->associate($protocol['Empty']);
         $c->powerGenerator()->associate($g);
         $c->numericalModel()->associate($m);

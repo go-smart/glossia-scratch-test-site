@@ -5,6 +5,7 @@ class CombinationTest extends TestCase {
   public function testCombinationSuccess()
   {
     $combination = new Combination();
+    $combination->isPublic = true;
     $combination->protocol_id = 1;
     $combination->power_generator_id = 1;
     $combination->needle_id = 1;

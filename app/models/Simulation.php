@@ -20,6 +20,8 @@
  */
 
 
+use Illuminate\Database\Eloquent\Collection;
+
 class Simulation extends UuidModel {
 
   protected $cachedParameters = null;
@@ -37,29 +39,24 @@ class Simulation extends UuidModel {
   /* This actually hydrates and then stringifies the parameter value again, but if the Parameter
    * object starts to store values as non-strings this is where it should change */
   public function Parameters() {
-    if (empty($this->parameter_data))
-      return [];
-
-    if ($this->cachedParameters === null)
-    {
-      $parameterDataArray = json_decode($this->parameter_data);
-      $this->cachedParameters = [];
-      foreach ($parameterDataArray as $name => $parameterData)
-        $this->cachedParameters[$name] = json_encode($parameterData);
-    }
-
-    return $this->cachedParameters;
-  }
-
-  public function Regions() {
-    $regions = json_decode($this->region_data, $assoc=true);
-    if (empty($regions))
-      return [];
-    return $regions;
+    return $this->belongsToMany('Parameter', 'Simulation_Parameter', 'SimulationId', 'ParameterId')->withPivot(['ValueSet']);
   }
 
   public function SimulationNeedles() {
     return $this->hasMany('SimulationNeedle', 'Simulation_Id');
+  }
+
+  public function getSegmentationsAttribute() {
+    $segmentations = new Collection(DB::select('
+      SELECT IS_S.SegmentationType AS SegmentationType, IS_F.FileName AS FileName, IS_F.Extension AS Extension
+      FROM ItemSet_Segmentation IS_S
+       JOIN ItemSet_Patient IS_P ON IS_S.Patient_Id=IS_P.Id
+       JOIN ItemSet_VtkFile IS_V ON IS_S.Id=IS_V.Segmentation_Id
+       JOIN ItemSet_File IS_F ON IS_F.Id=IS_V.Id
+      WHERE IS_P.Id=:PatientId
+    ', ['PatientId' => $this->Patient_Id]));
+    $segmentations->each(function ($s) { $s->Name = SegmentationTypeEnum::get($s->SegmentationType); });
+    return $segmentations;
   }
 
   public function findUnique()
@@ -70,6 +67,11 @@ class Simulation extends UuidModel {
   public function getAsStringAttribute()
   {
     return $this->Combination->asString . ' (' . $this->Id . ')';
+  }
+
+  public function getAsHtmlAttribute()
+  {
+    return "<span class='parameter' title='" . htmlentities($this->asString) . "'>" . $this->Caption . "</span>";
   }
 
 }

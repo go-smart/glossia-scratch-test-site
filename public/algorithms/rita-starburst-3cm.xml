@@ -1,0 +1,14 @@
+<algorithm modality="RFA" protocol="RITA StarBurst 5cm Protocol" result="CONSTANT_INPUT_POWER">
+  <arguments>
+    <argument name='Phase' />
+  </arguments>
+  <parameters>
+  </parameters>
+  <description>
+function CONSTANT_INPUT_POWER( Phase )
+{
+   powers(0:2) = 150.0 150.0;
+   _CONSTANT_INPUT_POWER = powers(floor(Phase+0.5));
+}
+  </description>
+</algorithm>

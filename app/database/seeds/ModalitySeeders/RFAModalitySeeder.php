@@ -23,7 +23,6 @@
 use \Seeder;
 
 use \Algorithm;
-use \Argument;
 use \Modality;
 use \Needle;
 use \NumericalModel;

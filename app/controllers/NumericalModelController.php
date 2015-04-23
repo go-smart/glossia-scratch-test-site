@@ -59,14 +59,14 @@ class NumericalModelController extends \BaseController {
       return Response::json(["error" => "Generator not found"]);
     }
 
-    $parameters = $numerical_model->parameters()->get();
+    $parameters = $numerical_model->Parameters()->get();
 
     $parameters = $parameters->map(function ($parameter) {
       return array(
         'Id' => $parameter->Id,
         'Name' => $parameter->Name,
         'Type' => $parameter->Type,
-        'html' => $parameter->as_html()
+        'Html' => $parameter->as_html()
       );
     });
 
@@ -104,7 +104,9 @@ class NumericalModelController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		//
+    $numerical_model = NumericalModel::find($id);
+
+    return View::make('numerical_models.show', compact('numerical_model'));
 	}
 
 

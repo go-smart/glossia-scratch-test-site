@@ -62,7 +62,8 @@ class BostonScientificCombinationSeeder extends Seeder {
     $needle['leveen std 3cm']->fill(array(
       'Name' => 'LeVeen Standard 3cm',
       'Manufacturer' => 'Boston Scientific',
-      'File' => 'library:umbrella tines',
+      'File' => '',
+      'Geometry' => 'library:umbrella tines',
       'Class' => 'point-sources'
     ));
     $modality['rfa']->Needles()->save($needle['leveen std 3cm']);
@@ -73,7 +74,8 @@ class BostonScientificCombinationSeeder extends Seeder {
     $needle['leveen std 3.5cm']->fill(array(
       'Name' => 'LeVeen Standard 3.5cm',
       'Manufacturer' => 'Boston Scientific',
-      'File' => 'library:umbrella tines',
+      'File' => '',
+      'Geometry' => 'library:umbrella tines',
       'Class' => 'point-sources'
     ));
     $modality['rfa']->Needles()->save($needle['leveen std 3.5cm']);
@@ -84,7 +86,8 @@ class BostonScientificCombinationSeeder extends Seeder {
     $needle['leveen std 4cm']->fill(array(
       'Name' => 'LeVeen Standard 4cm',
       'Manufacturer' => 'Boston Scientific',
-      'File' => 'library:umbrella tines',
+      'File' => '',
+      'Geometry' => 'library:umbrella tines',
       'Class' => 'point-sources'
     ));
     $modality['rfa']->Needles()->save($needle['leveen std 4cm']);
@@ -95,7 +98,8 @@ class BostonScientificCombinationSeeder extends Seeder {
     $needle['leveen std 5cm']->fill(array(
       'Name' => 'LeVeen Standard 5cm',
       'Manufacturer' => 'Boston Scientific',
-      'File' => 'library:umbrella tines',
+      'File' => '',
+      'Geometry' => 'library:umbrella tines',
       'Class' => 'point-sources'
     ));
     $modality['rfa']->Needles()->save($needle['leveen std 5cm']);
@@ -106,7 +110,8 @@ class BostonScientificCombinationSeeder extends Seeder {
     $needle['leveen super slim 2cm']->fill(array(
       'Name' => 'LeVeen Super Slim 2cm',
       'Manufacturer' => 'Boston Scientific',
-      'File' => 'library:umbrella tines',
+      'File' => '',
+      'Geometry' => 'library:umbrella tines',
       'Class' => 'point-sources'
     ));
     $modality['rfa']->Needles()->save($needle['leveen super slim 2cm']);
@@ -117,7 +122,8 @@ class BostonScientificCombinationSeeder extends Seeder {
     $needle['leveen super slim 3cm']->fill(array(
       'Name' => 'LeVeen Super Slim 3cm',
       'Manufacturer' => 'Boston Scientific',
-      'File' => 'library:umbrella tines',
+      'File' => '',
+      'Geometry' => 'library:umbrella tines',
       'Class' => 'point-sources'
     ));
     $modality['rfa']->Needles()->save($needle['leveen super slim 3cm']);
@@ -191,6 +197,7 @@ ENDLIPSUM2;
 
       foreach (array('3cm', '3.5cm', '4cm', '5cm') as $n) {
         $c = new Combination;
+        $c->isPublic = true;
         $c->protocol()->associate($protocol['leveen std ' . $n]);
         $c->powerGenerator()->associate($generator['rf3000']);
         $c->numericalModel()->associate($model['rfa basic sif']);
@@ -202,6 +209,7 @@ ENDLIPSUM2;
 
       foreach (array('2cm', '3cm') as $n) {
         $c = new Combination;
+        $c->isPublic = true;
         $c->Protocol()->associate($protocol['leveen super slim ' . $n]);
         $c->PowerGenerator()->associate($generator['rf3000']);
         $c->NumericalModel()->associate($model['rfa basic sif']);

@@ -16,12 +16,16 @@ class DatabaseSeeder extends Seeder {
     //DB::table('Simulation_Needle')->delete();
     //DB::table('PointSet')->delete();
     //DB::table('Simulation')->delete();
-    //DB::table('Combination_Needle')->delete();
+    $sS = App::make("SimulationSeeder")->clean();
+
+    DB::table('Combination_Needle')->delete();
     //DB::table('Combination')->delete();
     DB::table('Parameter_Attribution')->delete();
     DB::table('Numerical_Model_Region')->delete();
-    DB::table('Region')->delete();
+    //DB::table('Region')->delete();
     //DB::table('Numerical_Model')->delete();
+    DB::table('Numerical_Model_Argument')->delete();
+    DB::table('Algorithm_Argument')->delete();
     DB::table('Algorithm')->delete();
     //DB::table('Protocol')->delete();
     //DB::table('Context')->delete();
@@ -37,7 +41,7 @@ class DatabaseSeeder extends Seeder {
       $this->call('\ContextSeeders\ContextSeeder');
     $this->call('\CombinationSeeders\CombinationSeeder');
 
-    if (Simulation::count() == 0)
+    //if (Simulation::count() == 0)
       $this->call('SimulationSeeder');
 
 		$this->call('ValueSeeder');

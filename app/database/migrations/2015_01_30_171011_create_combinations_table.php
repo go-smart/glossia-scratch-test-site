@@ -34,17 +34,25 @@ class CreateCombinationsTable extends Migration {
 	{
 		Schema::create('Combination', function(Blueprint $table)
 		{
-			$table->char('Id', 36)->primary();
+			$table->char('Combination_Id', 36)->primary();
 			$table->char('Numerical_Model_Id', 36);
       $table->foreign('Numerical_Model_Id')->references('Id')->on('Numerical_Model');
 			$table->char('Power_Generator_Id', 36);
       $table->foreign('Power_Generator_Id')->references('Id')->on('Power_Generator');
 			$table->char('Protocol_Id', 36);
       $table->foreign('Protocol_Id')->references('Id')->on('Protocol');
-			$table->char('Context_Id', 36);
-      if (!Config::get('gosmart.context_as_enum'))
+      if (Config::get('gosmart.context_as_enum'))
+      {
+        $table->int('OrganType');
+        $table->unique(['Numerical_Model_Id', 'Power_Generator_Id', 'Protocol_Id', 'OrganType'], 'core_unique');
+      }
+      else
+      {
+        $table->char('Context_Id', 36);
         $table->foreign('Context_Id')->references('Id')->on('Context');
-      $table->unique(['Numerical_Model_Id', 'Power_Generator_Id', 'Protocol_Id', 'Context_Id'], 'core_unique');
+        $table->unique(['Numerical_Model_Id', 'Power_Generator_Id', 'Protocol_Id', 'Context_Id'], 'core_unique');
+      }
+      $table->boolean('isPublic');
 		});
 	}
 

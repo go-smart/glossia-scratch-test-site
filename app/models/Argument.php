@@ -39,9 +39,12 @@ class Argument extends UuidModel {
 	 */
 	protected $table = 'Argument';
 
-  public function Argumentable()
-  {
-    return $this->morphTo();
+  public function NumericalModels() {
+    return $this->belongsToMany('NumericalModel', 'Numerical_Model_Argument', 'Argument_Id', 'Numerical_Model_Id');
+  }
+
+  public function Algorithms() {
+    return $this->belongsToMany('Algorithm', 'Algorithm_Argument', 'Argument_Id', 'Algorithm_Id');
   }
 
   public function xml($parent)

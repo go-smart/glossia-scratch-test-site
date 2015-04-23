@@ -56,6 +56,10 @@
   cursor: pointer;
 }
 
+.parameter-table .parameter {
+  font-size: 10px;
+}
+
 .algorithm-create {
   border-top: thick black solid;
 }

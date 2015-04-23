@@ -15,10 +15,10 @@ class CreateSimulationNeedleParameter extends Migration {
 		Schema::create('Simulation_Needle_Parameter', function(Blueprint $table)
 		{
 			$table->increments('Id');
-      $table->integer('Simulation_Needle_Id')->unsigned();
-      $table->foreign('Simulation_Needle_Id')->references('Id')->on('Simulation_Needle');
-      $table->char('Parameter_Id', 36);
-      $table->foreign('Parameter_Id')->references('Id')->on('Parameter');
+      $table->integer('SimulationNeedleId')->unsigned();
+      $table->foreign('SimulationNeedleId')->references('Id')->on('Simulation_Needle');
+      $table->char('ParameterId', 36);
+      $table->foreign('ParameterId')->references('Id')->on('Parameter');
       $table->string('ValueSet');
 		});
 	}

@@ -36,7 +36,7 @@ function PHASE( ObservedTemperature, Phase, Time) import time_to_target_temp exp
 {
 
    target_temp = 378.0 378.0 378.0 378.0;
-   wait_at_target_temp = 30 30 210 210;
+   wait_at_target_temp = 30 30 420 420;
    iphase = floor(Phase + 0.5);
 
    if (iphase &lt; 0.5)

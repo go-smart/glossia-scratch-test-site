@@ -19,30 +19,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<algorithm modality="MWA" protocol="Generic modifiable power" result="CONSTANT_INPUT_POWER">
+<algorithm modality="MWA" protocol="Generic modifiable power" result="CONSTANT_DUMMY">
   <arguments>
     <argument name='Time' />
   </arguments>
   <parameters>
+    <parameter name='CONSTANT_INPUT_POWER' value='{"0.0": 150, "2.0": 300}' type='array(Time,float)' />
   </parameters>
   <description>
-function CONSTANT_INPUT_POWER( Time )
-{
-  Power = 1; 
-  if (Time &lt; 10)
-  {
-    Power = 0;
-  } else {
-    if (Time &lt; 20)
-    {
-      Power = 64;
-    } else {
-      Power = 10;
-    }
-  }
-
-  _CONSTANT_INPUT_POWER = Power;
-}
   </description>
 </algorithm>
 

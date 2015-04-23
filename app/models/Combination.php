@@ -46,6 +46,8 @@ class Combination extends UuidModel {
 	 */
 	protected $table = 'Combination';
 
+  protected $primaryKey = 'Combination_Id';
+
   protected $cachedParameterTable = null;
 
   public function Simulations() {
@@ -65,7 +67,7 @@ class Combination extends UuidModel {
   }
 
   public function Context() {
-    return $this->belongsTo('Context', 'Context_Id');
+    return $this->belongsTo('Context', Context::$idField);
   }
 
   public function NumericalModel() {
@@ -73,7 +75,7 @@ class Combination extends UuidModel {
   }
 
   public function getContextAttribute() {
-    return Context::find($this->Context_Id);
+    return Context::find($this->{Context::$idField});
   }
 
   public function getAsStringAttribute() {
@@ -116,9 +118,10 @@ class Combination extends UuidModel {
     $automaticFields = array_diff($this->attributingFields, ['Protocol']);
     foreach ($automaticFields as $field) {
       $property = train_case($field);
-      $attributionsWithoutNeedle = $attributions->where(function ($q) use ($field, $property) {
-        $q->whereNull("${field}_Id")
-          ->orWhere("${field}_Id", "=", $this->$property->Id);
+      $class = get_class($this->$property);
+      $attributionsWithoutNeedle = $attributions->where(function ($q) use ($field, $property, $class) {
+        $q->whereNull($class::$idField)
+          ->orWhere($class::$idField, "=", $this->$property->Id);
       });
     }
 
@@ -137,8 +140,8 @@ class Combination extends UuidModel {
     $requirements = with(clone $attributions)->whereNull("Parameter_Attribution.Value");
     $supplies = with(clone $attributions)->whereNotNull("Parameter_Attribution.Value");
 
-    $requirements = $requirements->groupBy("parameterName")->lists("parameterName");
-    $supplyList = $supplies->groupBy("parameterName")->lists("parameterName");
+    $requirements = $requirements->lists("parameterName");
+    $supplyList = $supplies->lists("parameterName");
 
     $undefinedList = array_diff($requirements, $supplyList);
     $undefinedList = array_diff($undefinedList, $resultList->lists("Name"));
@@ -177,9 +180,10 @@ class Combination extends UuidModel {
     $automaticFields = array_diff($this->attributingFields, ['Protocol']);
     foreach ($automaticFields as $field) {
       $property = train_case($field);
-      $attributionsWithoutNeedle = $attributions->where(function ($q) use ($field, $property) {
-        $q->whereNull("${field}_Id")
-          ->orWhere("${field}_Id", "=", $this->$property->Id);
+      $class = get_class($this->$property);
+      $attributionsWithoutNeedle = $attributions->where(function ($q) use ($field, $property, $class) {
+        $q->whereNull($class::$idField)
+          ->orWhere($class::$idField, "=", $this->$property->Id);
       });
     }
 
@@ -232,23 +236,21 @@ class Combination extends UuidModel {
         $needleParameters = array_filter($needleParameters);
 
         $needleUser = isset($needleUserParameters[$needleIx]) ? $needleUserParameters[$needleIx] : [];
-        foreach ($needleUser as $name => $value) {
-          $v = new Parameter;
-          $v->Name = $name;
-          $v->Value = $needleUser[$name];
-          $needleParameters[$name] = $v;
+
+        foreach ($needleUser as $needleUserParameter) {
+          $needleParameters[$needleUserParameter->Name] = $needleUserParameter;
         }
 
         $needleParametersByNeedle[$needleIx] = $needleParameters;
 
-        $requirements = $requirements->groupBy("parameterName")->lists("parameterName");
-        $supplyList = $supplies->groupBy("parameterName")->lists("parameterName");
+        $requirements = $requirements->lists("parameterName");
+        $supplyList = $supplies->lists("parameterName");
 
         $needleUserSupplied = [];
         if (isset($needleUserParameters[$needleIx]))
-          $needleUserSupplied = array_keys($needleUserParameters[$needleIx]);
+          $needleUserSupplied = $needleUserParameters[$needleIx]->lists('Name');
 
-        $undefinedList = array_diff($requirements, $supplyList, $needleUserSupplied, array_keys($userSupplied));
+        $undefinedList = array_diff($requirements, $supplyList, $needleUserSupplied, $userSupplied->lists('Name'));
         $undefinedList = array_diff($undefinedList, $resultList->lists("Name"));
 
         foreach ($undefinedList as $missingParameterName)
@@ -259,10 +261,10 @@ class Combination extends UuidModel {
       $requirements = with(clone $attributions)->whereNull("Parameter_Attribution.Value");
       $supplies = with(clone $attributions)->whereNotNull("Parameter_Attribution.Value");
 
-      $requirements = $requirements->groupBy("parameterName")->lists("parameterName");
-      $supplyList = $supplies->groupBy("parameterName")->lists("parameterName");
+      $requirements = $requirements->lists("parameterName");
+      $supplyList = $supplies->lists("parameterName");
 
-      $undefinedList = array_diff($requirements, $supplyList, array_keys($userSupplied));
+      $undefinedList = array_diff($requirements, $supplyList, $userSupplied->lists('Name'));
       $undefinedList = array_diff($undefinedList, $resultList->lists("Name"));
 
       foreach ($undefinedList as $missingParameterName)
@@ -283,11 +285,9 @@ class Combination extends UuidModel {
     foreach ($attributions as $name => $available)
       $parameters[$name] = $this->chooseAttribution($available);
 
-    foreach ($userSupplied as $name => $value) {
-      $v = new Parameter;
-      $v->Name = $name;
-      $v->Value = $value;
-      $parameters[$name] = $v;
+    foreach ($userSupplied as $userParameter) {
+      $userParameter->Value = $userParameter->pivot->ValueSet;
+      $parameters[$userParameter->Name] = $userParameter;
     }
 
     return [$parameters, $needleParametersByNeedle];
@@ -302,6 +302,7 @@ class Combination extends UuidModel {
     {
       $parameter = $attributions[0]->Parameter;
       $parameter->Value = $attributions[0]->Value;
+      $parameter->Format = $attributions[0]->Format;
       return $parameter;
     }
 
@@ -340,6 +341,7 @@ class Combination extends UuidModel {
 
     $parameter = $winningAttribution->Parameter;
     $parameter->Value = $winningAttribution->Value;
+    $parameter->Format = $winningAttribution->Format;
     return $parameter;
   }
 
@@ -379,7 +381,7 @@ class Combination extends UuidModel {
     return self::whereNumericalModelId($this->Numerical_Model_Id)
       ->whereProtocolId($this->Protocol_Id)
       ->wherePowerGeneratorId($this->Power_Generator_Id)
-      ->whereContextId($this->Context_Id)
+      ->where("OrganType", "=", $this->{Context::$idField})
       ->first();
   }
 }

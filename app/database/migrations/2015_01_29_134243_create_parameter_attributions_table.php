@@ -43,9 +43,15 @@ class CreateParameterAttributionsTable extends Migration {
       $table->foreign('Power_Generator_Id')->references('Id')->on('Power_Generator')->onDelete('cascade');
       $table->char('Numerical_Model_Id', 36)->nullable();
       $table->foreign('Numerical_Model_Id')->references('Id')->on('Numerical_Model')->onDelete('cascade');
-      $table->char('Context_Id', 36)->nullable();
-      if (!Config::get('gosmart.context_as_enum'))
+      if (Config::get('gosmart.context_as_enum'))
+      {
+        $table->int('OrganType')->nullable();
+      }
+      else
+      {
+        $table->char('Context_Id', 36)->nullable();
         $table->foreign('Context_Id')->references('Id')->on('Context')->onDelete('cascade');
+      }
       $table->char('Algorithm_Id', 36)->nullable();
       $table->foreign('Algorithm_Id')->references('Id')->on('Algorithm')->onDelete('cascade');
       $table->string('Value')->nullable();

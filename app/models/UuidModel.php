@@ -48,7 +48,7 @@ abstract class UuidModel extends Eloquent {
       $existing = $this->findUnique();
       if ($existing)
       {
-        $this->Id = $existing->Id;
+        $this->{$this->primaryKey} = $existing->{$this->primaryKey};
         $this->exists = true;
       }
     }

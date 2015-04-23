@@ -1,0 +1,44 @@
+<algorithm modality="RFA" protocol="RITA StarBurst 5cm Protocol" result="PHASE">
+  <arguments>
+    <argument name='Time' />
+    <argument name='Phase' />
+    <argument name='ObservedTemperature' />
+  </arguments>
+  <parameters>
+    <parameter name='CONSTANT_NEEDLE_EXTENSIONS' type='array(float)' value='[0.015, 0.020, 0.025]' />
+  </parameters>
+  <description>
+time_to_target_temp = -1;
+
+! Arguments must be in alphabetical order
+function PHASE( ObservedTemperature, Phase, Time) import time_to_target_temp export time_to_target_temp
+{
+
+   target_temp = 378.0 378.0 378.0;
+   wait_at_target_temp = 30 30 420;
+   iphase = floor(Phase + 0.5);
+
+   if (iphase &lt; 0.5)
+   {
+       iphase = 1;
+       time_to_target_temp = -1;
+   }
+
+   if (target_temp(iphase-1) &lt;= ObservedTemperature &amp; time_to_target_temp &lt; 0)
+       time_to_target_temp = Time;
+
+   if (time_to_target_temp &gt; 0)
+   {
+     if (Time - time_to_target_temp &gt;= wait_at_target_temp(iphase-1))
+     {
+       time_to_target_temp = -1;
+       iphase = iphase + 1;
+       if (iphase &gt; size(target_temp))
+           iphase = -1;
+     }
+   }
+
+   _PHASE = iphase;
+}
+  </description>
+</algorithm>

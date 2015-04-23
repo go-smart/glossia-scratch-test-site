@@ -48,8 +48,8 @@ class IRECombinationSeeder extends Seeder {
     $model['numa sif'] = new NumericalModel;
     $model['numa sif']->fill(array('Name' => 'NUMA IRE 3D SIF', 'Family' => 'elmer-libnuma', 'Definition' => 'lorem ipsum'));
     $modality['ire']->numericalModels()->save($model['numa sif']);
-    $model['numa sif']->arguments()->save(new Argument(['Name' => 'Temperature']));
-    $model['numa sif']->arguments()->save(new Argument(['Name' => 'Time']));
+    $model['numa sif']->arguments()->attach(Argument::create(['Name' => 'Temperature']));
+    $model['numa sif']->arguments()->attach(Argument::create(['Name' => 'Time']));
     $model['numa sif']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'float', 'Value' => null, 'Widget' => 'textbox']);
 
     $organ = Region::whereName('organ')->first();

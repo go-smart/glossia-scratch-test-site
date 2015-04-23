@@ -35,7 +35,7 @@ class CombinationSeeder extends Seeder {
     $lockedCombinations = \Combination::whereExists(function ($q) {
       $q->select(DB::raw(1))
         ->from('Simulation')
-        ->whereRaw('Simulation.Combination_Id = Combination.Id');
+        ->whereRaw('Simulation.Combination_Id = Combination.Combination_Id');
     })->get();
 
     if (!$lockedCombinations->isEmpty())
@@ -46,7 +46,7 @@ class CombinationSeeder extends Seeder {
     \Combination::whereNotExists(function ($q) {
       $q->select(DB::raw(1))
         ->from('Simulation')
-        ->whereRaw('Simulation.Combination_Id = Combination.Id');
+        ->whereRaw('Simulation.Combination_Id = Combination.Combination_Id');
     })->delete();
 
     $this->call('\CombinationSeeders\RFA\RFACombinationSeeder');

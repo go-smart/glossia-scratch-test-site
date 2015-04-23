@@ -29,7 +29,7 @@
       </td>
       <td>{{{ $combination->Numerical_Model->Name }}}</td>
       <td>{{{ $combination->Context->Family }}} :: {{{ $combination->Context->Name }}}</td>
-      <td>{{ HTML::link(route('combination.show', [$combination->Id, 'html' => 1]), "[XML]") }}</td>
+      <td>{{ HTML::link(route('combination.show', [$combination->Combination_Id, 'html' => 1]), "[XML]") }}</td>
       <td>
       @foreach ($combination->NumericalModel->Regions as $region)
         <span class='context-label'>[
@@ -58,7 +58,7 @@
 @foreach ($protocol->Algorithms as $algorithm)
   <tbody>
     <tr><td class='algorithm-result'>{{ $algorithm->Result->as_html() }}</td><td class='algorithm-arguments'>({{{ $algorithm->arguments_as_string() }}})</td></tr>
-    <tr><td class='algorithm-parameters' colspan=2><span class='inline-label'>&lt;Parameters&gt;</span> [{{ $algorithm->parameters_as_html() }}]</td></tr>
+    <tr><td class='algorithm-parameters' colspan=2><span class='inline-label'>&lt;Parameters&gt;</span> {{ $algorithm->parameters_as_html() }}</td></tr>
     <tr><td class='padding'></td><td><pre class='algorithm-content'>{{{ $algorithm->Content }}}</pre></td></tr>
   </tbody>
 @endforeach

@@ -10,6 +10,8 @@ class PointSet extends UuidModel {
    */
   public $timestamps = false;
 
+  public $guarded = [];
+
 	/**
 	 * The database table used by the model.
 	 *
@@ -22,5 +24,10 @@ class PointSet extends UuidModel {
   public function findUnique()
   {
     return false;
+  }
+
+  public function getAsStringAttribute()
+  {
+    return json_encode([(float)$this->X, (float)$this->Y, (float)$this->Z]);
   }
 }

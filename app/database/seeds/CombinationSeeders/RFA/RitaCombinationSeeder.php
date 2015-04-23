@@ -65,7 +65,8 @@ class RitaCombinationSeeder extends Seeder {
     $needle['rita starburst xl']->fill(array(
       'Name' => 'Starburst XL',
       'Manufacturer' => 'RITA',
-      'File' => 'library:straight tines',
+      'File' => '',
+      'Geometry' => 'library:straight tines',
       'Class' => 'point-sources'
     ));
     $modality['rfa']->needles()->save($needle['rita starburst xl']);
@@ -77,7 +78,8 @@ class RitaCombinationSeeder extends Seeder {
     $needle['rita starburst semi-flex']->fill(array(
       'Name' => 'Starburst Semi-Flex',
       'Manufacturer' => 'RITA',
-      'File' => 'library:straight tines',
+      'File' => '',
+      'Geometry' => 'library:straight tines',
       'Class' => 'point-sources'
     ));
     $modality['rfa']->needles()->save($needle['rita starburst semi-flex']);
@@ -89,7 +91,8 @@ class RitaCombinationSeeder extends Seeder {
     $needle['rita starburst mri']->fill(array(
       'Name' => 'Starburst MRI',
       'Manufacturer' => 'RITA',
-      'File' => 'library:straight tines',
+      'File' => '',
+      'Geometry' => 'library:straight tines',
       'Class' => 'point-sources'
     ));
     $modality['rfa']->needles()->save($needle['rita starburst mri']);
@@ -101,7 +104,8 @@ class RitaCombinationSeeder extends Seeder {
     $needle['rita starburst sde']->fill(array(
       'Name' => 'Starburst SDE',
       'Manufacturer' => 'RITA',
-      'File' => 'library:straight tines',
+      'File' => '',
+      'Geometry' => 'library:straight tines',
       'Class' => 'point-sources'
     ));
     $modality['rfa']->needles()->save($needle['rita starburst sde']);
@@ -224,6 +228,7 @@ ENDLIPSUM2;
       /* Add combinations */
         foreach (array('3cm', '4cm', '5cm') as $p) {
           $c = new Combination;
+          $c->isPublic = true;
           $c->protocol()->associate($protocol['rita starburst ' . $p]);
           $c->powerGenerator()->associate($generator['rita 1500X rf']);
           $c->numericalModel()->associate($model['rfa basic sif']);
@@ -235,6 +240,7 @@ ENDLIPSUM2;
         }
 
       $c = new Combination;
+      $c->isPublic = true;
       $c->protocol()->associate($protocol['rita starburst 2cm']);
       $c->powerGenerator()->associate($generator['rita 1500X rf']);
       $c->numericalModel()->associate($model['rfa basic sif']);

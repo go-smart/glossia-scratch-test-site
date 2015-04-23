@@ -37,6 +37,8 @@ class Needle extends Paramable {
 	 */
 	protected $table = 'Needle';
 
+  public static $idField = 'Needle_Id';
+
   /**
    * The generators allowed for this needle.
    *

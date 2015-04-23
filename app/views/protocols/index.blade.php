@@ -1,6 +1,9 @@
 @extends('master')
 
 @section('content')
+<h1>Protocols</h1>
+
+<p>{{ link_to_route('home', '&rarr; to index') }}</p>
 
 {{{ $errors->first() }}}
 

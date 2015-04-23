@@ -29,6 +29,8 @@ class Algorithm extends Paramable {
    */
   public $timestamps = false;
 
+  public static $idField = 'Algorithm_Id';
+
   protected static $updateByDefault = false;
 
 	/**
@@ -47,7 +49,7 @@ class Algorithm extends Paramable {
   }
 
   public function Arguments() {
-    return $this->morphMany('Argument', 'Argumentable');
+    return $this->belongsToMany('Argument', 'Algorithm_Argument', 'Algorithm_Id', 'Argument_Id');
   }
 
   /**

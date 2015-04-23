@@ -48,7 +48,7 @@ Simulation
   !--------------------------------------------------------------------
   ! Simulation length (number of timesteps):
   !--------------------------------------------------------------------
-  Timestep intervals = Integer $SETTING_FINAL_TIMESTEP                ![Si2]!
+  Timestep intervals = $SETTING_FINAL_TIMESTEP:int                ![Si2]!
   !--------------------------------------------------------------------
   ! Problem characteristics:
   !--------------------------------------------------------------------
@@ -57,7 +57,7 @@ Simulation
   !--------------------------------------------------------------------
   ! Timestepping scheme:
   !--------------------------------------------------------------------
-  Timestep Sizes = Real $SETTING_TIMESTEP_SIZE
+  Timestep Sizes = $SETTING_TIMESTEP_SIZE:float
   !--------------------------------------------------------------------
   ! Electric sources:
   !--------------------------------------------------------------------
@@ -72,8 +72,8 @@ Simulation
   !--------------------------------------------------------------------
   Electric Power Filename = String "$RUNNAME-power-over-time"          ![Si5]!
   Multi Electric Tips Location = Logical True
-  Electric Tips Location Times Nb = Integer $PROBELOCATIONS_COUNT
-  Multi Electric Tips Location Times($PROBELOCATIONS_COUNT) = Real $PROBELOCATIONS
+  Electric Tips Location Times Nb = $PROBELOCATIONS_COUNT:int
+  Multi Electric Tips Location Times($PROBELOCATIONS_COUNT:int) = $PROBELOCATIONS:array(float)
 
 !====================================================================
 End
@@ -156,9 +156,9 @@ Solver 2 ! Cells state
 
   Variable = String "CellState[Alive :1 Dead:1]"
   Variable DOFs = Integer 2
-  Forward Rate = Real $CONSTANT_FORWARD_RATE
-  Backward Rate = Real $CONSTANT_BACKWARD_RATE
-  Exponential Rate = Real $CONSTANT_EXPONENTIAL_RATE
+  Forward Rate = $CONSTANT_FORWARD_RATE:float
+  Backward Rate = $CONSTANT_BACKWARD_RATE:float
+  Exponential Rate = $CONSTANT_EXPONENTIAL_RATE:float
   Nonlinear System Max Iterations = 500
   Nonlinear System Convergence Tolerance = 1.0e-9
 !====================================================================
@@ -177,9 +177,9 @@ Solver 3
   Variable = String "SAR"
   Impedance Voltage = Real 300.0
   Temperature Controlled Electric Power = Logical True
-  Proportional Gain For Electric Power Control = Real $CONSTANT_PID_CONTROLLER_PROPORTIONAL_GAIN
-  Target Temperature = $TARGET_TEMPERATURE
-  Electric Power = $CONSTANT_INPUT_POWER
+  Proportional Gain For Electric Power Control = $CONSTANT_PID_CONTROLLER_PROPORTIONAL_GAIN:float
+  Target Temperature = $TARGET_TEMPERATURE:float
+  Electric Power = $CONSTANT_INPUT_POWER:float
   Linear System Solver = "Iterative"
   Linear System Iterative Method = "BiCGStabL"
   !Linear System Use TrilinosKokkos = Logical True
@@ -213,10 +213,10 @@ Body Force 1
 !====================================================================
   Heat Source = Equals SAR
   Volumetric Heat Source = Logical True
-  Perfusion Rate = Real $CONSTANT_PERFUSION_RATE
-  Perfusion Density = Real $CONSTANT_PERFUSION_DENSITY
-  Perfusion Heat Capacity = Real $CONSTANT_PERFUSION_HEAT_CAPACITY
-  Perfusion Reference Temperature = Real $CONSTANT_PERFUSION_REFERENCE_TEMPERATURE
+  Perfusion Rate = $CONSTANT_PERFUSION_RATE:float
+  Perfusion Density = $CONSTANT_PERFUSION_DENSITY:float
+  Perfusion Heat Capacity = $CONSTANT_PERFUSION_HEAT_CAPACITY:float
+  Perfusion Reference Temperature = $CONSTANT_PERFUSION_REFERENCE_TEMPERATURE:float
 !====================================================================
 End
 !====================================================================
@@ -226,16 +226,16 @@ Material 1 ! Body
 !====================================================================
   Name = "Tissue"
 
-  Body Temperature = Real $CONSTANT_BODY_TEMPERATURE
-  Heat Conductivity = Real $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE
-  Heat Capacity = Real $CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE
-  Density = Real $CONSTANT_DENSITY_TISSUE
-  Vapourization Cut Off = Real $CONSTANT_VAPOURIZATION_CUT_OFF_TISSUE
-  !Vapourization Minimum Deposition = Real $CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TISSUE
-  !Vapourization Gradient = Real $CONSTANT_VAPOURIZATION_GRADIENT_TISSUE
-  !Coagulation Cut Off = Real $CONSTANT_COAGULATION_CUT_OFF_TISSUE
-  !Coagulation Minimum Deposition = Real $CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TISSUE
-  !Coagulation Gradient = Real $CONSTANT_COAGULATION_GRADIENT_TISSUE
+  Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  Heat Conductivity = $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE:float
+  Heat Capacity = $CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE:float
+  Density = $CONSTANT_DENSITY_TISSUE:float
+  Vapourization Cut Off = $CONSTANT_VAPOURIZATION_CUT_OFF_TISSUE:float
+  !Vapourization Minimum Deposition = $CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TISSUE:float
+  !Vapourization Gradient = $CONSTANT_VAPOURIZATION_GRADIENT_TISSUE:float
+  !Coagulation Cut Off = $CONSTANT_COAGULATION_CUT_OFF_TISSUE:float
+  !Coagulation Minimum Deposition = $CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TISSUE:float
+  !Coagulation Gradient = $CONSTANT_COAGULATION_GRADIENT_TISSUE:float
 !====================================================================
 End
 !====================================================================
@@ -243,17 +243,17 @@ End
 !====================================================================
 Material 2 ! Tumour
 !====================================================================
-  Body Temperature = Real $CONSTANT_BODY_TEMPERATURE
-  Heat Conductivity = Real $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR
-  Heat Capacity = Real $CONSTANT_SPECIFIC_HEAT_CAPACITY_TUMOUR
-  Density = Real $CONSTANT_DENSITY_TUMOUR
+  Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  Heat Conductivity = $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR:float
+  Heat Capacity = $CONSTANT_SPECIFIC_HEAT_CAPACITY_TUMOUR:float
+  Density = $CONSTANT_DENSITY_TUMOUR:float
 
-    Vapourization Cut Off = Real $CONSTANT_VAPOURIZATION_CUT_OFF_TUMOUR
-    !Vapourization Minimum Deposition = Real $CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TUMOUR
-    !Vapourization Gradient = Real $CONSTANT_VAPOURIZATION_GRADIENT_TUMOUR
-    !Coagulation Cut Off = Real $CONSTANT_COAGULATION_CUT_OFF_TUMOUR
-    !Coagulation Minimum Deposition = Real $CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TUMOUR
-    !Coagulation Gradient = Real $CONSTANT_COAGULATION_GRADIENT_TUMOUR
+    Vapourization Cut Off = $CONSTANT_VAPOURIZATION_CUT_OFF_TUMOUR:float
+    !Vapourization Minimum Deposition = $CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TUMOUR:float
+    !Vapourization Gradient = $CONSTANT_VAPOURIZATION_GRADIENT_TUMOUR:float
+    !Coagulation Cut Off = $CONSTANT_COAGULATION_CUT_OFF_TUMOUR:float
+    !Coagulation Minimum Deposition = $CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TUMOUR:float
+    !Coagulation Gradient = $CONSTANT_COAGULATION_GRADIENT_TUMOUR:float
 !====================================================================
 End
 !====================================================================
@@ -262,7 +262,7 @@ End
 Boundary Condition 1 !Organ wall + sphere
 !====================================================================
   $REGIONS_BOUNDARY
-  Temperature = Real $CONSTANT_BODY_TEMPERATURE
+  Temperature = $CONSTANT_BODY_TEMPERATURE:float
 !====================================================================
 End
 !====================================================================
@@ -282,11 +282,11 @@ Boundary Condition 2 ! Output vessel (Hepatic vein)
   !--------------------------------------------------------------------
   ! Convective transfer coefficient (kg.s^-3.K^-1):
   !--------------------------------------------------------------------
-  Heat Transfer Coefficient = Real $CONSTANT_VENOUS_HEAT_TRANSFER_COEFFICIENT
+  Heat Transfer Coefficient = $CONSTANT_VENOUS_HEAT_TRANSFER_COEFFICIENT:float
   !--------------------------------------------------------------------
   ! External temperature (K):
   !--------------------------------------------------------------------
-  External Temperature = Real $CONSTANT_BODY_TEMPERATURE
+  External Temperature = $CONSTANT_BODY_TEMPERATURE:float
 !====================================================================
 End
 !====================================================================
@@ -302,7 +302,7 @@ Boundary Condition 3 ! Input vessel (Portal vein + HA)
   !--------------------------------------------------------------------
   ! Dirichlet BC on blood and tissue temperatures (K):
   !--------------------------------------------------------------------
-  Temperature = Real $CONSTANT_BODY_TEMPERATURE
+  Temperature = $CONSTANT_BODY_TEMPERATURE:float
 !====================================================================
 End
 !====================================================================
@@ -313,8 +313,8 @@ Boundary Condition 4 !Bronchi
   $REGIONS_BRONCHI
   Heat Flux BC = Logical True
   Flow Pressure = Real -0.00000000
-  Heat Transfer Coefficient = Real $CONSTANT_BRONCHI_HEAT_TRANSFER_COEFFICIENT
-  External Temperature = Real $CONSTANT_BODY_TEMPERATURE
+  Heat Transfer Coefficient = $CONSTANT_BRONCHI_HEAT_TRANSFER_COEFFICIENT:float
+  External Temperature = $CONSTANT_BODY_TEMPERATURE:float
 !====================================================================
 End
 !====================================================================
@@ -323,9 +323,9 @@ End
 Initial Condition 1
 !====================================================================
 
-  Temperature = Real $CONSTANT_BODY_TEMPERATURE
+  Temperature = $CONSTANT_BODY_TEMPERATURE:float
 
-  CellState(2) = Real $CONSTANT_INITIAL_CELLS_ALIVE $CONSTANT_INITIAL_CELLS_DEAD
+  CellState(2) = Real $CONSTANT_INITIAL_CELLS_ALIVE:float $CONSTANT_INITIAL_CELLS_DEAD:float
 !====================================================================
 End
 !====================================================================

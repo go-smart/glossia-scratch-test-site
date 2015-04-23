@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Eloquent\Collection;
+
 class CombinationController extends \BaseController {
 
 	/**
@@ -9,7 +11,7 @@ class CombinationController extends \BaseController {
 	 */
 	public function index()
 	{
-    $combinations = Combination::with('PowerGenerator', 'Needle', 'Protocol');
+    $combinations = Combination::with('PowerGenerator', 'Protocol');
 
     if (Input::has('Needle_Id'))
       $combinations->whereNeedleId(Input::get('Needle_Id'));
@@ -18,7 +20,12 @@ class CombinationController extends \BaseController {
       $combinations->wherePowerGeneratorId(Input::get('Power_Generator_Id'));
 
     if (Input::has('Context_Id'))
-      $combinations->whereContextId(Input::get('Context_Id'));
+    {
+      if (Config::get('gosmart.context_as_enum'))
+        $combinations->whereOrganType(Input::get('Context_Id'));
+      else
+        $combinations->whereContextId(Input::get('Context_Id'));
+    }
 
     if (Input::has('Modality_Id')) {
       $modality_id = Input::get('Modality_Id');
@@ -39,7 +46,10 @@ class CombinationController extends \BaseController {
         $output_ids = array_unique($combinations->get()->lists('Numerical_Model_Id'));
         return NumericalModel::find($output_ids)->lists('Name', 'Id');
       case 'Context':
-        $output_ids = array_unique($combinations->get()->lists('Context_Id'));
+        if (Config::get('gosmart.context_as_enum'))
+          $output_ids = array_unique($combinations->get()->lists('Context_Id'));
+        else
+          $output_ids = array_unique($combinations->get()->lists('OrganType'));
         return Context::find($output_ids)->lists('Name', 'Id');
       case 'Modality':
         $combinations= $combinations
@@ -51,6 +61,8 @@ class CombinationController extends \BaseController {
 
       return $combinations;
     }
+
+    $combinations = $combinations->get()->sortBy(function ($c) { return $c->Power_Generator->Modality->Name; });
 
 		return View::make('combinations.index', compact('combinations'));
 	}
@@ -95,7 +107,7 @@ class CombinationController extends \BaseController {
 
     $incompatibilities = [];
 
-    $xml = $combination->xml([], [], $incompatibilities, []);
+    $xml = $combination->xml(new Collection, new Collection, $incompatibilities, []);
 
     if (!empty($incompatibilities))
       return Response::make(array_map('trim', $incompatibilities), 400);
