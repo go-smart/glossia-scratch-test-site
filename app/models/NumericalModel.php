@@ -158,8 +158,8 @@ class NumericalModel extends Paramable {
 
       if (isset($needleUserData[$needleIx]) && isset($needleUserData[$needleIx]['file']))
         $needleNode->setAttribute("file", $needleUserData[$needleIx]['file']);
-      else if (!empty($needle->File))
-        $needleNode->setAttribute("file", $needle->File);
+      else if (!empty($needle->Geometry))
+        $needleNode->setAttribute("file", $needle->Geometry);
       else
         $incompatibilities[] = "Needle file is not given for " . $needleIx;
 
