@@ -72,8 +72,8 @@ Simulation
   !--------------------------------------------------------------------
   Electric Power Filename = String "$RUNNAME-power-over-time"          ![Si5]!
   Multi Electric Tips Location = Logical True
-  Electric Tips Location Times Nb = $PROBELOCATIONS_COUNT:int
-  Multi Electric Tips Location Times($PROBELOCATIONS_COUNT:int) = $PROBELOCATIONS:array(float)
+  Electric Tips Location Times Nb = $PROBELOCATIONS_COUNT
+  Multi Electric Tips Location Times($PROBELOCATIONS_COUNT) = $PROBELOCATIONS
 
 !====================================================================
 End
@@ -178,7 +178,7 @@ Solver 3
   Impedance Voltage = Real 300.0
   Temperature Controlled Electric Power = Logical True
   Proportional Gain For Electric Power Control = $CONSTANT_PID_CONTROLLER_PROPORTIONAL_GAIN:float
-  Target Temperature = $TARGET_TEMPERATURE:float
+  Target Temperature = $TARGET_TEMPERATURE
   Electric Power = $CONSTANT_INPUT_POWER:float
   Linear System Solver = "Iterative"
   Linear System Iterative Method = "BiCGStabL"
