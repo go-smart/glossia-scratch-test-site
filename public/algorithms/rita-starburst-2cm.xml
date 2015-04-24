@@ -1,4 +1,4 @@
-<algorithm modality="RFA" protocol="RITA StarBurst 5cm Protocol" result="CONSTANT_INPUT_POWER">
+<algorithm modality="RFA" protocol="RITA StarBurst 2cm Protocol" result="CONSTANT_INPUT_POWER">
   <arguments>
     <argument name='Phase' />
   </arguments>

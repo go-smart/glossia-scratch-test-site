@@ -101,7 +101,7 @@ class NumericalModel extends Paramable {
     $parent->appendChild($regionsNode);
     foreach ($this->Regions as $region) {
       $entries = $suppliedRegions->filter(function ($r) use ($region) { return in_array($r->SegmentationType, $region->SegmentationTypes); });
-      $entries->each(function($e) { $e->Location = $e->FileName . '.' . $e->Extension; });
+      $entries->each(function($e) { $e->Location = strtolower($e->FileId) . '/' . $e->FileName . '.' . $e->Extension; });
       $suppliedCount = $entries->count();
       $pivot = $region->pivot;
 

@@ -1,4 +1,4 @@
-<algorithm modality="RFA" protocol="RITA StarBurst 5cm Protocol" result="TARGET_TEMPERATURE">
+<algorithm modality="RFA" protocol="RITA StarBurst 2cm Protocol" result="TARGET_TEMPERATURE">
   <arguments>
     <argument name='Phase' />
   </arguments>

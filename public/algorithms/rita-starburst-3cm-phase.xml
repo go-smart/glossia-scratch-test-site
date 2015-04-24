@@ -1,4 +1,4 @@
-<algorithm modality="RFA" protocol="RITA StarBurst 5cm Protocol" result="PHASE">
+<algorithm modality="RFA" protocol="RITA StarBurst 3cm Protocol" result="PHASE">
   <arguments>
     <argument name='Time' />
     <argument name='Phase' />

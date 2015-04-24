@@ -100,7 +100,7 @@ class ValueSeeder extends Seeder {
         $parameterData['Name'] = preg_replace('/[ -]/', '_', $parameterData['Name']);
         $parameterData['Name'] = 'CONSTANT_' . strtoupper(preg_replace('/[[:^word:]]/', '', $parameterData['Name']));
 
-        if (!$constant->hasAttribute('Type'))
+        if (!$constant->hasAttribute('type'))
           $parameterData['Type'] = 'float';
 
         $parameter = Parameter::whereName($parameterData['Name'])->first();

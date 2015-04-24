@@ -30,6 +30,11 @@ abstract class ContextEnum
   const Prostate = 4;
   static $all = [1 => 'Liver', 2 => 'Lung', 3 => 'Kidney', 4 => 'Prostate'];
 
+  public static function value($name)
+  {
+    return constant('ContextEnum::' . self::get($name));
+  }
+
   public static function get($id)
   {
     if (is_numeric($id))

@@ -174,14 +174,14 @@ class Combination extends UuidModel {
 
     $allowedNeedles = $needlesCollection->intersect($this->Needles);
 
-    $attributions = ParameterAttribution::join("Parameter", "Parameter.Id", "=", "Parameter_Attribution.Parameter_Id")
+    $attributionsWithoutNeedle = ParameterAttribution::join("Parameter", "Parameter.Id", "=", "Parameter_Attribution.Parameter_Id")
       ->addSelect("Parameter_Attribution.*", "Parameter.Name AS parameterName", "Parameter_Attribution.Value AS parameterValue");
 
     $automaticFields = array_diff($this->attributingFields, ['Protocol']);
     foreach ($automaticFields as $field) {
       $property = train_case($field);
       $class = get_class($this->$property);
-      $attributionsWithoutNeedle = $attributions->where(function ($q) use ($field, $property, $class) {
+      $attributionsWithoutNeedle = $attributionsWithoutNeedle->where(function ($q) use ($field, $property, $class) {
         $q->whereNull($class::$idField)
           ->orWhere($class::$idField, "=", $this->$property->Id);
       });
@@ -347,33 +347,27 @@ class Combination extends UuidModel {
 
   /* Presenter logic hack */
   /* $suppliedRegions should be a 2D array organised by name each containing one or more filenames */
-  public function xml($userSuppliedParameters = [], $suppliedRegions = [], &$incompatibilities = [], $needles = [], $needleUserParameters = []) {
+  public function xml($root, $userSuppliedParameters = [], $suppliedRegions = [], &$incompatibilities = [], $needles = [], $needleUserParameters = []) {
     list($parameters, $needleParameters) = $this->compileParameters($userSuppliedParameters, $needles, $needleUserParameters, $incompatibilities);
 
-    $xml = new DOMDocument('1.0');
-    $root = $xml->createElement('simulationDefinition');
-    $xml->appendChild($root);
-
     if ($parameters !== null) {
-      $parametersNode = $xml->createElement("parameters");
+      $parametersNode = new DOMElement("parameters");
+      $root->appendChild($parametersNode);
       foreach ($parameters as $parameter) {
         $parameter->xml($parametersNode);
       }
-      $root->appendChild($parametersNode);
     }
 
     $algorithms = $this->Protocol->Algorithms;
-    $algorithmsNode = $xml->createElement("algorithms");
+    $algorithmsNode = new DOMElement("algorithms");
+    $root->appendChild($algorithmsNode);
     foreach ($algorithms as $algorithm) {
       $algorithm->xml($algorithmsNode);
     }
-    $root->appendChild($algorithmsNode);
 
-    $numericalModelNode = $xml->createElement("numericalModel");
-    $this->NumericalModel->xml($numericalModelNode, $suppliedRegions, $incompatibilities, $needles, $needleParameters);
+    $numericalModelNode = new DOMElement("numericalModel");
     $root->appendChild($numericalModelNode);
-
-    return $xml;
+    $this->NumericalModel->xml($numericalModelNode, $suppliedRegions, $incompatibilities, $needles, $needleParameters);
   }
 
   public function findUnique()

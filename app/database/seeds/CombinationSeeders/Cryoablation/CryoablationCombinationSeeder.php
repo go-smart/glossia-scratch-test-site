@@ -47,11 +47,16 @@ class CryoablationCombinationSeeder extends Seeder {
     /* Add model */
     $model['numa sif'] = new NumericalModel;
     $model['numa sif']->fill(array('Name' => 'NUMA Cryoablation Basic SIF', 'Family' => 'elmer-libnuma', 'Definition' => 'lorem ipsum'));
-    $model['numa sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'Float', 'Value' => '4', 'Widget' => 'Textbox']);
     $modality['Cryo']->numericalModels()->save($model['numa sif']);
+    $model['numa sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'SETTING_LESION_FIELD', 'Type' => 'string', 'Value' => 'temperature', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_UPPER', 'Type' => 'float', 'Value' => '223.0', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_LOWER', 'Type' => 'float', 'Value' => 'null', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'SIMULATION_SCALING', 'Type' => 'float', 'Value' => '0.001', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'SIMULATION_DOMAIN_RADIUS', 'Type' => 'float', 'Value' => '40.0', 'Widget' => 'textbox']);
+    $model['numa sif']->importSif(public_path() . '/templates/go-smart-template_cryo.sif');
     $model['numa sif']->arguments()->attach(Argument::create(['Name' => 'Temperature']));
     $model['numa sif']->arguments()->attach(Argument::create(['Name' => 'Time']));
-    $model['numa sif']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'Float', 'Value' => null, 'Widget' => 'Textbox']);
 
     $organ = Region::whereName('Organ')->first();
     $vessels = Region::whereName('Vessels')->first();

@@ -41,8 +41,30 @@ class SimulationSeeder extends Seeder {
   {
     Eloquent::unguard();
 
+    $this->clean();
+
+    $organs = ['liver', 'kidney'];
+    foreach ($organs as $organ)
+    {
+      $referenceSimulation[$organ] = [];
+      $sim =
+        Simulation::join('ItemSet_Patient AS IS_P', 'IS_P.Id', '=', 'Simulation.Patient_Id')
+        ->join('ItemSet AS IS', 'IS.Id', '=', 'IS_P.Id')
+        ->join('Simulation_Needle AS SN', 'SN.Simulation_Id', '=', 'Simulation.Id')
+        ->where('IS_P.OrganType', '=', ContextEnum::value($organ))
+        ->where('IS.IsDeleted', '=', 'FALSE')
+        ->select('Simulation.*')
+        ->first();
+      $referenceSimulation[$organ]["simulation"] = $sim;
+      $referenceSimulation[$organ]["patient"] = DB::table('ItemSet_Patient')->whereId($sim->Patient_Id)->first();
+
+      $referenceNeedle = $sim->SimulationNeedles->first();
+      $referenceSimulation[$organ]["target"] = $referenceNeedle->Target;
+      $referenceSimulation[$organ]["entry"] = $referenceNeedle->Entry;
+    }
+
     foreach (['5cm', '4cm', '3cm', '2cm'] as $length)
-      $this->makeSimulation("$length RITA RFA", 'liver', 'NUMA RFA Basic SIF', "RITA Starburst $length Protocol", [],
+      $this->makeSimulation("$length RITA RFA", $referenceSimulation["liver"]["patient"], 'liver', 'NUMA RFA Basic SIF', "RITA Starburst $length Protocol", [],
       [
         'organ' => ["organ.vtp"],
         'vessels' => ["vessels1.vtp"],
@@ -53,14 +75,17 @@ class SimulationSeeder extends Seeder {
           "Manufacturer" => "RITA",
           "Name" => "Starburst MRI",
           "Parameters" => [
-            'NEEDLE_TIP_LOCATION' => '[0.8, 240.0, -177.6]',
-            'NEEDLE_ENTRY_LOCATION' => '[0.0, 240.0, -177.6]'
+            'NEEDLE_TIP_LOCATION' => $referenceSimulation["liver"]["target"]->asString,
+            'NEEDLE_ENTRY_LOCATION' => $referenceSimulation["liver"]["entry"]->asString
           ]
         ]
       ]
       );
 
-    $this->makeSimulation('Cryoablation', 'kidney', 'NUMA Cryoablation Basic SIF', 'Empty', [],
+    $this->makeSimulation('Cryoablation', $referenceSimulation["kidney"]["patient"], 'kidney', 'NUMA Cryoablation Basic SIF', 'Empty',
+    [
+      'SETTING_FINAL_TIMESTEP' => '300'
+    ],
     [
       'organ' => ["organ.vtp"],
       'vessels' => ["vessels1.vtp"],
@@ -71,8 +96,8 @@ class SimulationSeeder extends Seeder {
         "Manufacturer" => "Galil Medical",
         "Name" => "IceROD",
         "Parameters" => [
-          'NEEDLE_TIP_LOCATION' => '[0.8, 240.0, -177.6]',
-          'NEEDLE_ENTRY_LOCATION' => '[0.0, 240.0, -177.6]'
+          'NEEDLE_TIP_LOCATION' => $referenceSimulation["kidney"]["target"]->asString,
+          'NEEDLE_ENTRY_LOCATION' => $referenceSimulation["kidney"]["entry"]->asString
         ]
       ]
     ]
@@ -86,9 +111,16 @@ class SimulationSeeder extends Seeder {
       [0, 5, 0],
       [0, -5, 0]
     ];
+    $ireTipCentre = $referenceSimulation["liver"]["target"]->asArray;
+    $ireEntryCentre = $referenceSimulation["liver"]["entry"]->asArray;
+
+    $needleDeltas = array_map(function ($p) use ($ireTipCentre, $ireEntryCentre) {
+      return array_map(function ($c) use ($p, $ireTipCentre, $ireEntryCentre) {
+        return $p[$c] + $ireTipCentre[$c] - $ireEntryCentre[$c];
+      }, [0, 1, 2]);
+    }, $needleDeltas);
+
     $ireNeedles = [];
-    $ireTipCentre = [0.8, 240.0, -177.6];
-    $ireEntryCentre = [0.0, 240.0, -177.6];
     foreach ($needleDeltas as $needleDelta)
     {
       $ireNeedle = [
@@ -101,7 +133,10 @@ class SimulationSeeder extends Seeder {
       ];
       $ireNeedles[] = $ireNeedle;
     }
-    $this->makeSimulation('IRE', 'liver', 'NUMA IRE 3D SIF', 'Empty', [],
+    $this->makeSimulation('IRE', $referenceSimulation["liver"]["patient"], 'liver', 'NUMA IRE 3D SIF', 'Empty',
+      [
+        'CONSTANT_IRE_POTENTIAL_DIFFERENCES' => "[1300, 1500, 1300, 1900, 1300, 1300, 1300, 1900, 1300]"
+      ],
       [
         'organ' => ["organ.vtp"],
         'vessels' => ["vessels1.vtp"],
@@ -110,7 +145,7 @@ class SimulationSeeder extends Seeder {
       $ireNeedles
     );
 
-    $this->makeSimulation('Amica MWA', 'kidney', 'NUMA MWA Nonlinear SIF', 'Generic modifiable power', [],
+    $this->makeSimulation('Amica MWA', $referenceSimulation["kidney"]["patient"], 'kidney', 'NUMA MWA Nonlinear SIF', 'Generic modifiable power', [],
     [
       'organ' => ["organ.vtp"],
       'vessels' => ["vessels1.vtp"],
@@ -121,8 +156,8 @@ class SimulationSeeder extends Seeder {
         "Manufacturer" => "HS",
         "Name" => "APK11150T19V5",
         "Parameters" => [
-          'NEEDLE_TIP_LOCATION' => '[0.8, 240.0, -177.6]',
-          'NEEDLE_ENTRY_LOCATION' => '[0.0, 240.0, -177.6]'
+          'NEEDLE_TIP_LOCATION' => $referenceSimulation["kidney"]["target"]->asString,
+          'NEEDLE_ENTRY_LOCATION' => $referenceSimulation["kidney"]["entry"]->asString
         ]
       ]
     ]
@@ -136,7 +171,7 @@ class SimulationSeeder extends Seeder {
     return $pointSet;
   }
 
-  public function makeSimulation($caption, $organ, $model, $protocol, $parameterData, $regionData, $needles)
+  public function makeSimulation($caption, $patient, $organ, $model, $protocol, $parameterData, $regionData, $needles)
   {
     $numerical_model = NumericalModel::whereName($model)->first();
     $protocol = Protocol::whereName($protocol)->whereModalityId($numerical_model->Modality_Id)->first();
@@ -150,7 +185,7 @@ class SimulationSeeder extends Seeder {
     $combination = $combinations->first();
     $simulation = Simulation::create([
         'Combination_Id' => $combination->Combination_Id,
-        'Patient_Id' => DB::table('ItemSet_Patient')->where('OrganType', '=', $combination->OrganType)->first()->Id ?: '00000000-0000-0000-0000-000000000000',
+        'Patient_Id' => $patient->Id ?: '00000000-0000-0000-0000-000000000000',
         'Caption' => 'Sample Simulation for ' . $caption,
         'SegmentationType' => 0,
         'Progress' => '0',
@@ -167,6 +202,12 @@ class SimulationSeeder extends Seeder {
         $simulation->regions()->attach($region, ['Location' => $location]);
     }
      */
+
+    foreach ($parameterData as $parameterName => $value)
+    {
+      $parameter = Parameter::whereName($parameterName)->first();
+      $simulation->parameters()->attach($parameter, ['ValueSet' => $value]);
+    }
 
     $needleData = [];
     $n = 0;

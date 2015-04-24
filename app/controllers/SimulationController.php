@@ -106,7 +106,18 @@ class SimulationController extends \BaseController {
       }
     }
 
-    $xml = $combination->xml($userParameters, $regions, $incompatibilities, $needles, $needleParameters);
+    $xml = new DOMDocument('1.0');
+    $root = $xml->createElement('simulationDefinition');
+    $xml->appendChild($root);
+
+    $transferrer = $xml->createElement('transferrer');
+    $transferrer->setAttribute('class', 'http');
+    $transferrerUrl = $xml->createElement('url');
+    $transferrerUrl->nodeValue = 'http://gosmartfiles.blob.core.windows.net/gosmart';
+    $transferrer->appendChild($transferrerUrl);
+    $root->appendChild($transferrer);
+
+    $combination->xml($root, $userParameters, $regions, $incompatibilities, $needles, $needleParameters);
 
     if (!empty($incompatibilities))
       return Response::make(array_map('trim', $incompatibilities), 400);
@@ -114,13 +125,11 @@ class SimulationController extends \BaseController {
     if ($xml === null)
       return Response::make("Simulation could not be built from input (reasons unreported)", 400);
 
-    if (Input::get('html'))
-    {
-      $xml->preserveWhiteSpace = false;
-      $xml->formatOutput = true;
+    $xml->preserveWhiteSpace = false;
+    $xml->formatOutput = true;
 
+    if (Input::get('html'))
       return View::make('simulations.show', ['simulationXml' => $xml]);
-    }
 
     return $xml->saveXML();
 	}

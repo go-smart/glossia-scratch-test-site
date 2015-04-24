@@ -53,6 +53,9 @@ class MWACombinationSeeder extends Seeder {
     $model['mwa linear sif']->arguments()->attach(Argument::create(['Name' => 'Time']));
     $model['mwa linear sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);
     $model['mwa linear sif']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'float', 'Value' => null, 'Widget' => 'textbox']);
+    $model['mwa linear sif']->attribute(['Name' => 'SETTING_LESION_FIELD', 'Type' => 'string', 'Value' => 'dead', 'Widget' => 'textbox']);
+    $model['mwa linear sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_UPPER', 'Type' => 'float', 'Value' => 'null', 'Widget' => 'textbox']);
+    $model['mwa linear sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_LOWER', 'Type' => 'float', 'Value' => '0.8', 'Widget' => 'textbox']);
 
     /* Defaults */
     $model['mwa linear sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);
@@ -72,6 +75,9 @@ class MWACombinationSeeder extends Seeder {
     $model['mwa nonlinear sif']->arguments()->attach(Argument::create(['Name' => 'Time']));
     $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);
     $model['mwa nonlinear sif']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'float', 'Value' => null, 'Widget' => 'textbox']);
+    $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_LESION_FIELD', 'Type' => 'string', 'Value' => 'dead', 'Widget' => 'textbox']);
+    $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_UPPER', 'Type' => 'float', 'Value' => 'null', 'Widget' => 'textbox']);
+    $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_LOWER', 'Type' => 'float', 'Value' => '0.8', 'Widget' => 'textbox']);
 
     /* Defaults */
     $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);

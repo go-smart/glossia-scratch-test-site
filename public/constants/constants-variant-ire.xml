@@ -20,10 +20,10 @@
  */
 -->
 <constants class="NumericalModel" name="NUMA IRE 3D SIF">
-    <constant name="IRE sequence count" value="9" note="Total number of anode-cathode pairings" />
-    <constant name="IRE anode sequence" value="1 1 2 2 3 3 4 4 5" note="Sequence of IRE anodes for consecutive pairings" />
-    <constant name="IRE cathode sequence" value="5 6 5 6 5 6 5 6 6" note="Sequence of IRE cathodes for consecutive pairings" />
-    <constant name="IRE nonlinear iterations" value="1" note="Number of iterations performed to account for nonlinear interaction of conductivity and energy deposition" />
+    <constant name="IRE sequence count" value="9" note="Total number of anode-cathode pairings" type="int" />
+    <constant name="IRE anode sequence" value="[1, 1, 2, 2, 3, 3, 4, 4, 5]" note="Sequence of IRE anodes for consecutive pairings" type="array(int)" />
+    <constant name="IRE cathode sequence" value="[5, 6, 5, 6, 5, 6, 5, 6, 6]" note="Sequence of IRE cathodes for consecutive pairings" type="array(int)"/>
+    <constant name="IRE nonlinear iterations" value="1" note="Number of iterations performed to account for nonlinear interaction of conductivity and energy deposition" type="int" />
     <constant name="IRE relative permittivity (tissue)" value="1.0" units="F/m" />
     <constant name="IRE relative permittivity (needle)" value="1.0" units="F/m" />
     <constant name="IRE relative permittivity (tumour)" value="1.0" units="F/m" />

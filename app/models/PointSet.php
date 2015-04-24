@@ -26,8 +26,13 @@ class PointSet extends UuidModel {
     return false;
   }
 
+  public function getAsArrayAttribute()
+  {
+    return [(float)$this->X, (float)$this->Y, (float)$this->Z];
+  }
+
   public function getAsStringAttribute()
   {
-    return json_encode([(float)$this->X, (float)$this->Y, (float)$this->Z]);
+    return json_encode($this->asArray);
   }
 }

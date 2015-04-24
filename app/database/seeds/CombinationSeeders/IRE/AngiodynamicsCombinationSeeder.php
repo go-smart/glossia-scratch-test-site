@@ -68,26 +68,6 @@ class AngiodynamicsCombinationSeeder extends Seeder {
     ));
     $modality['ire']->protocols()->save($protocol['6-node']);
 
-    $algorithm["anodes"] = new Algorithm;
-    $algorithm["anodes"]->content = <<<ENDLIPSUM2
-1 1 2 2 3 3 4 4 5
-ENDLIPSUM2;
-    $algorithm["anodes"]->protocol()->associate($protocol['6-node']);
-
-    $result = Parameter::create(['Name' => 'ANODE_SEQUENCE', 'Type' => 'integer', 'Widget' => 'needle-sequence[9]']);
-    $algorithm["anodes"]->result()->associate($result);
-    $algorithm["anodes"]->save();
-
-    $algorithm["cathodes"] = new Algorithm;
-    $algorithm["cathodes"]->content = <<<ENDLIPSUM2
-5 6 5 6 5 6 5 6 6
-ENDLIPSUM2;
-    $algorithm["cathodes"]->protocol()->associate($protocol['6-node']);
-
-    $result = Parameter::create(['Name' => 'CATHODE_SEQUENCE', 'Type' => 'integer', 'Widget' => 'needle-sequence[9]']);
-    $algorithm["cathodes"]->result()->associate($result);
-    $algorithm["cathodes"]->save();
-
     /* Add combinations */
     $c = new Combination;
     $c->isPublic = true;

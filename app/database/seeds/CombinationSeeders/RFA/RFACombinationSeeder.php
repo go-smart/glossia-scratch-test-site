@@ -72,6 +72,9 @@ class RFACombinationSeeder extends Seeder {
     // Allows an upper limit if protocol mucks up:
     $model['rfa basic sif']->attribute(['Name' => 'SETTING_FINAL_TIMESTEP', 'Type' => 'int', 'Value' => '10000', 'Widget' => 'textbox']);
     $model['rfa basic sif']->attribute(['Name' => 'CENTRE_LOCATION', 'Type' => 'string', 'Value' => 'first-needle', 'Widget' => 'textbox']);
+    $model['rfa basic sif']->attribute(['Name' => 'SETTING_LESION_FIELD', 'Type' => 'string', 'Value' => 'dead', 'Widget' => 'textbox']);
+    $model['rfa basic sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_UPPER', 'Type' => 'float', 'Value' => 'null', 'Widget' => 'textbox']);
+    $model['rfa basic sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_LOWER', 'Type' => 'float', 'Value' => '0.8', 'Widget' => 'textbox']);
     $model['rfa basic sif']->attribute(['Name' => 'SIMULATION_SCALING', 'Type' => 'float', 'Value' => '0.001', 'Widget' => 'textbox']);
     $model['rfa basic sif']->attribute(['Name' => 'SIMULATION_DOMAIN_RADIUS', 'Type' => 'float', 'Value' => '40.0', 'Widget' => 'textbox']);
 

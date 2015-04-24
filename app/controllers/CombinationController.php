@@ -107,7 +107,11 @@ class CombinationController extends \BaseController {
 
     $incompatibilities = [];
 
-    $xml = $combination->xml(new Collection, new Collection, $incompatibilities, []);
+    $xml = new DOMDocument('1.0');
+    $root = $xml->createElement('simulationDefinition');
+    $xml->appendChild($root);
+
+    $combination->xml($root, new Collection, new Collection, $incompatibilities, []);
 
     if (!empty($incompatibilities))
       return Response::make(array_map('trim', $incompatibilities), 400);

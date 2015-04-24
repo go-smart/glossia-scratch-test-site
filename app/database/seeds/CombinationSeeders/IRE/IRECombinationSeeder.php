@@ -48,9 +48,18 @@ class IRECombinationSeeder extends Seeder {
     $model['numa sif'] = new NumericalModel;
     $model['numa sif']->fill(array('Name' => 'NUMA IRE 3D SIF', 'Family' => 'elmer-libnuma', 'Definition' => 'lorem ipsum'));
     $modality['ire']->numericalModels()->save($model['numa sif']);
+    $model['numa sif']->attribute(['Name' => 'SIMULATION_SCALING', 'Type' => 'float', 'Value' => '0.001', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'SIMULATION_DOMAIN_RADIUS', 'Type' => 'float', 'Value' => '40.0', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'SETTING_SOLID_NEEDLES', 'Type' => 'boolean', 'Value' => 'true', 'Widget' => 'checkbox']);
+    $model['numa sif']->attribute(['Name' => 'SETTING_LESION_FIELD', 'Type' => 'string', 'Value' => 'max_e', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_UPPER', 'Type' => 'float', 'Value' => 'null', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_LOWER', 'Type' => 'float', 'Value' => '80000', 'Widget' => 'textbox']);
+    $model['numa sif']->placeholder('CONSTANT_IRE_ANODE_SEQUENCE', null, 'array(int)');
+    $model['numa sif']->placeholder('CONSTANT_IRE_CATHODE_SEQUENCE', null, 'array(int)');
+    $model['numa sif']->placeholder('CONSTANT_IRE_POTENTIAL_DIFFERENCES', null, 'array(float)');
+    $model['numa sif']->importSif(public_path() . '/templates/go-smart-template_ire.sif');
     $model['numa sif']->arguments()->attach(Argument::create(['Name' => 'Temperature']));
     $model['numa sif']->arguments()->attach(Argument::create(['Name' => 'Time']));
-    $model['numa sif']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'float', 'Value' => null, 'Widget' => 'textbox']);
 
     $organ = Region::whereName('organ')->first();
     $vessels = Region::whereName('vessels')->first();

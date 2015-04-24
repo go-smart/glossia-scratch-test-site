@@ -1,0 +1,10 @@
+<algorithm modality="Cryoablation" protocol="Empty" result="CONSTANT_DUMMY">
+  <arguments>
+    <argument name='Time' />
+  </arguments>
+  <parameters>
+  </parameters>
+  <description>
+  </description>
+</algorithm>
+

@@ -48,12 +48,12 @@ class Simulation extends UuidModel {
 
   public function getSegmentationsAttribute() {
     $segmentations = new Collection(DB::select('
-      SELECT IS_S.SegmentationType AS SegmentationType, IS_F.FileName AS FileName, IS_F.Extension AS Extension
+      SELECT IS_F.Id AS FileId, IS_S.SegmentationType AS SegmentationType, IS_F.FileName AS FileName, IS_F.Extension AS Extension
       FROM ItemSet_Segmentation IS_S
        JOIN ItemSet_Patient IS_P ON IS_S.Patient_Id=IS_P.Id
        JOIN ItemSet_VtkFile IS_V ON IS_S.Id=IS_V.Segmentation_Id
        JOIN ItemSet_File IS_F ON IS_F.Id=IS_V.Id
-      WHERE IS_P.Id=:PatientId
+      WHERE IS_P.Id=:PatientId AND IS_S.State=3
     ', ['PatientId' => $this->Patient_Id]));
     $segmentations->each(function ($s) { $s->Name = SegmentationTypeEnum::get($s->SegmentationType); });
     return $segmentations;
