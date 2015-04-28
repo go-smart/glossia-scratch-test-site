@@ -23,6 +23,22 @@
 use \DB;
 use \Seeder;
 
+function crossProduct($a, $b)
+{
+  $c = [];
+  $c[0] = $a[1] * $b[2] - $a[2] * $b[1];
+  $c[1] = $a[2] * $b[0] - $a[0] * $b[2];
+  $c[2] = $a[0] * $b[1] - $a[1] * $b[0];
+
+  $sqNorm = $c[0] * $c[0] + $c[1] * $c[1] + $c[2] * $c[2];
+
+  if ($sqNorm > 1E-10)
+    return array_map(function ($l) use ($sqNorm) { return $l / sqrt($sqNorm); }, $c);
+
+  return $c;
+}
+
+
 class SimulationSeeder extends Seeder {
 
   protected $r = 0;
@@ -55,7 +71,11 @@ class SimulationSeeder extends Seeder {
         ->where('IS.IsDeleted', '=', 'FALSE')
         ->select('Simulation.*')
         ->first();
-      $referenceSimulation[$organ]["simulation"] = $sim;
+
+      if (!$sim)
+      {
+      }
+
       $referenceSimulation[$organ]["patient"] = DB::table('ItemSet_Patient')->whereId($sim->Patient_Id)->first();
 
       $referenceNeedle = $sim->SimulationNeedles->first();
@@ -114,15 +134,23 @@ class SimulationSeeder extends Seeder {
     $ireTipCentre = $referenceSimulation["liver"]["target"]->asArray;
     $ireEntryCentre = $referenceSimulation["liver"]["entry"]->asArray;
 
-    $needleDeltas = array_map(function ($p) use ($ireTipCentre, $ireEntryCentre) {
-      return array_map(function ($c) use ($p, $ireTipCentre, $ireEntryCentre) {
-        return $p[$c] + $ireTipCentre[$c] - $ireEntryCentre[$c];
-      }, [0, 1, 2]);
-    }, $needleDeltas);
+    $parallel = array_map(function ($c) use ($ireTipCentre, $ireEntryCentre) {
+      return $ireTipCentre[$c] - $ireEntryCentre[$c];
+    }, [0, 1, 2]);
+    $norm = sqrt($parallel[0] * $parallel[0] + $parallel[1] * $parallel[1] + $parallel[2] * $parallel[2]);
+    $parallel = array_map(function ($c) use ($norm) { return $c / $norm; }, $parallel);
+
+    $randVec = [0, 1.2384717624, 0.00000342878];
+    $perp1 = crossProduct($parallel, $randVec);
+    $perp2 = crossProduct($parallel, $perp1);
 
     $ireNeedles = [];
     foreach ($needleDeltas as $needleDelta)
     {
+      $needleDelta = array_map(function ($c) use ($needleDelta, $parallel, $perp1, $perp2) {
+        return $needleDelta[0] * $parallel[$c] + $needleDelta[1] * $perp1[$c] + $needleDelta[2] * $perp2[$c];
+      }, [0, 1, 2]);
+
       $ireNeedle = [
         "Manufacturer" => "Angiodynamics",
         "Name" => "Basic",
@@ -240,7 +268,7 @@ class SimulationSeeder extends Seeder {
     }
 
     $this->r++;
-    print "Simulation #$this->r: " . $simulation->asString . "\n";
+    print "Simulation #$this->r: " . $simulation->Combination->asString . " [ " . strtoupper($simulation->Id) . " ]\n";
   }
 
 }
