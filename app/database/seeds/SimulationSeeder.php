@@ -72,15 +72,22 @@ class SimulationSeeder extends Seeder {
         ->select('Simulation.*')
         ->first();
 
-      if (!$sim)
+      if ($sim)
       {
+        $referenceSimulation[$organ]["patient"] = DB::table('ItemSet_Patient')->whereId($sim->Patient_Id)->first();
+
+        $referenceNeedle = $sim->SimulationNeedles->first();
+        $referenceSimulation[$organ]["target"] = $referenceNeedle->Target;
+        $referenceSimulation[$organ]["entry"] = $referenceNeedle->Entry;
+      }
+      else
+      {
+        $referenceSimulation[$organ]["patient"] = NULL;
+        $referenceSimulation[$organ]["target"] = PointSet::fromArray([0, 0, 0]);
+        $referenceSimulation[$organ]["entry"] = PointSet::fromArray([1, 1, 1]);
       }
 
-      $referenceSimulation[$organ]["patient"] = DB::table('ItemSet_Patient')->whereId($sim->Patient_Id)->first();
 
-      $referenceNeedle = $sim->SimulationNeedles->first();
-      $referenceSimulation[$organ]["target"] = $referenceNeedle->Target;
-      $referenceSimulation[$organ]["entry"] = $referenceNeedle->Entry;
     }
 
     foreach (['5cm', '4cm', '3cm', '2cm'] as $length)
@@ -124,12 +131,12 @@ class SimulationSeeder extends Seeder {
     );
 
     $needleDeltas = [
-      [0, 8, -5],
-      [0, 8, 5],
-      [0, -8, -5],
-      [0, -8, 5],
-      [0, 5, 0],
-      [0, -5, 0]
+      [10, 8, -5],
+      [10, 8, 5],
+      [10, -8, -5],
+      [10, -8, 5],
+      [10, 5, 0],
+      [10, -5, 0]
     ];
     $ireTipCentre = $referenceSimulation["liver"]["target"]->asArray;
     $ireEntryCentre = $referenceSimulation["liver"]["entry"]->asArray;
@@ -143,20 +150,24 @@ class SimulationSeeder extends Seeder {
     $randVec = [0, 1.2384717624, 0.00000342878];
     $perp1 = crossProduct($parallel, $randVec);
     $perp2 = crossProduct($parallel, $perp1);
+    //$parallel = [1, 0, 0];
+    //$perp1 = [0, 1, 0];
+    //$perp2 = [0, 0, 1];
 
     $ireNeedles = [];
     foreach ($needleDeltas as $needleDelta)
     {
-      $needleDelta = array_map(function ($c) use ($needleDelta, $parallel, $perp1, $perp2) {
+      $needleOffset = array_map(function ($c) use ($needleDelta, $parallel, $perp1, $perp2) {
         return $needleDelta[0] * $parallel[$c] + $needleDelta[1] * $perp1[$c] + $needleDelta[2] * $perp2[$c];
       }, [0, 1, 2]);
 
+      $needleTip = array_map(function ($p) { return $p[0] + $p[1]; }, array_map(null, $ireTipCentre, $needleOffset));
       $ireNeedle = [
         "Manufacturer" => "Angiodynamics",
         "Name" => "Basic",
         "Parameters" => [
-          'NEEDLE_TIP_LOCATION' => json_encode(array_map(function ($p) { return $p[0] + $p[1]; }, array_map(null, $ireTipCentre, $needleDelta))),
-          'NEEDLE_ENTRY_LOCATION' => json_encode(array_map(function ($p) { return $p[0] + $p[1]; }, array_map(null, $ireEntryCentre, $needleDelta))),
+          'NEEDLE_TIP_LOCATION' => json_encode($needleTip),
+          'NEEDLE_ENTRY_LOCATION' => json_encode(array_map(function ($p) { return $p[0] + $p[1]; }, array_map(null, $ireEntryCentre, $needleOffset))),
         ]
       ];
       $ireNeedles[] = $ireNeedle;

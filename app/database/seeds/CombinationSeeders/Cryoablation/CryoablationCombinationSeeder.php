@@ -54,6 +54,7 @@ class CryoablationCombinationSeeder extends Seeder {
     $model['numa sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_LOWER', 'Type' => 'float', 'Value' => 'null', 'Widget' => 'textbox']);
     $model['numa sif']->attribute(['Name' => 'SIMULATION_SCALING', 'Type' => 'float', 'Value' => '0.001', 'Widget' => 'textbox']);
     $model['numa sif']->attribute(['Name' => 'SIMULATION_DOMAIN_RADIUS', 'Type' => 'float', 'Value' => '40.0', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'CENTRE_LOCATION', 'Type' => 'string', 'Value' => 'centroid-of-tips', 'Widget' => 'textbox']);
     $model['numa sif']->importSif(public_path() . '/templates/go-smart-template_cryo.sif');
     $model['numa sif']->arguments()->attach(Argument::create(['Name' => 'Temperature']));
     $model['numa sif']->arguments()->attach(Argument::create(['Name' => 'Time']));

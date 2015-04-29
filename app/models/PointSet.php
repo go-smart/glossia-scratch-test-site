@@ -35,4 +35,13 @@ class PointSet extends UuidModel {
   {
     return json_encode($this->asArray);
   }
+
+  public static function fromArray($arr)
+  {
+    $pointSet = new self;
+    $pointSet->X = $arr[0];
+    $pointSet->Y = $arr[1];
+    $pointSet->Z = $arr[2];
+    return $pointSet;
+  }
 }
