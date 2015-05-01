@@ -52,6 +52,8 @@ class GalilCombinationSeeder extends Seeder {
       'Name' => 'Visual-ICE',
       'Manufacturer' => 'Galil Medical'
     ));
+    $generator['visual-ice']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
+    $generator['visual-ice']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
     $modality['Cryo']->powerGenerators()->save($generator['visual-ice']);
 
     $generator['Presice'] = new PowerGenerator;
@@ -59,6 +61,8 @@ class GalilCombinationSeeder extends Seeder {
       'Name' => 'Presice',
       'Manufacturer' => 'Galil Medical'
     ));
+    $generator['Presice']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
+    $generator['Presice']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
     $modality['Cryo']->powerGenerators()->save($generator['Presice']);
 
     $generator['Seednet'] = new PowerGenerator;
@@ -66,6 +70,8 @@ class GalilCombinationSeeder extends Seeder {
       'Name' => 'SeedNet',
       'Manufacturer' => 'Galil Medical'
     ));
+    $generator['Seednet']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
+    $generator['Seednet']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
     $modality['Cryo']->powerGenerators()->save($generator['Seednet']);
 
     $generator['mri-seednet'] = new PowerGenerator;
@@ -73,6 +79,8 @@ class GalilCombinationSeeder extends Seeder {
       'Name' => 'MRI SeedNet',
       'Manufacturer' => 'Galil Medical'
     ));
+    $generator['mri-seednet']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
+    $generator['mri-seednet']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
     $modality['Cryo']->powerGenerators()->save($generator['mri-seednet']);
 
     $probes = [

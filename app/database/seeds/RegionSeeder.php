@@ -35,7 +35,7 @@ class RegionSeeder extends Seeder {
   {
     Eloquent::unguard();
 
-    Region::create(['Name' => 'organ', 'Format' => 'surface', 'Groups' => '["boundary"]', 'Segmentation' => ''])
+    Region::create(['Name' => 'organ', 'Format' => 'surface', 'Groups' => '["boundary", "no-flux", "tissues"]', 'Segmentation' => ''])
       ->addSegmentationType(SegmentationTypeEnum::Liver)
       ->addSegmentationType(SegmentationTypeEnum::Lung)
       ->addSegmentationType(SegmentationTypeEnum::Kidney)
@@ -46,7 +46,7 @@ class RegionSeeder extends Seeder {
     Region::create(['Name' => 'vessels', 'Format' => 'surface', 'Groups' => '["vessels"]', 'Segmentation' => '']) /* Generic vessels - could be veins/arteries */
       ->addSegmentationType(SegmentationTypeEnum::Vessels);
 
-    Region::create(['Name' => 'tumour', 'Format' => 'surface', 'Groups' => '["tumour"]', 'Segmentation' => ''])
+    Region::create(['Name' => 'tumour', 'Format' => 'zone', 'Groups' => '["tumours"]', 'Segmentation' => ''])
       ->addSegmentationType(SegmentationTypeEnum::Tumor);
 
     Region::create(['Name' => 'bronchi', 'Format' => 'surface', 'Groups' => '["bronchi"]', 'Segmentation' => ''])

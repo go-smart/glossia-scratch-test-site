@@ -54,6 +54,8 @@ class AmicaCombinationSeeder extends Seeder {
     $modality['mwa']->powerGenerators()->save($generator['amica-gen']);
     $generator['amica-gen']->attribute(['Name' => 'GENERATOR_FREQUENCY', 'Type' => 'float', 'Value' => 2450.0, 'Units' => 'MHz', 'Widget' => 'textbox']);
     $generator['amica-gen']->attribute(['Name' => 'GENERATOR_MAX_WATT_CW', 'Type' => 'float', 'Value' => 140.0, 'Units' => 'W', 'Widget' => 'textbox']);
+    $generator['amica-gen']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
+    $generator['amica-gen']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
     $result = $generator['amica-gen']->attribute(['Name' => 'CONSTANT_DUMMY', 'Type' => 'float', 'Widget' => 'points-over-time', 'Value' => '120', 'Units' => 'W']);
 
     /* Add needles */

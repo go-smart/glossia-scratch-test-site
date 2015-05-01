@@ -66,7 +66,7 @@ End
 
 !Tumour
 Body 7
-  $REGIONS_TUMOURS
+  $BODIES_REGIONS_TUMOURS
     Equation = Integer 1
     Initial Condition = Integer 3
     Material = Integer 3
@@ -74,7 +74,7 @@ End
 
 !Vessel 1
 Body 8
-  $REGIONS_VESSELS
+  $BODIES_REGIONS_VESSELS
     Equation = Integer 1
     Initial Condition = Integer 5
     Material = Integer 5
@@ -82,7 +82,7 @@ End
 
 !Organ
 Body 9
-  $REGIONS_TISSUES
+  Target Bodies(1) = Integer $REGION_TISSUE
     Equation = Integer 1
     Initial Condition = Integer 1
     Material = Integer 1
@@ -90,7 +90,7 @@ End
 
 !Background
 Body 10
-  $REGIONS_BACKGROUND
+  $BODIES_REGIONS_BACKGROUND
     Target Bodies = Integer 12
     Equation = Integer 1
     Initial Condition = Integer 1
@@ -112,7 +112,7 @@ Solver 2
     Variable DOFs = Integer 1
     Procedure = File "StatCurrentSolve" "StatCurrentSolver"
     Calculate Joule Heating = Logical True
-    !Linear System Solver = "Direct"
+    Linear System Solver = "Iterative"
     Linear System Convergence Tolerance = Real 1e-06
     Linear System Preconditioning = ILU0
     Linear System Iterative Method = "BiCGStab"

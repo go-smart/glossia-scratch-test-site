@@ -51,6 +51,8 @@ class AngiodynamicsCombinationSeeder extends Seeder {
       'Name' => 'Angiodynamics',
       'Manufacturer' => 'Angiodynamics'
     ]);
+    $generator->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "2", 'Widget' => 'textbox']);
+    $generator->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "6", 'Widget' => 'textbox']);
     $modality['ire']->powerGenerators()->save($generator);
 
     /* Add needles */

@@ -59,6 +59,8 @@ class RitaCombinationSeeder extends Seeder {
     $modality['rfa']->powerGenerators()->save($generator['rita 1500X rf']);
     $generator['rita 1500X rf']->attribute(['Name' => 'GENERATOR_WATTAGE', 'Type' => 'float', 'Value' => 250.0, 'Widget' => 'textbox']);
     $generator['rita 1500X rf']->attribute(['Name' => 'INITIAL_POWER', 'Type' => 'float', 'Value' => 250.0, 'Widget' => 'textbox']);
+    $generator['rita 1500X rf']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
+    $generator['rita 1500X rf']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
 
     /* Add needles */
     $needle['rita starburst xl'] = new Needle;

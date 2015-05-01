@@ -56,6 +56,8 @@ class BostonScientificCombinationSeeder extends Seeder {
     $generator['rf3000']->attribute(['Name' => 'GENERATOR_WATTAGE', 'Type' => 'float', 'Value' => 200.0, 'Widget' => 'textbox']);
     $generator['rf3000']->attribute(['Name' => 'INITIAL_POWER', 'Type' => 'float', 'Value' => 200.0, 'Widget' => 'textbox']);
     $generator['rf3000']->attribute(['Name' => 'MAX_POWER', 'Type' => 'float', 'Value' => 200.0, 'Widget' => 'textbox']);
+    $generator['rf3000']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
+    $generator['rf3000']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
 
     /* Add needles */
     $needle['leveen std 3cm'] = new Needle;
