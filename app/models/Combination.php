@@ -258,8 +258,8 @@ class Combination extends UuidModel {
       }
     }
     else {
-      $requirements = with(clone $attributions)->whereNull("Parameter_Attribution.Value");
-      $supplies = with(clone $attributions)->whereNotNull("Parameter_Attribution.Value");
+      $requirements = with(clone $attributionsWithoutNeedle)->whereNull("Parameter_Attribution.Value");
+      $supplies = with(clone $attributionsWithoutNeedle)->whereNotNull("Parameter_Attribution.Value");
 
       $requirements = $requirements->lists("parameterName");
       $supplyList = $supplies->lists("parameterName");
