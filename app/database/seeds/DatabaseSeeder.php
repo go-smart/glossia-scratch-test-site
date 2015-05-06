@@ -17,9 +17,8 @@ class DatabaseSeeder extends Seeder {
     //DB::table('PointSet')->delete();
     //DB::table('Simulation')->delete();
     $sS = App::make("SimulationSeeder")->clean();
+    $sC = App::make("\CombinationSeeders\CombinationSeeder")->clean($this->command);
 
-    DB::table('Combination_Needle')->delete();
-    //DB::table('Combination')->delete();
     DB::table('Parameter_Attribution')->delete();
     DB::table('Numerical_Model_Region')->delete();
     //DB::table('Region')->delete();
@@ -27,6 +26,11 @@ class DatabaseSeeder extends Seeder {
     DB::table('Numerical_Model_Argument')->delete();
     DB::table('Algorithm_Argument')->delete();
     DB::table('Algorithm')->delete();
+
+    $sP = App::make("ParameterSeeder")->clean();
+
+    DB::table('Combination_Needle')->delete();
+    //DB::table('Combination')->delete();
     //DB::table('Protocol')->delete();
     //DB::table('Context')->delete();
     DB::table('Needle_Power_Generator')->delete();
@@ -35,6 +39,9 @@ class DatabaseSeeder extends Seeder {
     //DB::table('Modality')->delete();
     DB::table('Argument')->delete();
     //DB::table('Parameter')->delete();
+
+    $this->call('ParameterSeeder');
+
 
 		$this->call('RegionSeeder');
     if (!Config::get('gosmart.context_as_enum'))

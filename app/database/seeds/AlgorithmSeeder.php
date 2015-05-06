@@ -100,10 +100,11 @@ class AlgorithmSeeder extends Seeder {
       $algorithm->content = $description;
 
       $resultName = $root->getAttribute('result');
+      $resultType = $root->getAttribute('type');
       $result = Parameter::whereName($resultName)->first();
       if (empty($result))
       {
-        $result = Parameter::create(['Name' => $resultName]);
+        $result = Parameter::create(['Name' => $resultName, 'Type' => $resultType]);
       }
       $algorithm->result()->associate($result);
       $algorithm->protocol()->associate($protocol);

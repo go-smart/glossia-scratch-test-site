@@ -52,36 +52,36 @@ class GalilCombinationSeeder extends Seeder {
       'Name' => 'Visual-ICE',
       'Manufacturer' => 'Galil Medical'
     ));
+    $modality['Cryo']->powerGenerators()->save($generator['visual-ice']);
     $generator['visual-ice']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
     $generator['visual-ice']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
-    $modality['Cryo']->powerGenerators()->save($generator['visual-ice']);
 
     $generator['Presice'] = new PowerGenerator;
     $generator['Presice']->fill(array(
       'Name' => 'Presice',
       'Manufacturer' => 'Galil Medical'
     ));
+    $modality['Cryo']->powerGenerators()->save($generator['Presice']);
     $generator['Presice']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
     $generator['Presice']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
-    $modality['Cryo']->powerGenerators()->save($generator['Presice']);
 
     $generator['Seednet'] = new PowerGenerator;
     $generator['Seednet']->fill(array(
       'Name' => 'SeedNet',
       'Manufacturer' => 'Galil Medical'
     ));
+    $modality['Cryo']->powerGenerators()->save($generator['Seednet']);
     $generator['Seednet']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
     $generator['Seednet']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
-    $modality['Cryo']->powerGenerators()->save($generator['Seednet']);
 
     $generator['mri-seednet'] = new PowerGenerator;
     $generator['mri-seednet']->fill(array(
       'Name' => 'MRI SeedNet',
       'Manufacturer' => 'Galil Medical'
     ));
+    $modality['Cryo']->powerGenerators()->save($generator['mri-seednet']);
     $generator['mri-seednet']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
     $generator['mri-seednet']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
-    $modality['Cryo']->powerGenerators()->save($generator['mri-seednet']);
 
     $probes = [
       'IceSEED' => ['X', 'Y', 'Z', '0', 'B'],

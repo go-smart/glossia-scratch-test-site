@@ -25,12 +25,7 @@ use \Seeder;
 
 class CombinationSeeder extends Seeder {
 
-  /**
-   * Run the database seeds.
-   *
-   * @return void
-   */
-  public function run()
+  public function clean($command)
   {
     $lockedCombinations = \Combination::whereExists(function ($q) {
       $q->select(DB::raw(1))
@@ -39,7 +34,7 @@ class CombinationSeeder extends Seeder {
     })->get();
 
     if (!$lockedCombinations->isEmpty())
-      $this->command->info("The following combinations are locked for removal by simulations\n  * " .
+      $command->info("The following combinations are locked for removal by simulations\n  * " .
         $lockedCombinations->implode('asString', "\n  * ")
       );
 
@@ -48,6 +43,15 @@ class CombinationSeeder extends Seeder {
         ->from('Simulation')
         ->whereRaw('Simulation.Combination_Id = Combination.Combination_Id');
     })->delete();
+  }
+
+  /**
+   * Run the database seeds.
+   *
+   * @return void
+   */
+  public function run()
+  {
 
     $this->call('\CombinationSeeders\RFA\RFACombinationSeeder');
     $this->call('\CombinationSeeders\MWA\MWACombinationSeeder');

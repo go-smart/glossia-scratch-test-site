@@ -51,9 +51,9 @@ class AngiodynamicsCombinationSeeder extends Seeder {
       'Name' => 'Angiodynamics',
       'Manufacturer' => 'Angiodynamics'
     ]);
-    $generator->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "2", 'Widget' => 'textbox']);
-    $generator->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "6", 'Widget' => 'textbox']);
     $modality['ire']->powerGenerators()->save($generator);
+    $generator->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "6", 'Widget' => 'textbox']);
+    $generator->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "2", 'Widget' => 'textbox']);
 
     /* Add needles */
     $probe = new Needle(['Name' => 'Basic', 'Manufacturer' => 'Angiodynamics', 'File' => '', 'Geometry' => 'library:rfa-cylinder-1', 'Class' => 'solid-boundary']);

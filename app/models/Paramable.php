@@ -31,6 +31,9 @@ abstract class Paramable extends UuidModel
     /* Convention over configuration */
     $id_name = train_case(get_class($this)) . '_Id';
 
+    if (!$this->Id)
+      throw new InvalidArgumentException("Cowardly refusing to create an empty (universal) placeholder");
+
     $parameterClause = ParameterAttribution::where($id_name, '=', $this->Id);
 
     if ($context !== null)
@@ -56,6 +59,9 @@ abstract class Paramable extends UuidModel
   }
 
   public function attribute($data, $context = null) {
+    if (!$this->Id)
+      throw new InvalidArgumentException("Cowardly refusing to create an empty (universal) attribute");
+
     if (array_key_exists('Value', $data))
     {
       $value = $data['Value'];
