@@ -96,3 +96,30 @@
 .simulations-table tbody tr:nth-child(even) {
   background-color: #ccc;
 }
+
+.simulations-table td[name=simulation-server-message] {
+  width: 300px;
+}
+
+.simulations-table td[name=simulation-server-progress] {
+  padding: none;
+  margin: none;
+  width: 100px;
+  position: relative;
+}
+
+.simulations-table td[name=simulation-server-progress] div {
+  background-color: rgba(128, 255, 255, 0.5);
+  height: 100%;
+  display: inline;
+  position: absolute;
+  padding: none;
+  margin: none;
+  width: 0px;
+  left: 0px;
+  top: 0px;
+}
+
+.simulations-table td[name=simulation-server-progress] span {
+  z-index: -1;
+}

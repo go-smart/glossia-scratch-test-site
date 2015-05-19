@@ -89,7 +89,7 @@ class NumericalModel extends Paramable {
   }
 
   /* XML */
-  public function xml($parent, $suppliedRegions, &$incompatibilities, $needles = [], $needleParameters = [], $needleUserData = []) {
+  public function xml($parent, $suppliedRegions, &$incompatibilities, $needles = [], $needleUserData = [], $backup=false) {
     foreach ($this->results as $result) {
       $resultNode = new DOMNode("result");
       $resultNode->setAttribute('name', $this->result->name);
@@ -143,10 +143,19 @@ class NumericalModel extends Paramable {
 
     $needlesNode = new DOMElement("needles");
     $parent->appendChild($needlesNode);
-    foreach ($needles as $needleIx => $needle) {
+    foreach ($needles as $simulationNeedle) {
+      $needle = $simulationNeedle->Needle;
+      $needleIx = $needle->Id;
+
       $needleNode = new DOMElement("needle");
       $needlesNode->appendChild($needleNode);
       $needleNode->setAttribute("index", $needleIx);
+
+      if ($backup)
+      {
+        $needleNode->setAttribute("id", $needle->Id);
+        $needleNode->setAttribute("name", $needle->Name);
+      }
 
       /* isset checks value whether NULL */
       if (isset($needleUserData[$needleIx]) && isset($needleUserData[$needleIx]['class']))
@@ -165,9 +174,18 @@ class NumericalModel extends Paramable {
 
       $parametersNode = new DOMElement("parameters");
       $needleNode->appendChild($parametersNode);
-      if (isset($needleParameters[$needleIx]))
-        foreach ($needleParameters[$needleIx] as $parameter)
-          $parameter->xml($parametersNode);
+
+      $tipParameter = Parameter::whereName("NEEDLE_TIP_LOCATION")->first();
+      $tipParameter->Value = json_encode($simulationNeedle->Target->asArray);
+      $entryParameter = Parameter::whereName("NEEDLE_ENTRY_LOCATION")->first();
+      $entryParameter->Value = json_encode($simulationNeedle->Entry->asArray);
+
+      $tipParameter->xml($parametersNode, $backup);
+      $entryParameter->xml($parametersNode, $backup);
+
+      $simulationNeedle->Parameters->each(function ($parameter) use ($parametersNode, $backup) {
+        $parameter->xml($parametersNode, $backup);
+      });
     }
 
     $definition = new DOMElement("definition");

@@ -286,7 +286,8 @@ class Combination extends UuidModel {
       $parameters[$name] = $this->chooseAttribution($available);
 
     foreach ($userSupplied as $userParameter) {
-      $userParameter->Value = $userParameter->pivot->ValueSet;
+      if ($userParameter->Value === null)
+        $userParameter->Value = $userParameter->pivot->ValueSet;
       $parameters[$userParameter->Name] = $userParameter;
     }
 
@@ -345,8 +346,7 @@ class Combination extends UuidModel {
     return $parameter;
   }
 
-  /* Presenter logic hack */
-  /* $suppliedRegions should be a 2D array organised by name each containing one or more filenames */
+  /*
   public function xml($root, $userSuppliedParameters = [], $suppliedRegions = [], &$incompatibilities = [], $needles = [], $needleUserParameters = []) {
     list($parameters, $needleParameters) = $this->compileParameters($userSuppliedParameters, $needles, $needleUserParameters, $incompatibilities);
 
@@ -369,6 +369,7 @@ class Combination extends UuidModel {
     $root->appendChild($numericalModelNode);
     $this->NumericalModel->xml($numericalModelNode, $suppliedRegions, $incompatibilities, $needles, $needleParameters);
   }
+   */
 
   public function findUnique()
   {

@@ -35,6 +35,11 @@ Route::resource('combination', 'CombinationController');
 Route::get('combination/{id}/parameter/{name}', 'CombinationController@retrieveParameter');
 
 /* Simulations */
+Route::get('simulation/dashboard', 'SimulationController@dashboard');
+Route::get('simulation/{id}/duplicate', ['uses' => 'SimulationController@duplicate', 'as' => 'simulation.duplicate']);
+Route::get('simulation/patient', 'SimulationController@patient');
+Route::get('simulation/backup', ['uses' => 'SimulationController@backup', 'as' => 'simulation.backup']);
+Route::get('simulation/restore', ['uses' => 'SimulationController@restore', 'as' => 'simulation.restore']);
 Route::resource('simulation', 'SimulationController');
 
 /* Numerical models */

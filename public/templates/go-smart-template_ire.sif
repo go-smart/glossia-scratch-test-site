@@ -98,7 +98,7 @@ Body 10
 End
 
 Equation 1
-    Active Solvers(4) = 1 2 3 4
+    Active Solvers(5) = 1 2 3 4 5
 End
 
 Solver 1
@@ -146,6 +146,12 @@ End
 !    Minimum Coverage = Real 5000
 !    Maximum Coverage = Real 1e5
 !End
+
+Solver 5 ! Progress Solver
+  Equation = String "progress"
+  Procedure = File "libnuma-progress" "NumaProgressSolver"
+  Percentage Progress = $PERCENTAGE
+End
 
 Material 1
     Relative Permittivity = $CONSTANT_IRE_RELATIVE_PERMITTIVITY_TISSUE

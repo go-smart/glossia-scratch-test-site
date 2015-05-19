@@ -69,6 +69,19 @@ class Context extends Paramable {
 	 */
 	protected $table = 'Context';
 
+  public static function all($columns=['*'])
+  {
+    if (Config::get('gosmart.context_as_enum'))
+    {
+      $all = new Collection;
+      foreach (ContextEnum::$all as $key => $value)
+        $all[] = self::find($key);
+      return $all;
+    }
+
+    return parent::all($columns);
+  }
+
   public static function find($id, $columns = [])
   {
     if (Config::get('gosmart.context_as_enum'))

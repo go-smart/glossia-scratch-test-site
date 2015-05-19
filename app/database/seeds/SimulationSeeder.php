@@ -22,6 +22,7 @@
 
 use \DB;
 use \Seeder;
+use Illuminate\Database\Eloquent\Collection;
 
 function crossProduct($a, $b)
 {
@@ -48,6 +49,11 @@ class SimulationSeeder extends Seeder {
     Simulation::where('Caption', 'LIKE', "Sample %")->delete();
   }
 
+  public function deepClean()
+  {
+    Simulation::where('Caption', 'LIKE', "N: %")->delete();
+  }
+
   /**
    * Run the database seeds.
    *
@@ -58,6 +64,7 @@ class SimulationSeeder extends Seeder {
     Eloquent::unguard();
 
     $this->clean();
+    //$this->deepClean();
 
     $organs = ['liver', 'kidney'];
     foreach ($organs as $organ)
@@ -242,13 +249,11 @@ class SimulationSeeder extends Seeder {
     }
      */
 
-    foreach ($parameterData as $parameterName => $value)
-    {
-      $parameter = Parameter::whereName($parameterName)->first();
-      $simulation->parameters()->attach($parameter, ['ValueSet' => $value]);
-    }
+    $simulation->save();
 
+    $simulationNeedles = [];
     $needleData = [];
+    $needleUserParameters = new Collection;
     $n = 0;
     foreach ($needles as $needleConfig)
     {
@@ -257,6 +262,8 @@ class SimulationSeeder extends Seeder {
       $needle = Needle::whereManufacturer($needleConfig["Manufacturer"])
         ->whereName($needleConfig["Name"])
         ->first();
+
+      $needleUserParameters[$needle->Id] = new Collection;
 
       $simulationNeedle = SimulationNeedle::create([
         'Needle_Id' => $needle->Id,
@@ -269,14 +276,35 @@ class SimulationSeeder extends Seeder {
       foreach ($needleConfig["Parameters"] as $paramName => $paramValue)
       {
         $parameter = Parameter::whereName($paramName)->first();
-        $simulationNeedleParameter = DB::table('Simulation_Needle_Parameter')
-          ->insert([
-            'SimulationNeedleId' => $simulationNeedleId,
-            'ParameterId' => $parameter->Id,
-            'ValueSet' => $paramValue
-          ]);
+        $parameter->Value = $paramValue;
+        $needleUserParameters[$needle->Id][$paramName] = $parameter;
       }
+
+      $simulationNeedles[] = $needle;
     }
+
+    $parameters = new Collection;
+    foreach ($parameterData as $parameterName => $value)
+    {
+      $parameter = Parameter::whereName($parameterName)->first();
+      $parameter->Value = $value;
+      $parameters[$parameter->Name] = $parameter;
+    }
+
+    list($parameters, $needleParameters) = $combination->compileParameters($parameters, $simulationNeedles, $needleUserParameters, $incompatibilities);
+
+    foreach ($parameters as $parameterName => $parameter)
+    {
+      $simulation->Parameters()->attach($parameter, ['ValueSet' => $parameter->Value]);
+    }
+
+    $simulation->SimulationNeedles->each(function ($simulationNeedle) use ($needleParameters) {
+      if (array_key_exists($simulationNeedle->Needle_Id, $needleParameters)) {
+        $needleParameters[$simulationNeedle->Needle_Id]->each(function ($p) use ($simulationNeedle) {
+          $simulationNeedle->Parameters()->attach($p);
+        });
+      }
+    });
 
     $this->r++;
     print "Simulation #$this->r: " . $simulation->Combination->asString . " [ " . strtoupper($simulation->Id) . " ]\n";

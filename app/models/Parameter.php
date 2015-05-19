@@ -79,12 +79,15 @@ class Parameter extends UuidModel {
   }
 
   /* More Presenter logic hack */
-  public function xml($parent) {
+  public function xml($parent, $backup=false) {
     $name = $this->Name;
 
     $xml = new DOMElement("parameter");
     $parent->appendChild($xml);
     $xml->setAttribute('name', $this->Name);
+
+    if ($backup)
+      $xml->setAttribute('id', $this->Id);
 
     if ($this->Value !== null)
       $xml->setAttribute('value', $this->Value);

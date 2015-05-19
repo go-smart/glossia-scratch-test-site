@@ -32,6 +32,7 @@ abstract class SegmentationTypeEnum
   const Bronchi = 6;
   const Lesion = 7;
   const Simulation = 8;
+  const TACE = 9;
 
   static $all = [
     0 => 'Liver',
@@ -42,7 +43,8 @@ abstract class SegmentationTypeEnum
     5 => 'Tumor',
     6 => 'Bronchi',
     7 => 'Lesion',
-    8 => 'Simulation'
+    8 => 'Simulation',
+    9 => 'TACE'
   ];
 
   public static function get($id)

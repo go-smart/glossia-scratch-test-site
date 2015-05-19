@@ -14,15 +14,24 @@ class CombinationController extends \BaseController {
     $combinations = Combination::with('PowerGenerator', 'Protocol');
 
     if (Input::has('Needle_Id'))
+    {
+      $combinations = $combinations->join('Combination_Needle', 'Combination_Needle.Combination_Id', '=', 'Combination.Combination_Id');
       $combinations->whereNeedleId(Input::get('Needle_Id'));
+    }
+
+    if (Input::has('Numerical_Model_Id'))
+      $combinations->whereNumericalModelId(Input::get('Numerical_Model_Id'));
 
     if (Input::has('Power_Generator_Id'))
       $combinations->wherePowerGeneratorId(Input::get('Power_Generator_Id'));
 
+    if (Input::has('Protocol_Id'))
+      $combinations->whereProtocolId(Input::get('Protocol_Id'));
+
     if (Input::has('Context_Id'))
     {
       if (Config::get('gosmart.context_as_enum'))
-        $combinations->whereOrganType(Input::get('Context_Id'));
+        $combinations->where(Context::$idField, '=', Input::get('Context_Id'));
       else
         $combinations->whereContextId(Input::get('Context_Id'));
     }
@@ -37,8 +46,14 @@ class CombinationController extends \BaseController {
     if (Input::has('output')) {
       switch (Input::get('output')) {
       case 'Needle':
+        $combination = $combinations->join('Combination_Needle', 'Combination_Needle.Combination_Id', '=', 'Combination.Combination_Id');
         $output_ids = array_unique($combinations->get()->lists('Needle_Id'));
         return Needle::find($output_ids)->lists('Name', 'Id');
+      case 'Combination':
+        return $combinations->get()->lists('asString', 'Combination_Id');
+      case 'Protocol':
+        $output_ids = array_unique($combinations->get()->lists('Protocol_Id'));
+        return Protocol::find($output_ids)->lists('Name', 'Id');
       case 'PowerGenerator':
         $output_ids = array_unique($combinations->get()->lists('Power_Generator_Id'));
         return PowerGenerator::find($output_ids)->lists('Name', 'Id');

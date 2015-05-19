@@ -1,0 +1,13 @@
+<algorithm modality="RFA" protocol="RITA StarBurst 3cm Protocol" result="PERCENTAGE">
+  <arguments>
+    <argument name='Phase' />
+  </arguments>
+  <parameters>
+  </parameters>
+  <description>
+function PERCENTAGE( Phase )
+{
+    _PERCENTAGE = 100 * (Phase - 1) / 2;
+}
+  </description>
+</algorithm>

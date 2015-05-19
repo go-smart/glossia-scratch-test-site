@@ -34,6 +34,15 @@
   </li>
 </ul>
 
+<div style='font-style: italic; font-size: small'>
+  <p>For your convenience, the following are needle targets from other simulations used with the same patient</p>
+  <ul>
+  @foreach ($otherSimulationTargets as $target)
+    <tr>{{ $target }}</tr>
+  @endforeach
+  </ul>
+</div>
+
 <h2>Segmentations</h2>
 <ul>
 <input type='hidden' value='' name='region-remove-id' />

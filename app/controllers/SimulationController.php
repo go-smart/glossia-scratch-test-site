@@ -11,9 +11,10 @@ class SimulationController extends \BaseController {
 	 */
 	public function index()
 	{
+    $backups = array_filter(scandir(public_path() . '/backups'), function ($d) { return $d[0] != '.'; });
     $simulations = Simulation::all();
 
-		return View::make('simulations.index', compact('simulations'));
+		return View::make('simulations.index', compact('simulations', 'backups'));
 	}
 
 
@@ -24,10 +25,68 @@ class SimulationController extends \BaseController {
 	 */
 	public function create()
 	{
-    $contexts = Context::all()->lists('name', 'id');
-		return View::make('simulations.create', compact('Contexts'));
+    $contexts = Context::all()->lists('Name', 'Id');
+		return View::make('simulations.create', compact('contexts'));
 	}
 
+
+  public function patient()
+  {
+    $context = Context::find(Input::get('Context_Id'));
+
+    $patients = DB::table('ItemSet_Patient')->whereExists(function ($q) {
+      $q->select(DB::raw(1))
+        ->from('ItemSet_Segmentation')
+        ->whereRaw('ItemSet_Patient.Id = ItemSet_Segmentation.Patient_Id')
+        ->where('ItemSet_Segmentation.State', '=', 3);
+      })
+      ->where('IsDeleted', '=', 'false')
+      ->where('OrganType', '=', $context->Id)->get();
+
+    $output = [];
+    foreach ($patients as $patient)
+      $output[$patient->Id] = $patient->Alias . ' (' . $patient->Description . ')';
+
+    return $output;
+  }
+
+	public function duplicate($id)
+	{
+		$oldSimulation = Simulation::find($id);
+
+    $simulation = new Simulation;
+    $simulation->Combination_Id = $oldSimulation->Combination_Id;
+    $simulation->Patient_Id = $oldSimulation->Patient_Id;
+    $simulation->Caption = $oldSimulation->Caption . '+';
+    $simulation->SegmentationType = $oldSimulation->SegmentationType;
+    $simulation->Progress = '0';
+    $simulation->State = 0;
+    $simulation->Color = 0;
+    $simulation->Active = 0;
+    $simulation->save();
+
+    $oldSimulation->SimulationNeedles->each(function ($needle) use ($simulation) {
+      $simulationNeedle = new SimulationNeedle;
+      $simulationNeedle->Needle_Id = $needle->Needle_Id;
+      $simulationNeedle->Target_Id = PointSet::create(['X' => $needle->Target->X, 'Y' => $needle->Target->Y, 'Z' => $needle->Target->Z])->Id;
+      $simulationNeedle->Entry_Id = PointSet::create(['X' => $needle->Entry->X, 'Y' => $needle->Entry->Y, 'Z' => $needle->Entry->Z])->Id;
+      $simulationNeedle->Simulation_Id = $simulation->Id;
+      $simulationNeedle->save();
+
+      $needle->Parameters->each(function ($parameter) use ($simulationNeedle) {
+        $simulationNeedle->Parameters()->attach($parameter, ['ValueSet' => $parameter->ValueSet]);
+      });
+    });
+
+    $oldSimulation->Parameters->each(function ($parameter) use ($simulation) {
+      $simulation->Parameters()->attach($parameter, ['ValueSet' => $parameter->pivot->ValueSet]);
+    });
+
+    if (Response::json())
+      return $simulation;
+
+    return Redirect::route('simulation.edit', $simulation->Id);
+	}
 
 	/**
 	 * Store a newly created resource in storage.
@@ -36,7 +95,35 @@ class SimulationController extends \BaseController {
 	 */
 	public function store()
 	{
-		//
+		$combination = Combination::find(Input::get('Combination_Id'));
+    $patient = DB::table('ItemSet_Patient')->whereId(Input::get('Patient_Id'))->first();
+    $caption = Input::get('caption');
+
+    $incompatibilities = [];
+
+    list($parameters, $needleParameters) = $combination->compileParameters(new Collection, [], new Collection, $incompatibilities);
+
+    $simulation = new Simulation;
+    $simulation->Combination_Id = $combination->Combination_Id;
+    $simulation->Patient_Id = $patient->Id;
+    $simulation->Caption = 'N: ' . $caption;
+    $simulation->SegmentationType = 0;
+    $simulation->Progress = '0';
+    $simulation->State = 0;
+    $simulation->Color = 0;
+    $simulation->Active = 0;
+    $simulation->save();
+
+    foreach ($parameters as $parameter) {
+      $simulation->parameters()->attach($parameter, ['ValueSet' => $parameter->Value]);
+    };
+
+    return Redirect::route('simulation.edit', $simulation->Id);
+	}
+
+	public function dashboard()
+	{
+		return View::make('simulations.dashboard');
 	}
 
 
@@ -54,6 +141,9 @@ class SimulationController extends \BaseController {
     {
       return ["error" => "Simulation not found"];
     }
+
+    if (Response::json() && !in_array(Request::format(), ['xml', 'html']))
+      return $simulation;
 
     $incompatibilities = [];
 
@@ -117,7 +207,7 @@ class SimulationController extends \BaseController {
     $transferrer->appendChild($transferrerUrl);
     $root->appendChild($transferrer);
 
-    $combination->xml($root, $userParameters, $regions, $incompatibilities, $needles, $needleParameters);
+    $simulation->xml($root);
 
     if (!empty($incompatibilities))
       return Response::make(array_map('trim', $incompatibilities), 400);
@@ -131,7 +221,7 @@ class SimulationController extends \BaseController {
     if (Input::get('html'))
       return View::make('simulations.show', ['simulationXml' => $xml]);
 
-    return $xml->saveXML();
+    return Response::make($xml->saveXML(), 200)->header('Content-Type', 'application/xml');
 	}
 
 
@@ -146,7 +236,15 @@ class SimulationController extends \BaseController {
     $simulation = Simulation::find($id);
     $needles = $simulation->Combination->Needles;
     $regions = $simulation->Combination->NumericalModel->Regions;
-		return View::make('simulations.edit', compact('simulation', 'needles', 'regions'));
+
+    $otherSimulationTargets = PointSet::join('Simulation_Needle as SN', 'SN.Target_Id', '=', 'PointSet.Id')
+      ->join('Simulation as S', 'S.Id', '=', 'SN.Simulation_Id')
+      ->where('S.Patient_Id', '=', $simulation->Patient_Id)
+      ->where('S.Id', '!=', $simulation->Id)
+      ->get()
+      ->lists('asString');
+
+		return View::make('simulations.edit', compact('simulation', 'needles', 'regions', 'otherSimulationTargets'));
 	}
 
 
@@ -215,4 +313,106 @@ class SimulationController extends \BaseController {
 	}
 
 
+  public function restore()
+  {
+    if (!Input::has('batch'))
+      return Response::json(['message' => 'Need guid and batch'], 400);
+
+    $batch = preg_replace('/[^0-9-_]+/', '', Input::get('batch'));
+
+    if (Input::has('guid'))
+    {
+      $guids = [preg_replace('/[^A-Z0-9-]+/', '', Input::get('guid'))];
+    }
+    else
+    {
+      $guids = array_map(function ($x) {
+        return preg_replace('/[^A-Z0-9-]+/', '', $x);
+      }, array_filter(scandir(public_path() . '/backups/' . $batch), function ($x) {
+        return $x[0] != '.';
+      }));
+    }
+
+    $simulations = new Collection;
+
+    foreach ($guids as $id)
+    {
+      $path = public_path() . '/backups/' . $batch . '/' . $id . '.xml';
+      if (!file_exists($path))
+        return Response::json(['message' => 'Cannot find backup', 'guid' => $id, 'batch' => $batch, 'path' => $path], 400);
+
+      $xml = new DOMDocument;
+      $xml->load($path);
+
+      try {
+        $simulations[] = Simulation::fromXml($xml);
+      }
+      catch (Exception $e)
+      {
+        return Response::json($e, 400);
+      }
+    }
+
+    return Response::json($simulations->lists('Id'), 200);
+  }
+
+  public function backup()
+  {
+    $store = !Input::get('html');
+    $path = public_path() . '/backups/' . date("Y-m-d_H-i-s");
+    if ($store)
+    {
+      mkdir($path, 0777, true);
+    }
+
+    if (Input::has('prefix'))
+      $simulations = Simulation::where("Caption", "LIKE", Input::get('prefix') . "%")->get();
+    else
+      $simulations = Simulation::all();
+
+    $couldNotStore = [];
+    $simulations->each(function ($simulation) use (&$couldNotStore, $store, $path) {
+      $xml = new DOMDocument('1.0');
+      $root = $xml->createElement('simulationDefinition');
+      $xml->appendChild($root);
+
+      try {
+        $simulation->xml($root, true);
+      }
+      catch (Exception $e)
+      {
+        $couldNotStore[] = $simulation;
+        return;
+      }
+
+      $xml->preserveWhiteSpace = false;
+      $xml->formatOutput = true;
+
+      if ($store)
+        $xml->save($path . '/' . $simulation->Id . '.xml');
+    });
+
+    if (Request::format() == 'json')
+    {
+      if (count($store))
+      {
+        $responseArray = array_map(function ($s) {
+          return ['id' => $s->Id, 'description' => $s->asString];
+        });
+        return json_encode($responseArray);
+      }
+      return true;
+    }
+    else
+    {
+      $err = "Backup<br/>\n";
+      foreach ($couldNotStore as $simulation)
+        $err .= "Error for " . $simulation->Id . ':' . $simulation->asString . "<br\>\n";
+      if ($store)
+        $err .= 'Complete.';
+      else
+        $err .= 'Tested but not stored.';
+      return $err;
+    }
+  }
 }
