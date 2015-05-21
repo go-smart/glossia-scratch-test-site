@@ -69,6 +69,7 @@ class Simulation extends UuidModel {
   public function getClinicianAttribute()
   {
     $clinician = DB::table('AspNetUsers')
+      ->select('AspNetUsers.*')
       ->join('ItemSet_Patient', 'ItemSet_Patient.AspNetUsersId', '=', 'AspNetUsers.Id')
       ->where('ItemSet_Patient.Id', '=', $this->Patient_Id)->first();
 

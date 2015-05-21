@@ -1,5 +1,9 @@
 var session = null;
 
+function showAjaxError(jqXHR) {
+  showError(id, jqXHR.data.msg);
+};
+
 var connection = new autobahn.Connection({
   url: "ws://www.numa.oan:8081/ws",
   realm: "realm1"
@@ -95,6 +99,15 @@ function showMessage(id, res) {
   setProgress(simulation);
 }
 
+function rebuildSimulation(id) {
+  var rebuildLink = $('#' + id + ' a[name=rebuild]').attr('href');
+
+  $.get(rebuildLink, [], function (data) {
+    alert(data.msg);
+    regenerateBoard();
+  }).fail(showAjaxError);
+}
+
 function duplicateSimulation(id) {
   var dupLink = $('#' + id + ' a[name=duplicate]').attr('href');
 
@@ -145,6 +158,7 @@ function startSimulation(id) {
 
 function regenerateBoard() {
   var table = $('.simulations-table');
+  table.empty();
   var clinicians = {"None": {"simulations": [], "UserName": "[none]"}};
   for (Id in simulations)
   {
@@ -170,7 +184,7 @@ function regenerateBoard() {
   {
     var clinician = clinicians[clinicianId];
 
-    table.append('<tr><td><div><h2>' + clinician.UserName + '</h2><table id="clinician-' + clinicianId + '"></table></div></td></tr>');
+    table.append('<tr><td><div><h2 title="' + clinicianId + '">' + clinician.UserName + '</h2><table id="clinician-' + clinicianId + '"></table></div></td></tr>');
     var clinicianTable = $('#clinician-' + clinicianId);
     for (var i = 0; i < clinician.simulations.length; i++)
     {
@@ -179,7 +193,10 @@ function regenerateBoard() {
       clinicianTable.append('<tr id="' + Id + '" class="simulations">');
       var tr = clinicianTable.find('#' + Id);
       tr.append('<td name="simulation-server-status"><a href="#" name="start">&#9658;</a></td>');
-      tr.append('<td><a href="' + duplicateLink(Id) + '" name="duplicate">&#9842;</a></td>');
+      tr.append('<td>'
+          + '<a href="' + duplicateLink(Id) + '" name="duplicate">&#9842;</a>'
+          + '<a href="' + rebuildLink(Id) + '" name="rebuild">&#x1f3ed;</a>'
+          + '</td>');
       tr.append('<td name="name">' + simulation.asHtml + '<br/><span style="font-size:xx-small">' + simulation.asString + '</span></td>');
       if (simulation.interactive === false)
       {
@@ -194,6 +211,7 @@ function regenerateBoard() {
       tr.append('<td id="simulation-' + Id + '-parameter" class="combination-parameters"></td>');
       tr.append('<td name="simulation-server-message"></td>');
       tr.find('a[name=start]').click(handleStart);
+      tr.find('a[name=rebuild]').click(handleRebuild);
       tr.find('a[name=duplicate]').click(handleDuplicate);
     }
   }
@@ -233,6 +251,12 @@ function onAnnounce(args) {
       onFail(args[0], args[1][1]);
   }
 };
+
+function handleRebuild(e) {
+  e.preventDefault();
+  var simulation = $(e.target).closest('tr').attr('id');
+  rebuildSimulation(simulation);
+}
 
 function handleDuplicate(e) {
   e.preventDefault();

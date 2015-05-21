@@ -33,8 +33,12 @@ abstract class UuidModel extends Eloquent {
     parent::boot();
 
     static::creating(function ($model) {
-      $model->{$model->getKeyName()} = (string)$model->generateUuid();
+      $model->{$model->getKeyName()} = substr((string)$model->generateUuid(), 0, 36);
     });
+  }
+
+  public function getIdAttribute($id) {
+    return substr($id, 0, 36);
   }
 
   public function generateUuid() {

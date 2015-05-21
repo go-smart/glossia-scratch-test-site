@@ -75,6 +75,7 @@ class RitaCombinationSeeder extends Seeder {
     $needle['rita starburst xl']->powerGenerators()->attach($generator['rita 1500X rf']);
     $needle['rita starburst xl']->attribute(['Name' => 'NEEDLE_MAX_EXTENSION', 'Type' => 'float', 'Value' => 5.0, 'Widget' => 'textbox']);
     $needle['rita starburst xl']->attribute(['Name' => 'NEEDLE_MIN_EXTENSION', 'Type' => 'float', 'Value' => 2.0, 'Widget' => 'textbox']);
+    $needle['rita starburst xl']->attribute(['Name' => 'NEEDLE_PRONG_AMOUNT', 'Type' => 'int', 'Value' => 9, 'Widget' => 'textbox']);
 
     $needle['rita starburst semi-flex'] = new Needle;
     $needle['rita starburst semi-flex']->fill(array(
@@ -88,6 +89,7 @@ class RitaCombinationSeeder extends Seeder {
     $needle['rita starburst semi-flex']->powerGenerators()->attach($generator['rita 1500X rf']);
     $needle['rita starburst semi-flex']->attribute(['Name' => 'NEEDLE_MAX_EXTENSION', 'Type' => 'float', 'Value' => 5.0, 'Widget' => 'textbox']);
     $needle['rita starburst semi-flex']->attribute(['Name' => 'NEEDLE_MIN_EXTENSION', 'Type' => 'float', 'Value' => 2.0, 'Widget' => 'textbox']);
+    $needle['rita starburst semi-flex']->attribute(['Name' => 'NEEDLE_PRONG_AMOUNT', 'Type' => 'int', 'Value' => 9, 'Widget' => 'textbox']);
 
     $needle['rita starburst mri'] = new Needle;
     $needle['rita starburst mri']->fill(array(
@@ -101,6 +103,7 @@ class RitaCombinationSeeder extends Seeder {
     $needle['rita starburst mri']->powerGenerators()->attach($generator['rita 1500X rf']);
     $needle['rita starburst mri']->attribute(['Name' => 'NEEDLE_MAX_EXTENSION', 'Type' => 'float', 'Value' => 5.0, 'Widget' => 'textbox']);
     $needle['rita starburst mri']->attribute(['Name' => 'NEEDLE_MIN_EXTENSION', 'Type' => 'float', 'Value' => 2.0, 'Widget' => 'textbox']);
+    $needle['rita starburst mri']->attribute(['Name' => 'NEEDLE_PRONG_AMOUNT', 'Type' => 'int', 'Value' => 9, 'Widget' => 'textbox']);
 
     $needle['rita starburst sde'] = new Needle;
     $needle['rita starburst sde']->fill(array(
@@ -113,6 +116,7 @@ class RitaCombinationSeeder extends Seeder {
     $modality['rfa']->needles()->save($needle['rita starburst sde']);
     $needle['rita starburst sde']->powerGenerators()->attach($generator['rita 1500X rf']);
     $needle['rita starburst sde']->attribute(['Name' => 'NEEDLE_EXTENSION', 'Type' => 'float', 'Value' => 2.0, 'Widget' => 'textbox']);
+    $needle['rita starburst sde']->attribute(['Name' => 'NEEDLE_PRONG_AMOUNT', 'Type' => 'int', 'Value' => 3, 'Widget' => 'textbox']);
 
     /* Add protocols */
     $protocol['rita starburst 2cm'] = new Protocol;

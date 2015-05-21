@@ -40,7 +40,7 @@ class SimulationController extends \BaseController {
         ->whereRaw('ItemSet_Patient.Id = ItemSet_Segmentation.Patient_Id')
         ->where('ItemSet_Segmentation.State', '=', 3);
       })
-      ->where('IsDeleted', '=', 'false')
+        /*->where('IsDeleted', '=', 'false') SOFT-DELETING SEEMS TO HAVE GONE UPSTREAM */
       ->where('OrganType', '=', $context->Id)->get();
 
     $output = [];
@@ -58,6 +58,8 @@ class SimulationController extends \BaseController {
     $simulation->Combination_Id = $oldSimulation->Combination_Id;
     $simulation->Patient_Id = $oldSimulation->Patient_Id;
     $simulation->Caption = $oldSimulation->Caption . '+';
+    if (substr($simulation->Caption, 0, 2) != "N:")
+      $simulation->Caption = "N: " . $simulation->Caption;
     $simulation->SegmentationType = $oldSimulation->SegmentationType;
     $simulation->Progress = '0';
     $simulation->State = 0;
@@ -86,6 +88,40 @@ class SimulationController extends \BaseController {
       return $simulation;
 
     return Redirect::route('simulation.edit', $simulation->Id);
+	}
+
+	public function rebuild($id)
+	{
+    $simulation = Simulation::find($id);
+    if (!$simulation)
+      return Response::json(["msg" => "No such simulation found"], 400);
+
+    $incompatibilities = [];
+
+    $needles = $simulation->SimulationNeedles->lists('Needle', 'Id');
+    list($parameters, $needleParameters) = $simulation->Combination->compileParameters(new Collection,
+      $needles, new Collection, $incompatibilities);
+
+    /*
+    $simulation->parameters()->detach();
+    foreach ($parameters as $parameter) {
+      $simulation->parameters()->attach($parameter, ['ValueSet' => $parameter->Value]);
+    };
+     */
+
+    $simulation->SimulationNeedles->each(function ($simulationNeedle) use ($needleParameters) {
+      $simulationNeedle->Parameters()->detach();
+      $needleIx = substr($simulationNeedle->Id, 0, 36);
+      if (array_key_exists($needleIx, $needleParameters))
+      {
+        foreach ($needleParameters[$needleIx] as $needleParameter)
+        {
+          $simulationNeedle->Parameters()->attach($needleParameter, ['ValueSet' => $needleParameter->ValueSet]);
+        }
+      }
+    });
+
+    return Response::json(["msg" => "Simulation rebuilt"], 200);
 	}
 
 	/**

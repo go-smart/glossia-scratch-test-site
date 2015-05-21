@@ -6,6 +6,7 @@
 <script src="/scripts/simulations/dashboard.js"></script>
 <script>
   function duplicateLink(id) { return "{{ URL::route('simulation.duplicate', ['ID']) }}".replace('ID', id); };
+  function rebuildLink(id) { return "{{ URL::route('simulation.rebuild', ['ID']) }}".replace('ID', id); };
   function xmlLink(id) { return "{{ URL::route('simulation.show', ['ID']) }}".replace('ID', id); };
   function htmlLink(id) { return "{{ URL::route('simulation.show', ['ID', 'html' => '1']) }}".replace('ID', id); };
   function editLink(id) { return "{{ URL::route('simulation.edit', ['ID']) }}".replace('ID', id); };

@@ -167,7 +167,11 @@ class Combination extends UuidModel {
   }
 
   public function compileParameters($userSupplied, $needles, $needleUserParameters, &$incompatibilities = array()) {
-    $needlesCollection = new Collection($needles);
+    if (is_array($needles))
+      $needlesCollection = new Collection($needles);
+    else
+      $needlesCollection = $needles;
+
     $disallowedNeedles = $needlesCollection->diff($this->Needles);
     foreach ($disallowedNeedles as $needle)
       $incompatibilities[] = "Needle $needle->Name is not marked for use in this combination";

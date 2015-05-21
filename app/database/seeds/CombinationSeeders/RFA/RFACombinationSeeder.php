@@ -80,6 +80,10 @@ class RFACombinationSeeder extends Seeder {
 
     /* Requirements */
     $model['rfa basic sif']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'float', 'Value' => null, 'Widget' => 'textbox']);
+    $model['rfa basic sif']->placeholder('NEEDLE_PRONG_AMOUNT', null, 'int');
+
+    /* Defaults that should soon be changed to requirements but otherwise break validation before needle is added */
+    $model['rfa basic sif']->attribute(['Name' => 'NEEDLE_PRONG_LOCATIONS', 'Type' => 'array(array(float))', 'Value' => '[]', 'Widget' => 'textbox']);
 
     $this->call('\CombinationSeeders\RFA\BostonScientificCombinationSeeder');
     $this->call('\CombinationSeeders\RFA\RitaCombinationSeeder');

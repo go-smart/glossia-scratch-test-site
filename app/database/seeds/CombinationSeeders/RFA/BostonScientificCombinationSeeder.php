@@ -71,6 +71,7 @@ class BostonScientificCombinationSeeder extends Seeder {
     $modality['rfa']->Needles()->save($needle['leveen std 3cm']);
     $needle['leveen std 3cm']->powerGenerators()->attach($generator['rf3000']);
     $needle['leveen std 3cm']->attribute(['Name' => 'NEEDLE_EXTENSION', 'Type' => 'float', 'Value' => 3.0, 'Widget' => 'textbox']);
+    $needle['leveen std 3cm']->attribute(['Name' => 'NEEDLE_PRONG_AMOUNT', 'Type' => 'int', 'Value' => 10, 'Widget' => 'textbox']);
 
     $needle['leveen std 3.5cm'] = new Needle;
     $needle['leveen std 3.5cm']->fill(array(
@@ -83,6 +84,7 @@ class BostonScientificCombinationSeeder extends Seeder {
     $modality['rfa']->Needles()->save($needle['leveen std 3.5cm']);
     $needle['leveen std 3.5cm']->powerGenerators()->attach($generator['rf3000']);
     $needle['leveen std 3.5cm']->attribute(['Name' => 'NEEDLE_EXTENSION', 'Type' => 'float', 'Value' => 3.5, 'Widget' => 'textbox']);
+    $needle['leveen std 3.5cm']->attribute(['Name' => 'NEEDLE_PRONG_AMOUNT', 'Type' => 'int', 'Value' => 10, 'Widget' => 'textbox']);
 
     $needle['leveen std 4cm'] = new Needle;
     $needle['leveen std 4cm']->fill(array(
@@ -95,6 +97,7 @@ class BostonScientificCombinationSeeder extends Seeder {
     $modality['rfa']->Needles()->save($needle['leveen std 4cm']);
     $needle['leveen std 4cm']->powerGenerators()->attach($generator['rf3000']);
     $needle['leveen std 4cm']->attribute(['Name' => 'NEEDLE_EXTENSION', 'Type' => 'float', 'Value' => 4.0, 'Widget' => 'textbox']);
+    $needle['leveen std 4cm']->attribute(['Name' => 'NEEDLE_PRONG_AMOUNT', 'Type' => 'int', 'Value' => 12, 'Widget' => 'textbox']);
 
     $needle['leveen std 5cm'] = new Needle;
     $needle['leveen std 5cm']->fill(array(
@@ -107,6 +110,7 @@ class BostonScientificCombinationSeeder extends Seeder {
     $modality['rfa']->Needles()->save($needle['leveen std 5cm']);
     $needle['leveen std 5cm']->powerGenerators()->attach($generator['rf3000']);
     $needle['leveen std 5cm']->attribute(['Name' => 'NEEDLE_EXTENSION', 'Type' => 'float', 'Value' => 5.0, 'Widget' => 'textbox']);
+    $needle['leveen std 5cm']->attribute(['Name' => 'NEEDLE_PRONG_AMOUNT', 'Type' => 'int', 'Value' => 14, 'Widget' => 'textbox']);
 
     $needle['leveen super slim 2cm'] = new Needle;
     $needle['leveen super slim 2cm']->fill(array(
@@ -119,6 +123,7 @@ class BostonScientificCombinationSeeder extends Seeder {
     $modality['rfa']->Needles()->save($needle['leveen super slim 2cm']);
     $needle['leveen super slim 2cm']->powerGenerators()->attach($generator['rf3000']);
     $needle['leveen super slim 2cm']->attribute(['Name' => 'NEEDLE_EXTENSION', 'Type' => 'float', 'Value' => 2.0, 'Widget' => 'textbox']);
+    $needle['leveen super slim 2cm']->attribute(['Name' => 'NEEDLE_PRONG_AMOUNT', 'Type' => 'int', 'Value' => 8, 'Widget' => 'textbox']);
 
     $needle['leveen super slim 3cm'] = new Needle;
     $needle['leveen super slim 3cm']->fill(array(
@@ -131,6 +136,7 @@ class BostonScientificCombinationSeeder extends Seeder {
     $modality['rfa']->Needles()->save($needle['leveen super slim 3cm']);
     $needle['leveen super slim 3cm']->powerGenerators()->attach($generator['rf3000']);
     $needle['leveen super slim 3cm']->attribute(['Name' => 'NEEDLE_EXTENSION', 'Type' => 'float', 'Value' => 3.0, 'Widget' => 'textbox']);
+    $needle['leveen super slim 3cm']->attribute(['Name' => 'NEEDLE_PRONG_AMOUNT', 'Type' => 'int', 'Value' => 10, 'Widget' => 'textbox']);
 
     /* Add protocols */
     foreach (array('3cm', '3.5cm', '4cm', '5cm') as $n) {
