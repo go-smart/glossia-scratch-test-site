@@ -1,0 +1,50 @@
+<!--
+/**
+ * This file is part of the Go-Smart Simulation Architecture (GSSA).
+ * Go-Smart is an EU-FP7 project, funded by the European Commission.
+ *
+ * Copyright (C) 2013-  NUMA Engineering Ltd. (see AUTHORS file)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+-->
+<constants class="NumericalModel" name="NUMA MWA Nonlinear SIF">
+    <constant name="initial cells alive" value="0.99" units="-" />
+    <constant name="initial cells dead" value="0.0" units="-" />
+    <constant name="forward rate" value="0.00333" units="-" />
+    <constant name="backward rate" value="0.00777" units="-" />
+    <constant name="exponential rate" value="40.5" units="K" />
+    <constant name="input frequency" value="2450000000" units="Hz" />
+    <constant name="MW relative permeability (tissue)" value="1" note="at 2.45 GHz" />
+    <constant name="MW relative permittivity (tissue)" value="43.3" note="at 2.45 GHz" />
+    <constant name="MW relative permeability (tumour)" value="1" note="at 2.45 GHz" />
+    <constant name="MW relative permittivity (tumour)" value="43.3" note="at 2.45 GHz" />
+    <constant name="MW effective electric conductivity (tissue)" value="1.69" note="at 2.45 GHz" />
+    <constant name="MW electric conductivity (air)" value="0" note="at 2.45 GHz" />
+    <constant name="MW relative permeability (air)" value="1" note="at 2.45 GHz" />
+    <constant name="MW relative permittivity (air)" value="1" note="at 2.45 GHz" />
+    <constant name="MW electric conductivity (dielectric cable)" value="0" note="at 2.45 GHz" />
+    <constant name="MW relative permeability (dielectric cable)" value="1" note="at 2.45 GHz" />
+    <constant name="MW relative permittivity (dielectric cable)" value="2.03" note="at 2.45 GHz" />
+    <constant name="MW electric conductivity (catheter)" value="0" note="at 2.45 GHz" />
+    <constant name="MW relative permeability (catheter)" value="1" note="at 2.45 GHz" />
+    <constant name="MW relative permittivity (catheter)" value="2.60" note="at 2.45 GHz" />
+    <constant name="MW dielectric radius (inner)" value="0.135" units="mm" />
+    <constant name="MW dielectric radius (outer)" value="0.470" units="mm" />
+    <constant name="MW catheter radius (inner)" value="0.595" units="mm" />
+    <constant name="MW catheter radius (outer)" value="0.895" units="mm" />
+    <constant name="MW slot elevation" value="6" units="mm" />
+    <constant name="MW slot height" value="1" units="mm" />
+    <constant name="MW dielectric extension" value="0.135" units="mm" />
+</constants>

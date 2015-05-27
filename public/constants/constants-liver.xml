@@ -1,0 +1,53 @@
+<!--
+/**
+ * This file is part of the Go-Smart Simulation Architecture (GSSA).
+ * Go-Smart is an EU-FP7 project, funded by the European Commission.
+ *
+ * Copyright (C) 2013-  NUMA Engineering Ltd. (see AUTHORS file)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+-->
+<constants class="Context" family="organ" name="liver">
+    <constant name="venous heat transfer coefficient" value="230" units="W/m^2 K" />
+    <constant name="body temperature" value="310.0" units="K" />
+    <constant name="specific heat capacity (blood)" value="3617" units="J/kg K" />
+    <constant name="RF conductivity (blood)" value="0.122" units="S/m" note="at 480kHz" />
+    <constant name="RF conductivity (tissue)" value="0.122" units="S/m" note="at 480kHz" />
+    <constant name="thermal conductivity (tissue)" value="0.302" units="W/m K" />
+    <constant name="specific heat capacity (tissue)" value="3540" units="J/kg K" />
+    <constant name="RF conductivity (tumour)" value="0.4" units="S/m" note="at 480kHz" />
+    <constant name="thermal conductivity (tumour)" value="0.5" units="W/m K" />
+    <constant name="specific heat capacity (tumour)" value="3750" units="J/kg K" />
+    <constant name="density (tissue)" value="1079" units="kg/m^3" />
+    <constant name="density (tumour)" value="1079" units="kg/m^3" />
+    <constant name="perfusion density" value="1060.0" units="?" />
+    <constant name="perfusion heat capacity" value="3639.0" units="?" />
+    <constant name="perfusion reference temperature" value="310.0" units="?" />
+    <constant name="perfusion rate" value="0.0036" units="1/s" />
+    <constant name="wall pressure flux" value="0.0" units="?" />
+    <constant name="bronchi heat transfer coefficient" value="0" units="W/m^2 K" />
+    <constant name="coagulation cut off (tissue)" value="443" units="K" />
+    <constant name="coagulation gradient (tissue)" value="0.01" units="K" />
+    <constant name="coagulation minimum deposition (tissue)" value="0.0" units="K" />
+    <constant name="coagulation cut off (tumour)" value="0.9" units="K" />
+    <constant name="coagulation gradient (tumour)" value="0.01" units="K" />
+    <constant name="coagulation minimum deposition (tumour)" value="0.0" units="K" />
+    <constant name="vapourization cut off (tissue)" value="443" units="K" />
+    <constant name="vapourization gradient (tissue)" value="0.01" units="K" />
+    <constant name="vapourization minimum deposition (tissue)" value="0.0" units="K" />
+    <constant name="vapourization cut off (tumour)" value="0.9" units="K" />
+    <constant name="vapourization gradient (tumour)" value="0.01" units="K" />
+    <constant name="vapourization minimum deposition (tumour)" value="0.0" units="K" />
+</constants>

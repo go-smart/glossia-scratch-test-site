@@ -1,0 +1,27 @@
+(Go-Smart) SIMULATION-MODEL-LARAVEL
+===================================
+
+This tool is the reference implementation of the Go-Smart domain model. It provides basic GSSA-XML generation, which is the input for the go-smart-simulation-server, from a simulation defined in the database.
+
+DEPENDENCIES
+------------
+
+* MariaDB/MySQL
+* Apache2/Nginx
+
+INSTALLATION
+------------
+
+This is installed as a normal Laravel 4.2 app (http://laravel.com/docs/4.2). Once the appropriate permissions, database access settings, dependencies and Apache/Nginx files are configured you should run the following commands in the project root:
+* php artisan migrate
+* php artisan db:seed
+
+You should now be able to access a few basic web pages:
+* http://SERVER/protocols - shows a hyperlinked list of protocols
+
+To retrieve GSSA-XML for a simulation, you must have a simulation defined in the database. The seeder will set up a couple and output GUIDs that you may use to retrieve them:
+* http://SERVER/simulation/GUID - GSSA-XML for simulation GUID
+* http://SERVER/simulation/GUID?html=1 - HTML rendering of the GSSA-XML for simulation GUID
+
+You can retrieve a specific parameter from a combination (not including needle parameters) without defining a simulation by calling,
+* http://SERVER/combination/GUID/parameter/PARAMETER_NAME

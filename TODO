@@ -1,0 +1,4 @@
+Differences with FIT deployment:
+  - enum for organs
+  - removal of polymorphic relationships (algorithm_argument and numericalmodel_argument)
+  - addition of simulation cross-over tables, superseding JSON fields

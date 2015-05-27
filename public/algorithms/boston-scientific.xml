@@ -1,0 +1,79 @@
+<!--
+/**
+ * This file is part of the Go-Smart Simulation Architecture (GSSA).
+ * Go-Smart is an EU-FP7 project, funded by the European Commission.
+ *
+ * Copyright (C) 2013-  NUMA Engineering Ltd. (see AUTHORS file)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+-->
+<algorithm modality="RFA" protocol="Leveen Super Slim 2cm Ablation Algorithm" result="CONSTANT_INPUT_POWER">
+  <arguments>
+    <argument name='Time' />
+    <argument name='CurrentPower' />
+  </arguments>
+  <parameters>
+    <parameter name='MAX_POWER' type='float' />
+  </parameters>
+  <description>
+function protocol_power( Arguments )
+!
+!  defines power vs time for simulation
+!
+
+   ! log heating cycle start time for computing power increase
+   if ( ~exists(cycle_start_time) )
+       cycle_start_time = Time
+
+   if ( ~exists(roll_off_start) )
+       roll_off_start = 0
+
+   if ( ~exists(final_roll_off) )
+       final_roll_off = FALSE
+
+   ! first check if there has been roll off
+   if ( impedance &gt; impedance_thresh )
+       roll_off_start = Time
+       roll_off_power = CurrentPower
+
+   ! if there is roll off during first 5 mins
+   if ( Time &lt; 300 )
+       if ( roll_off_start &gt; 0+eps )
+           if ( Time - roll_off_start &gt;= 30 &amp;&amp; Time - roll_off_start &lt;=330 )
+               _protocol_power = roll_off_power/2
+               final_roll_off = TRUE
+
+           if ( Time - roll_off_start &lt; 30 )
+               _protocol_power = 0
+
+           if ( Time - roll_off_start &gt; 330 )
+               roll_off_start = 0
+               cycle_start_time = Time
+
+   ! if no roll off present raise to max and maintain
+   if ( roll_off_start &lt; 0+eps )
+       if ( CurrentPower >= $MAX_POWER )
+           _protocol_power = $MAX_POWER
+       else
+           _protocol_power = (Time-cycle_start_time)*increase_rate_power/60
+
+   ! stop criteria
+   if ( Time >= 900 &amp; ~final_roll_off)
+       final_roll_off = TRUE
+   if ( final_roll_off )
+       if ( roll_off_start &gt; 0+eps )
+           END SIMULATION
+  </description>
+</algorithm>

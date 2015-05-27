@@ -1,0 +1,86 @@
+.combinations-table {
+  text-align: left;
+}
+
+.combinations-table tbody tr:nth-child(odd) {
+  background-color: #ccf;
+}
+
+.combinations-table tbody tr:nth-child(even) {
+  background-color: #ccc;
+}
+
+.combinations-table th, td {
+  padding: 0px 10px 0px 10px;
+}
+
+.combinations-table .context-label {
+  display: inline-block;
+}
+
+.protocol-algorithms-table .algorithm-result {
+  font-weight: bold;
+  width: 10%;
+}
+
+.protocol-algorithms-table .algorithm-arguments {
+  padding-bottom: 5px;
+  padding-top: 5px;
+}
+
+.protocol-algorithms-table .algorithm-content {
+  width: 90%;
+}
+
+.protocol-algorithms-table .algorithm-parameters {
+  background-color: #eee;
+}
+
+.protocol-algorithms-table .algorithm-parameters .inline-label {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.protocol-algorithms-table tbody:nth-child(even) {
+  background-color: #aba;
+}
+
+.protocol-algorithms-table tbody:nth-child(odd) {
+  background-color: #aca;
+}
+
+.protocol-algorithms-table .padding {
+  background-color: #fff;
+}
+
+.parameter {
+  cursor: pointer;
+}
+
+.algorithm-create {
+  border-top: thick black solid;
+}
+
+.protocol-parameters-header {
+  color: #888;
+}
+
+#parameter-selection td {
+  vertical-align: top;
+  text-align: left;
+}
+
+#parameter-selection ul {
+  padding-left: 0px;
+}
+
+#parameter-selection li {
+  list-style-type: none;
+}
+
+#parameter-selection {
+  background-color: #ccf;
+}
+
+#algorithm-block {
+  background-color: #cfc;
+}
