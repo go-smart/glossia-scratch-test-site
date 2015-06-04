@@ -89,13 +89,13 @@ Body 9
 End
 
 !Background
-Body 10
-  $BODIES_REGIONS_BACKGROUND
-    Target Bodies = Integer 12
-    Equation = Integer 1
-    Initial Condition = Integer 1
-    Material = Integer 4
-End
+!Body 10
+!  $BODIES_REGIONS_BACKGROUND
+!    Target Bodies = Integer 12
+!    Equation = Integer 1
+!    Initial Condition = Integer 1
+!    Material = Integer 4
+!End
 
 Equation 1
     Active Solvers(5) = 1 2 3 4 5

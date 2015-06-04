@@ -9,6 +9,9 @@
 <input type='hidden' value=0 name='removing' />
 <p>{{ $simulation->Combination->asString }}</p>
 
+<p>{{ Form::label('caption', 'Caption') }}: {{ Form::text('caption', $simulation->Caption) }}</p>
+<p>{{ Form::submit() }}</p>
+
 <h2>Needles</h2>
 <ul>
 <input type='hidden' value='' name='simulation-needle-id' />
@@ -53,6 +56,12 @@
   </li>
 @endforeach
 </ul>
+
+<table>
+@foreach ($simulation->Parameters as $parameter)
+<tr><td>{{ $parameter->Name }}</td><td>{{ Form::text('parameters-' . $parameter->Id, $parameter->pivot->ValueSet) }}</td></tr>
+@endforeach
+</table>
 
 {{ Form::close() }}
 

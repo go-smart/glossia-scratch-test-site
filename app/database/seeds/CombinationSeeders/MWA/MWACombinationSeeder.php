@@ -58,7 +58,7 @@ class MWACombinationSeeder extends Seeder {
     $model['mwa linear sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_LOWER', 'Type' => 'float', 'Value' => '0.8', 'Widget' => 'textbox']);
 
     /* Defaults */
-    $model['mwa linear sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);
+    $model['mwa linear sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '2', 'Widget' => 'textbox']);
     // Allows an upper limit if protocol mucks up:
     $model['mwa linear sif']->attribute(['Name' => 'SETTING_FINAL_TIMESTEP', 'Type' => 'int', 'Value' => '10000', 'Widget' => 'textbox']);
     $model['mwa linear sif']->attribute(['Name' => 'CENTRE_LOCATION', 'Type' => 'string', 'Value' => 'first-needle', 'Widget' => 'textbox']);
@@ -81,11 +81,14 @@ class MWACombinationSeeder extends Seeder {
 
     /* Defaults */
     $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);
+    $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_SOLID_NEEDLES', 'Type' => 'boolean', 'Value' => 'true', 'Widget' => 'checkbox']);
+    $model['mwa nonlinear sif']->attribute(['Name' => 'RESOLUTION_FIELD_NEEDLE_ZONE', 'Type' => 'float', 'Value' => '0.5', 'Widget' => 'textbox']);
     // Allows an upper limit if protocol mucks up:
     $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_FINAL_TIMESTEP', 'Type' => 'int', 'Value' => '10000', 'Widget' => 'textbox']);
     $model['mwa nonlinear sif']->attribute(['Name' => 'CENTRE_LOCATION', 'Type' => 'string', 'Value' => 'first-needle', 'Widget' => 'textbox']);
+    $model['mwa nonlinear sif']->attribute(['Name' => 'CENTRE_OFFSET', 'Type' => 'float', 'Value' => '-8.0', 'Widget' => 'textbox']);
     $model['mwa nonlinear sif']->attribute(['Name' => 'SIMULATION_SCALING', 'Type' => 'float', 'Value' => '0.001', 'Widget' => 'textbox']);
-    $model['mwa nonlinear sif']->attribute(['Name' => 'SIMULATION_DOMAIN_RADIUS', 'Type' => 'float', 'Value' => '40.0', 'Widget' => 'textbox']);
+    $model['mwa nonlinear sif']->attribute(['Name' => 'SIMULATION_DOMAIN_RADIUS', 'Type' => 'float', 'Value' => '35.0', 'Widget' => 'textbox']);
     $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_AXISYMMETRIC_INNER', 'Type' => 'string', 'Value' => 'basic-mwa', 'Widget' => 'textbox']);
     $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_AXISYMMETRIC_INNER_COARSE', 'Type' => 'string', 'Value' => 'basic-mwa-coarse', 'Widget' => 'textbox']);
     $model['mwa nonlinear sif']->attribute(['Name' => 'ELMER_NUMA_MODULES', 'Type' => 'array(string)', 'Value' => '[ "mwa_RelPerm", "mwa_ElecCond" ]', 'Widget' => 'textbox']);

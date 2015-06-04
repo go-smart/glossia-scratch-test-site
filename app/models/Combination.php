@@ -50,6 +50,12 @@ class Combination extends UuidModel {
 
   protected $cachedParameterTable = null;
 
+  public function getCombinationIdAttribute($id) {
+    if ($id)
+      return substr($id, 0, 36);
+    return $id;
+  }
+
   public function Simulations() {
     return $this->hasMany('Simulation', 'Combination_Id');
   }

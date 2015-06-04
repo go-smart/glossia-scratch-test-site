@@ -82,7 +82,7 @@ End
 !====================================================================
 Body 1
 !====================================================================
-  $REGIONS_TISSUE
+  $REGIONS_TISSUES
   Name = "Tissue & Blood"
   Equation = Integer 1
   Body Force = Integer 1

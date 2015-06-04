@@ -53,8 +53,8 @@ class GalilCombinationSeeder extends Seeder {
       'Manufacturer' => 'Galil Medical'
     ));
     $modality['Cryo']->powerGenerators()->save($generator['visual-ice']);
-    $generator['visual-ice']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
     $generator['visual-ice']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
+    $generator['visual-ice']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "10", 'Widget' => 'textbox']);
 
     $generator['Presice'] = new PowerGenerator;
     $generator['Presice']->fill(array(
@@ -62,8 +62,8 @@ class GalilCombinationSeeder extends Seeder {
       'Manufacturer' => 'Galil Medical'
     ));
     $modality['Cryo']->powerGenerators()->save($generator['Presice']);
-    $generator['Presice']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
     $generator['Presice']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
+    $generator['Presice']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "10", 'Widget' => 'textbox']);
 
     $generator['Seednet'] = new PowerGenerator;
     $generator['Seednet']->fill(array(
@@ -71,8 +71,8 @@ class GalilCombinationSeeder extends Seeder {
       'Manufacturer' => 'Galil Medical'
     ));
     $modality['Cryo']->powerGenerators()->save($generator['Seednet']);
-    $generator['Seednet']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
     $generator['Seednet']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
+    $generator['Seednet']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "10", 'Widget' => 'textbox']);
 
     $generator['mri-seednet'] = new PowerGenerator;
     $generator['mri-seednet']->fill(array(
@@ -80,8 +80,8 @@ class GalilCombinationSeeder extends Seeder {
       'Manufacturer' => 'Galil Medical'
     ));
     $modality['Cryo']->powerGenerators()->save($generator['mri-seednet']);
-    $generator['mri-seednet']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
     $generator['mri-seednet']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
+    $generator['mri-seednet']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "10", 'Widget' => 'textbox']);
 
     $probes = [
       'IceSEED' => ['X', 'Y', 'Z', '0', 'B'],
@@ -118,7 +118,7 @@ class GalilCombinationSeeder extends Seeder {
      foreach ($model as $m)
       foreach ($generator as $g) {
         $c = new Combination;
-        $c->isPublic = true;
+        $c->isPublic = ($m->Name == 'NUMA Cryoablation Basic SIF');
         $c->protocol()->associate($protocol['Empty']);
         $c->powerGenerator()->associate($g);
         $c->numericalModel()->associate($m);

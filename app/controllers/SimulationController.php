@@ -4,6 +4,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 class SimulationController extends \BaseController {
 
+  protected $httpTransferrerBase = 'http://gosmartfiles.blob.core.windows.net/gosmart';
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -102,12 +104,10 @@ class SimulationController extends \BaseController {
     list($parameters, $needleParameters) = $simulation->Combination->compileParameters(new Collection,
       $needles, new Collection, $incompatibilities);
 
-    /*
-    $simulation->parameters()->detach();
     foreach ($parameters as $parameter) {
+      $simulation->parameters()->detach($parameter);
       $simulation->parameters()->attach($parameter, ['ValueSet' => $parameter->Value]);
     };
-     */
 
     $simulation->SimulationNeedles->each(function ($simulationNeedle) use ($needleParameters) {
       $simulationNeedle->Parameters()->detach();
@@ -239,7 +239,7 @@ class SimulationController extends \BaseController {
     $transferrer = $xml->createElement('transferrer');
     $transferrer->setAttribute('class', 'http');
     $transferrerUrl = $xml->createElement('url');
-    $transferrerUrl->nodeValue = 'http://gosmartfiles.blob.core.windows.net/gosmart';
+    $transferrerUrl->nodeValue = $this->httpTransferrerBase;
     $transferrer->appendChild($transferrerUrl);
     $root->appendChild($transferrer);
 
@@ -259,6 +259,23 @@ class SimulationController extends \BaseController {
 
     return Response::make($xml->saveXML(), 200)->header('Content-Type', 'application/xml');
 	}
+
+  public function getSegmentedLesion($id)
+  {
+    $simulation = Simulation::find($id);
+
+    if (!$simulation)
+      return Response::make('Simulation not found', 400);
+
+    $lesion = $simulation->SegmentedLesion;
+
+    if ($lesion)
+    {
+      return Redirect::to($this->httpTransferrerBase . '/' . strtolower($lesion->Id) . '/' . $lesion->FileName . '.' . $lesion->Extension);
+    }
+
+    return Response::make('Segmented lesion not found', 404);
+  }
 
 
 	/**
@@ -293,6 +310,18 @@ class SimulationController extends \BaseController {
 	public function update($id)
 	{
     $simulation = Simulation::find($id);
+    if (Input::has('caption'))
+      $simulation->Caption = Input::get('caption');
+    $simulation->save();
+
+    foreach ($simulation->Parameters as $parameter)
+    {
+      if (Input::has('parameters-' . $parameter->Id))
+      {
+        $parameter->pivot->ValueSet = Input::get('parameters-' . $parameter->Id);
+        $parameter->pivot->save();
+      }
+    }
 
     if (Input::get('removing'))
     {

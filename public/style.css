@@ -123,3 +123,34 @@
 .simulations-table td[name=simulation-server-progress] span {
   z-index: -1;
 }
+
+.simulations-table td[name=simulation-tools] a {
+  padding-right: 3px;
+}
+
+.simulations-table .deleted {
+  color: #aaa !important;
+}
+
+.simulations-table span.location {
+  color: #888;
+  font-size: xx-small;
+  visibility: hidden;
+}
+
+.modality-indicator {
+  min-width: 2px;
+}
+
+.modality-Cryoablation {
+  background-color: blue;
+}
+.modality-MWA {
+  background-color: green;
+}
+.modality-IRE {
+  background-color: purple;
+}
+.modality-RFA {
+  background-color: red;
+}

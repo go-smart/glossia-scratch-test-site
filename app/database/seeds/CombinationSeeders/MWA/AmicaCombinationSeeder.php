@@ -74,8 +74,8 @@ class AmicaCombinationSeeder extends Seeder {
           'Name' => $name,
           'Manufacturer' => 'HS',
           'File' => '',
-          'Geometry' => 'library:default',
-          'Class' => 'axisymm-2d'
+          'Geometry' => 'library:mwa-cooled',
+          'Class' => 'solid-boundary'
         ));
         $modality['mwa']->needles()->save($probe);
         $probe->powerGenerators()->attach($generator['amica-gen']);
@@ -97,17 +97,16 @@ class AmicaCombinationSeeder extends Seeder {
       'Name' => 'Generic modifiable power',
     ));
     $modality['mwa']->protocols()->save($protocol['user-modified']);
-/*
+
     $algorithm["user-modified power"] = new Algorithm;
     $algorithm["user-modified power"]->content = <<<ENDLIPSUM2
 ENDLIPSUM2;
     $algorithm["user-modified power"]->protocol()->associate($protocol['user-modified']);
     $algorithm["user-modified power"]->result()->associate($result);
     $algorithm["user-modified power"]->save();
-    $algorithm["user-modified power"]->attribute(['Name' => 'CONSTANT_INPUT_POWER', 'Type' => 'array(Time,float)', 'Value' => '{"0.0": 150, "2.0": 300}']);
-
     $algorithm["user-modified power"]->attribute(['Name' => 'NEEDLE_MAX_POWER_OUTPUT', 'Type' => 'float', 'Description' => 'Maximum power that can be output from this needle']);
 
+    /*
     $argument = new Argument;
     $argument->name = "Time";
     $argument->argumentable()->associate($algorithm["user-modified power"]);

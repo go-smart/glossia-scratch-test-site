@@ -52,7 +52,7 @@ End
 !====================================================================
 Body 1
 !====================================================================
-  $REGIONS_TISSUE
+  $REGIONS_ORGANS
   Name = "Tissue & Blood"
   Equation = Integer 1
   Body Force = Integer 1
@@ -71,6 +71,20 @@ Body 2
   Equation = Integer 1
   Initial condition = Integer 1
   Material = Integer 2
+  Body Force = Integer 1
+!====================================================================
+End
+!====================================================================
+
+!====================================================================
+Body 3
+!====================================================================
+  $REGIONS_BACKGROUND
+
+  Name = "Tumour"
+  Equation = Integer 1
+  Initial condition = Integer 1
+  Material = Integer 3
   Body Force = Integer 1
 !====================================================================
 End
@@ -177,6 +191,7 @@ Material 1 ! Body
 !====================================================================
   Name = "Tissue"
 
+  Freezable = Logical True
   Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
   Heat Capacity = $CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE:float
   Density = $CONSTANT_DENSITY_TISSUE:float
@@ -221,6 +236,7 @@ End
 Material 2 ! Tumour
 !====================================================================
   Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  Freezable = Logical True
   Heat Conductivity = Variable Temperature
   Real
     0.0 $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR_FROZEN:float
@@ -258,10 +274,34 @@ End
 !====================================================================
 
 !====================================================================
+Material 3 ! Fat
+!====================================================================
+  Name = "Fat"
+
+  Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  Density = $CONSTANT_DENSITY_FAT:float
+  Freezable = Logical False
+  Heat Conductivity = $CONSTANT_THERMAL_CONDUCTIVITY_FAT:float
+  Heat Capacity = $CONSTANT_SPECIFIC_HEAT_CAPACITY_FAT:float
+  Specific Enthalpy = Variable Temperature
+    0 0
+    233 0
+    273 300000
+    313 500000
+    500 500000
+  End
+!====================================================================
+End
+!====================================================================
+
+!====================================================================
 Boundary Condition 1 !Organ wall + sphere
 !====================================================================
   $REGIONS_BOUNDARY
-  Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  !Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  Heat Flux BC = Logical True
+  Heat Flux = Real 0.0
+  Flow Pressure = Real -0.00000000
 !====================================================================
 End
 !====================================================================

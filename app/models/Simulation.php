@@ -30,9 +30,13 @@ class Simulation extends UuidModel {
 
   protected $table = "Simulation";
 
-  protected $appends = ['asHtml', 'asString', 'clinician'];
+  protected $appends = ['asHtml', 'asString', 'clinician', 'hasSegmentedLesion', 'modality', 'isDeleted', 'creationDate'];
 
   protected static $updateByDefault = false;
+
+  public function getModalityAttribute() {
+    return $this->Combination->Power_Generator->Modality;
+  }
 
   public function Combination() {
     return $this->belongsTo('Combination', 'Combination_Id');
@@ -46,6 +50,25 @@ class Simulation extends UuidModel {
 
   public function SimulationNeedles() {
     return $this->hasMany('SimulationNeedle', 'Simulation_Id');
+  }
+
+  public function getCreationDateAttribute() {
+    $itemSet = DB::table('ItemSet')
+      ->where('Id', '=', $this->Id)
+      ->first();
+    if (!$itemSet)
+      return null;
+    $created = strtotime($itemSet->CreationDate);
+    return date("Y-m-d H:i:s", $created);
+  }
+
+  public function getIsDeletedAttribute() {
+    return $this->newQuery()
+      ->join('ItemSet_Patient as P', 'P.Id', '=', 'Simulation.Patient_Id')
+      ->join('ItemSet as IS', 'IS.Id', '=', 'P.Id')
+      ->where('IS.IsDeleted', '=', true)
+      ->where('Simulation.Id', '=', $this->Id)
+      ->count() > 0;
   }
 
   public function getSegmentationsAttribute() {
@@ -64,6 +87,24 @@ class Simulation extends UuidModel {
   public function findUnique()
   {
     return false;
+  }
+
+  public function getSegmentedLesionAttribute()
+  {
+    return $this->newQuery()
+      ->where('Simulation.Id', '=', $this->Id)
+      ->join('ItemSet_Segmentation as ISS', 'ISS.Patient_Id', '=', 'Simulation.Patient_Id')
+      ->join('ItemSet_VtkFile as ISV', 'ISV.Segmentation_Id', '=', 'ISS.Id')
+      ->join('ItemSet_File as ISF', 'ISF.Id', '=', 'ISV.Id')
+      ->select('ISF.*')
+      ->where('ISS.State', '=', '3')
+      ->where('ISS.SegmentationType', '=', SegmentationTypeEnum::Lesion)
+      ->first();
+  }
+
+  public function getHasSegmentedLesionAttribute()
+  {
+    return $this->segmentedLesion !== null;
   }
 
   public function getClinicianAttribute()
@@ -87,7 +128,7 @@ class Simulation extends UuidModel {
     if ($this->Patient_Id)
     {
       $patient = DB::table('ItemSet_Patient')->whereId($this->Patient_Id)->first();
-      $simulation .= " [<span class='parameter' title='" . htmlentities($patient->Description) . "'>" . $patient->Alias . "</span>]";
+      $simulation .= "</br><span class='parameter' title='" . htmlentities($this->Caption) . "'>" . htmlentities($patient->Description) . "</span> [<span class='parameter'>" . $patient->Alias . "</span>]";
     }
 
     return $simulation;

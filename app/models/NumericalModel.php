@@ -145,7 +145,7 @@ class NumericalModel extends Paramable {
     $parent->appendChild($needlesNode);
     foreach ($needles as $simulationNeedle) {
       $needle = $simulationNeedle->Needle;
-      $needleIx = $needle->Id;
+      $needleIx = $simulationNeedle->Id;
 
       $needleNode = new DOMElement("needle");
       $needlesNode->appendChild($needleNode);

@@ -69,7 +69,6 @@ class Needle extends Paramable {
   {
     return self::whereName($this->Name)
       ->whereManufacturer($this->Manufacturer)
-      ->whereClass($this->Class)
       ->first();
   }
 }

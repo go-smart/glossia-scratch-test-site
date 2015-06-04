@@ -38,7 +38,13 @@ abstract class UuidModel extends Eloquent {
   }
 
   public function getIdAttribute($id) {
-    return substr($id, 0, 36);
+    if ($id)
+      return substr($id, 0, 36);
+
+    if (strtolower($this->primaryKey) != 'id')
+      return $this->{$this->primaryKey};
+
+    return $id;
   }
 
   public function generateUuid() {
