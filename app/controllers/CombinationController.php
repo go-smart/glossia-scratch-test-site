@@ -11,7 +11,7 @@ class CombinationController extends \BaseController {
 	 */
 	public function index()
 	{
-    $combinations = Combination::with('PowerGenerator', 'Protocol');
+    $combinations = Combination::with('PowerGenerator');
 
     if (Input::has('Needle_Id'))
     {
