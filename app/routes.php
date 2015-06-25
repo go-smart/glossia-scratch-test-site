@@ -48,3 +48,9 @@ Route::resource('simulation', 'SimulationController');
 Route::get('numerical_model/parameters', 'NumericalModelController@parameters');
 Route::get('numerical_model/arguments', 'NumericalModelController@arguments');
 Route::resource('numerical_model', 'NumericalModelController');
+
+/* Developer corner mock */
+Route::get('developer', ['as' => 'developer.start', function ()
+  {
+    return View::make('developer.start');
+  }]);

@@ -127,7 +127,9 @@ class Simulation extends UuidModel {
     $simulation = "<span class='parameter' title='" . htmlentities($this->asString) . "'>" . $this->Caption . "</span>";
     if ($this->Patient_Id)
     {
-      $patient = DB::table('ItemSet_Patient')->whereId($this->Patient_Id)->first();
+      if (!$this->cachedPatient)
+        $this->cachedPatient = DB::table('ItemSet_Patient')->whereId($this->Patient_Id)->remember(1)->first();
+      $patient = $this->cachedPatient;
       $simulation .= "</br><span class='parameter' title='" . htmlentities($this->Caption) . "'>" . htmlentities($patient->Description) . "</span> [<span class='parameter'>" . $patient->Alias . "</span>]";
     }
 

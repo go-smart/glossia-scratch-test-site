@@ -89,6 +89,11 @@
   background-color: #cfc;
 }
 
+.simulations-table table {
+  border: none;
+  border-collapse: collapse;
+}
+
 .simulations-table tbody tr:nth-child(odd) {
   background-color: #ccf;
 }
@@ -154,3 +159,14 @@
 .modality-RFA {
   background-color: red;
 }
+
+a[name=start], a[name=duplicate], a[name=pick] {
+  text-decoration: none;
+}
+
+.disabled {
+  text-decoration: none;
+  opacity: 50%;
+  cursor: none;
+}
+

@@ -14,6 +14,8 @@ Simulation
     Timestep Sizes = Real 1
     Anode($CONSTANT_IRE_SEQUENCE_COUNT ) = $CONSTANT_IRE_ANODE_SEQUENCE:array(int)
     Cathode($CONSTANT_IRE_SEQUENCE_COUNT ) = $CONSTANT_IRE_CATHODE_SEQUENCE:array(int)
+    Potential Consecutive Values(2, $CONSTANT_IRE_SEQUENCE_COUNT ) = $CONSTANT_IRE_POTENTIAL_DIFFERENCES
+                                              0    0    0    0    0    0    0    0    0
 End
 
 !Needle 1
@@ -82,20 +84,20 @@ End
 
 !Organ
 Body 9
-  Target Bodies(1) = Integer $REGION_TISSUE
+  $BODIES_REGIONS_ORGAN
     Equation = Integer 1
     Initial Condition = Integer 1
     Material = Integer 1
 End
 
 !Background
-!Body 10
-!  $BODIES_REGIONS_BACKGROUND
-!    Target Bodies = Integer 12
-!    Equation = Integer 1
-!    Initial Condition = Integer 1
-!    Material = Integer 4
-!End
+Body 10
+  $BODIES_REGIONS_BACKGROUND
+    Target Bodies = Integer 12
+    Equation = Integer 1
+    Initial Condition = Integer 1
+    Material = Integer 4
+End
 
 Equation 1
     Active Solvers(5) = 1 2 3 4 5
@@ -113,10 +115,10 @@ Solver 2
     Procedure = File "StatCurrentSolve" "StatCurrentSolver"
     Calculate Joule Heating = Logical True
     Linear System Solver = "Iterative"
-    Linear System Convergence Tolerance = Real 1e-06
+    Linear System Convergence Tolerance = Real 1e-05
     Linear System Preconditioning = ILU0
     Linear System Iterative Method = "BiCGStab"
-    Linear System Max Iterations = Integer 1000
+    Linear System Max Iterations = Integer 2000
 End
 
 Solver 3
@@ -206,44 +208,59 @@ End
 Boundary Condition 1
     $BOUNDARIES_REGIONS_NEEDLE_1
     Body Id = 1
+    Potential = Variable Time
+        Real Procedure "libnuma-ire" "AlternatingBoundaryCondition"
+    Alternating Boundary Condition = Logical True
 End
 
 Boundary Condition 2
     $BOUNDARIES_REGIONS_NEEDLE_2
     Body Id = 2
+    Potential = Variable Time
+        Real Procedure "libnuma-ire" "AlternatingBoundaryCondition"
+    Alternating Boundary Condition = Logical True
 End
 
 Boundary Condition 3
     $BOUNDARIES_REGIONS_NEEDLE_3
     Body Id = 3
+    Potential = Variable Time
+        Real Procedure "libnuma-ire" "AlternatingBoundaryCondition"
+    Alternating Boundary Condition = Logical True
 End
 
 Boundary Condition 4
     $BOUNDARIES_REGIONS_NEEDLE_4
     Body Id = 4
+    Potential = Variable Time
+        Real Procedure "libnuma-ire" "AlternatingBoundaryCondition"
+    Alternating Boundary Condition = Logical True
 End
 
 Boundary Condition 5
     $BOUNDARIES_REGIONS_NEEDLE_5
     Body Id = 5
+    Potential = Variable Time
+        Real Procedure "libnuma-ire" "AlternatingBoundaryCondition"
+    Alternating Boundary Condition = Logical True
 End
 
 Boundary Condition 6
     $BOUNDARIES_REGIONS_NEEDLE_6
     Body Id = 6
+    Potential = Variable Time
+        Real Procedure "libnuma-ire" "AlternatingBoundaryCondition"
+    Alternating Boundary Condition = Logical True
 End
 
 Boundary Condition 7
-    Potential = Variable Time
-    Real Procedure "libnuma-ire" "AlternatingBoundaryCondition"
-    Alternating Boundary Condition = Logical True
-    Current Density BC = Logical False
-    Potential Consecutive Values(2, $CONSTANT_IRE_SEQUENCE_COUNT ) = $CONSTANT_IRE_POTENTIAL_DIFFERENCES
-                                              0    0    0    0    0    0    0    0    0
+    $BOUNDARIES_REGIONS_NO_FLUX
+    Current Density = Real 0.0
+    Current Density BC = Logical True
 End
 
 Boundary Condition 8
-    $REGIONS_NO_FLUX
+    $BOUNDARIES_REGIONS_NEEDLES_INACTIVE
     Current Density = Real 0.0
     Current Density BC = Logical True
 End

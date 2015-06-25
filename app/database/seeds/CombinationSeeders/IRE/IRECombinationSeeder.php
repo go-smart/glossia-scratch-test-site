@@ -54,8 +54,10 @@ class IRECombinationSeeder extends Seeder {
     $model['numa sif']->attribute(['Name' => 'SETTING_LESION_FIELD', 'Type' => 'string', 'Value' => 'max_e', 'Widget' => 'textbox']);
     $model['numa sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_UPPER', 'Type' => 'float', 'Value' => 'null', 'Widget' => 'textbox']);
     $model['numa sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_LOWER', 'Type' => 'float', 'Value' => '80000', 'Widget' => 'textbox']);
-    $model['numa sif']->attribute(['Name' => 'RESOLUTION_FIELD_NEEDLE_ZONE', 'Type' => 'float', 'Value' => '0.6', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'RESOLUTION_FIELD_NEEDLE_ZONE', 'Type' => 'float', 'Value' => '0.3', 'Widget' => 'textbox']);
     $model['numa sif']->attribute(['Name' => 'CENTRE_LOCATION', 'Type' => 'string', 'Value' => 'centroid-of-tips', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'SETTING_ORGAN_AS_SUBDOMAIN', 'Type' => 'boolean', 'Value' => 'true', 'Widget' => 'checkbox']);
+    $model['numa sif']->attribute(['Name' => 'SETTING_ORGAN_AS_SURFACE', 'Type' => 'boolean', 'Value' => 'true', 'Widget' => 'checkbox']);
     $model['numa sif']->placeholder('CONSTANT_IRE_ANODE_SEQUENCE', null, 'array(int)');
     $model['numa sif']->placeholder('CONSTANT_IRE_CATHODE_SEQUENCE', null, 'array(int)');
     $model['numa sif']->placeholder('CONSTANT_IRE_POTENTIAL_DIFFERENCES', null, 'array(float)');

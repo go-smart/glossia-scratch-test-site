@@ -1,5 +1,6 @@
 var session = null;
 var statuses = {};
+var chosenSimulations = [];
 
 function showAjaxError(jqXHR) {
   showError(id, jqXHR.data.msg);
@@ -22,7 +23,7 @@ connection.onopen = function (newSession, details) {
 connection.onclose = function (reason, details) {
 };
 
-function setProgress(tr, percentage=null)
+function setProgress(tr, percentage)
 {
   if (!isNaN(parseFloat(percentage)))
   {
@@ -99,6 +100,27 @@ function showProperties(id, res) {
   }
 }
 
+function pickSimulation(id) {
+  var index = chosenSimulations.indexOf(id);
+  var simulation = $('#' + id);
+  if (simulation.length == 0)
+    return;
+
+  if (index > -1) {
+    chosenSimulations.splice(index, 1);
+    simulation.css('background-color', 'inherit');
+  }
+  else {
+    chosenSimulations.push(id);
+    simulation.css('background-color', '#a66');
+  }
+
+  if (chosenSimulations.length == 2)
+    $('#diffLink').removeClass('disabled')
+  else
+    $('#diffLink').addClass('disabled')
+}
+
 function showMessage(id, res) {
   var simulation = $('#' + id);
   if (simulation.length == 0)
@@ -135,6 +157,28 @@ function duplicateSimulation(id) {
   {
     console.error('No WAMP session available for simulation server connection');
   }
+}
+
+function diffSimulations(idThis, idThat) {
+  var xmlThisLink = $('#' + idThis + ' a[name=xml-link]').attr('href');
+  var xmlThatLink = $('#' + idThat + ' a[name=xml-link]').attr('href');
+
+  $.when(
+      $.get(xmlThisLink),
+      $.get(xmlThatLink)
+  ).done(function (responseThis, responseThat) {
+    var xmlThis = (new XMLSerializer()).serializeToString(responseThis[0]);
+    var xmlThat = (new XMLSerializer()).serializeToString(responseThat[0]);
+    session.call('com.gosmartsimulation.compare', [xmlThis, xmlThat]).then(function (difflines) {
+      var w = window.open();
+      var body = $(w.document.body);
+      var pre = $("<pre></pre>");
+      pre.appendTo(body);
+      for (line in difflines) {
+        pre.append(difflines[line] + "\n");
+      }
+    });
+  });
 }
 
 function startSimulation(id) {
@@ -223,7 +267,9 @@ function regenerateBoard() {
       var tr = clinicianTable.find('#' + Id);
       tr.append('<td name="simulation-server-status"><a href="#" name="start">&#9658;</a></td>');
 
-      tools = '<a href="' + duplicateLink(Id) + '" title="Duplicate" name="duplicate">&#9842;</a>'
+      tools =
+          '<a href="' + duplicateLink(Id) + '" title="Duplicate" name="duplicate">&#9842;</a>'
+          + '<a href="#" title="Pick" name="pick">&#9935;</a>'
           + '<a href="' + rebuildLink(Id) + '" title="Rebuild" name="rebuild">&#x1f3ed;</a>';
 
       if (simulation.hasSegmentedLesion)
@@ -250,6 +296,8 @@ function regenerateBoard() {
       tr.append('<td name="simulation-server-progress"><span name="progress-number"></span><div name="progress-bar"></div></td>');
       tr.append('<td id="simulation-' + Id + '-parameter" class="combination-parameters"></td>');
       tr.append('<td name="simulation-server-message"></td>');
+      tr.find('a[name=pick]').unbind("click");
+      tr.find('a[name=pick]').bind("click", handlePick);
       tr.find('a[name=start]').unbind("click");
       tr.find('a[name=start]').bind("click", handleStart);
       tr.find('a[name=rebuild]').unbind("click");
@@ -337,13 +385,28 @@ function handleDuplicate(e) {
   duplicateSimulation(simulation);
 }
 
+function handlePick(e) {
+  e.preventDefault();
+  var simulation = $(e.target).closest('tr').attr('id');
+  pickSimulation(simulation);
+}
+
 function handleStart(e) {
   e.preventDefault();
   var simulation = $(e.target).closest('tr').attr('id');
   startSimulation(simulation);
 }
 
+function handleDiff(e) {
+  e.preventDefault();
+  if (chosenSimulations.length == 2)
+    diffSimulations(chosenSimulations[0], chosenSimulations[1]);
+  else
+    alert("Must pick exactly two simulations");
+}
+
 $(function () {
   connection.open();
+  $('#diffLink').click(handleDiff);
   regenerateBoard();
 });
