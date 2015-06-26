@@ -86,6 +86,8 @@ class SimulationController extends \BaseController {
       $simulation->Parameters()->attach($parameter, ['ValueSet' => $parameter->pivot->ValueSet]);
     });
 
+    DB::table('ItemSet')->insert(['CreationDate' => date('Y-m-d H:i:s'), 'IsDeleted' => false, 'Id' => $simulation->Id]);
+
     if (Response::json())
       return $simulation;
 
@@ -120,6 +122,8 @@ class SimulationController extends \BaseController {
         }
       }
     });
+
+    DB::table('ItemSet')->where('Id', '=', $simulation->Id)->update(['CreationDate' => date('Y-m-d H:i:s')]);
 
     return Response::json(["msg" => "Simulation rebuilt"], 200);
 	}

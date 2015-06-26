@@ -39,7 +39,7 @@ function setProgress(tr, percentage)
 }
 
 function onFail(args) {
-  statuses[args[0]] = ['fail', null];
+  statuses[args[0]] = ['fail', args[1]];
   showError(args[0], args[1]);
 }
 
@@ -66,7 +66,8 @@ function showError(id, res) {
 
   simulation.find('td[name=simulation-server-status] a').css('visibility', 'visible');
   simulation.find('td[name=simulation-server-status]').css('background-color', 'red');
-  simulation.find('td[name=simulation-server-message]').html(res);
+  if (res)
+    simulation.find('td[name=simulation-server-message]').html('[' + res.id + ':' + res.code + '] ' + res.message);
   setProgress(simulation);
 }
 
@@ -353,17 +354,18 @@ function onAnnounce(args) {
 
   if (args[1])
   {
-    if (args[1][0] >= 100 - 1e-5)
+    stat = args[1][1];
+    if (stat.code == 'SUCCESS')
     {
       onComplete([args[0]]);
     }
-    else if (!args[1][0])
+    else if (stat.code == 'IN_PROGRESS')
     {
-      onFail([args[0], args[1][1]]);
+      onStatus([args[0], args[1][0], stat.message]);
     }
     else
     {
-      onStatus([args[0], args[1][0], args[1][1]]);
+      onFail([args[0], stat]);
     }
   }
 
