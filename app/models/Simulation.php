@@ -30,12 +30,18 @@ class Simulation extends UuidModel {
 
   protected $table = "Simulation";
 
+  protected $cachedAsString = false;
+
   protected $appends = ['asHtml', 'asString', 'clinician', 'hasSegmentedLesion', 'modality', 'isDeleted', 'creationDate'];
 
   protected static $updateByDefault = false;
 
   public function getModalityAttribute() {
-    return $this->Combination->Power_Generator->Modality;
+    return $this->Combination->PowerGenerator->Modality;
+  }
+
+  public function getCombinationIdAttribute($id) {
+      return substr($id, 0, 36);
   }
 
   public function Combination() {
@@ -119,7 +125,11 @@ class Simulation extends UuidModel {
 
   public function getAsStringAttribute()
   {
-    return $this->Combination->asString . ' (' . $this->Id . ')';
+    if (!$this->cachedAsString)
+    {
+      $this->cachedAsString = $this->Combination->asString . ' (' . $this->Id . ')';
+    }
+    return $this->cachedAsString;
   }
 
   public function getAsHtmlAttribute()

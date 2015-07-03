@@ -91,6 +91,18 @@ class Combination extends UuidModel {
       ' - ' . $this->Context->Name;
   }
 
+  public function getProtocolIdAttribute($id) {
+      return substr($id, 0, 36);
+  }
+
+  public function getPowerGeneratorIdAttribute($id) {
+      return substr($id, 0, 36);
+  }
+
+  public function getNumericalModelIdAttribute($id) {
+      return substr($id, 0, 36);
+  }
+
   /**
    * Find the value for a given parameter name based on the parameter
    * aggregation logic of this Combination. Caches results, but not

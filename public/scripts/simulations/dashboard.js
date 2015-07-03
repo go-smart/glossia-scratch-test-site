@@ -1,6 +1,8 @@
 var session = null;
 var statuses = {};
 var chosenSimulations = [];
+var servers = {};
+var simulationToServer = {};
 
 function showAjaxError(jqXHR) {
   showError(id, jqXHR.data.msg);
@@ -14,10 +16,12 @@ var connection = new autobahn.Connection({
 connection.onopen = function (newSession, details) {
   session = newSession;
   session.subscribe('com.gosmartsimulation.announce', onAnnounce)
+  session.subscribe('com.gosmartsimulation.identify', onIdentify)
   session.subscribe('com.gosmartsimulation.status', onStatus)
   session.publish('com.gosmartsimulation.request_announce', [])
   session.subscribe('com.gosmartsimulation.complete', onComplete)
   session.subscribe('com.gosmartsimulation.fail', onFail)
+  requestIdentify();
 };
 
 connection.onclose = function (reason, details) {
@@ -38,14 +42,29 @@ function setProgress(tr, percentage)
   }
 }
 
+function freestServer()
+{
+  var maxScore = null, maxServer = null;
+  for (server in servers)
+    if (maxServer === null || servers[server].score > maxScore)
+    {
+      maxServer = server;
+      maxScore = servers[server].score;
+    }
+
+  return maxServer;
+}
+
 function onFail(args) {
   statuses[args[0]] = ['fail', args[1]];
   showError(args[0], args[1]);
+  requestIdentify();
 }
 
 function onComplete(args) {
   statuses[args[0]] = ['complete', null];
   showComplete(args[0]);
+  requestIdentify();
 }
 
 function showComplete(id) {
@@ -170,7 +189,8 @@ function diffSimulations(idThis, idThat) {
   ).done(function (responseThis, responseThat) {
     var xmlThis = (new XMLSerializer()).serializeToString(responseThis[0]);
     var xmlThat = (new XMLSerializer()).serializeToString(responseThat[0]);
-    session.call('com.gosmartsimulation.compare', [xmlThis, xmlThat]).then(function (difflines) {
+    var s = freestServer();
+    session.call('com.gosmartsimulation.' + s + '.compare', [xmlThis, xmlThat]).then(function (difflines) {
       var w = window.open();
       var body = $(w.document.body);
       var pre = $("<pre></pre>");
@@ -191,16 +211,17 @@ function startSimulation(id) {
 
     showDatabaseRequest(id, 'Retrieving XML');
     $.get(xmlLink, [], function (xml) {
-      session.call('com.gosmartsimulation.init', [id]).then(function (res) {
+      var s = freestServer();
+      session.call('com.gosmartsimulation.' + s + '.init', [id]).then(function (res) {
         showMessage(id, "Initiated");
         var xmlString = (new XMLSerializer()).serializeToString(xml);
-        session.call('com.gosmartsimulation.update_settings_xml', [id, xmlString]).then(function (res) {
+        session.call('com.gosmartsimulation.' + s + '.update_settings_xml', [id, xmlString]).then(function (res) {
           showMessage(id, "XML set");
-          session.call('com.gosmartsimulation.finalize', [id, '.']).then(function (res) {
+          session.call('com.gosmartsimulation.' + s + '.finalize', [id, '.']).then(function (res) {
             showMessage(id, "Settings finalized");
-            session.call('com.gosmartsimulation.start', [id]).then(function (res) {
+            session.call('com.gosmartsimulation.' + s + '.start', [id]).then(function (res) {
               showMessage(id, "Started...");
-              session.call('com.gosmartsimulation.properties', [id]).then(function (res) {
+              session.call('com.gosmartsimulation.' + s + '.properties', [id]).then(function (res) {
                 showProperties(id, res);
               }, sE);
             }, sE); }, sE); }, sE); }, sE);
@@ -342,6 +363,29 @@ function showStatus(id, percentage, statusMessage) {
   }
 }
 
+function requestIdentify() {
+  session.publish('com.gosmartsimulation.request_identify', [])
+}
+
+function updateServers() {
+  var tbody = $('#servers-table');
+  tbody.empty();
+  for (server in servers)
+  {
+    var score = servers[server].score;
+    var hostname = servers[server].host;
+    tbody.append('<tr><td>' + server + '</td><td>' + hostname + '</td><td>' + score + '</td></tr>');
+  }
+}
+
+function onIdentify(args) {
+  var serverId = args[0];
+  var hostname = args[1];
+  var score = args[2];
+  servers[serverId] = {id: serverId, host: hostname, score: score};
+  updateServers();
+}
+
 function onAnnounce(args) {
   var tr;
 
@@ -350,22 +394,24 @@ function onAnnounce(args) {
   //  simulations[args[0]] = {"Id": args[0], "asHtml": "[-- Unknown --]", "asString": "", "interactive": false};
   //}
 
-  tr = $('#' + args[0]);
+  serverId = args[0];
+  tr = $('#' + args[1]);
+  simulationToServer[args[1]] = serverId;
 
-  if (args[1])
+  if (args[2])
   {
-    stat = args[1][1];
+    stat = args[2][1];
     if (stat.code == 'SUCCESS')
     {
-      onComplete([args[0]]);
+      onComplete([args[1]]);
     }
     else if (stat.code == 'IN_PROGRESS')
     {
-      onStatus([args[0], args[1][0], stat.message]);
+      onStatus([args[1], args[2][0], stat.message]);
     }
     else
     {
-      onFail([args[0], stat]);
+      onFail([args[1], stat]);
     }
   }
 

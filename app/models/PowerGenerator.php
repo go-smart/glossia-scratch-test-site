@@ -56,6 +56,10 @@ class PowerGenerator extends Paramable {
     return $this->belongsTo('Modality', 'Modality_Id');
   }
 
+  public function getModalityIdAttribute($id) {
+    return substr($id, 0, 36);
+  }
+
   public function Combinations() {
     return $this->hasMany('Combination', 'Power_Generator_Id');
   }

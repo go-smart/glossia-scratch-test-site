@@ -13,6 +13,16 @@
 <table>
   <thead>
     <tr>
+      <th>Servers Connected</th>
+    </tr>
+  </thead>
+  <tbody id='server-dashboard-table-body'>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
       <th>Simulations Running</th>
     </tr>
   </thead>

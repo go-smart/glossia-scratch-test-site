@@ -44,6 +44,19 @@ function updateParameters()
 </script>
 <input id='parameter-request'/>
 <input type='button' value='Show Parameters' onClick='updateParameters()' />
+
+<h2>Servers Connected</h2>
+
+<table>
+<thead>
+  <tr><td>ID</td><td>Hostname</td><td>Score</td></tr>
+</thead>
+<tbody id='servers-table'>
+</tbody>
+</table>
+
+<h2>Simulations</h2>
+
 <table class='simulations-table'>
 </table>
 

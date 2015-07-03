@@ -14,7 +14,12 @@ class SimulationController extends \BaseController {
 	public function index()
 	{
     $backups = array_filter(scandir(public_path() . '/backups'), function ($d) { return $d[0] != '.'; });
-    $simulations = Simulation::all();
+    $simulations = Simulation::with([
+      'Combination.NumericalModel',
+      'Combination.Protocol',
+      'Combination.PowerGenerator',
+      'Combination.PowerGenerator.Modality'
+    ])->get();
 
 		return View::make('simulations.index', compact('simulations', 'backups'));
 	}
