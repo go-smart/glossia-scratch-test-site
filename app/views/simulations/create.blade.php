@@ -5,7 +5,7 @@
 @stop
 
 @section('content')
-
+asdf
 <h1>Create Simulation</h1>
 
 {{ Form::open(array('route' => 'simulation.store')) }}

@@ -70,7 +70,7 @@ End
 !====================================================================
 Body 1
 !====================================================================
-  $REGIONS_TISSUES
+  $BODIES_REGIONS_ORGANS
 
   Name = "Tissue & Blood"
   Equation = Integer 1
@@ -117,7 +117,7 @@ End
 !====================================================================
 Body 5
 !====================================================================
-  $REGIONS_TUMOURS
+  $BODIES_REGIONS_TUMOURS
   Name = "Tumour"
   Equation = Integer 1
   Initial condition = Integer 1

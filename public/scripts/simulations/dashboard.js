@@ -56,14 +56,22 @@ function freestServer()
 }
 
 function onFail(args) {
-  statuses[args[0]] = ['fail', args[1]];
-  showError(args[0], args[1]);
+  var id = args[0];
+  if (!(id in statuses))
+    statuses[id] = [];
+
+  statuses[id].push(['fail', args[1], args[2]]);
+  reshowStatus(id);
   requestIdentify();
 }
 
 function onComplete(args) {
-  statuses[args[0]] = ['complete', null];
-  showComplete(args[0]);
+  var id = args[0];
+  if (!(id in statuses))
+    statuses[id] = [];
+
+  statuses[id].push(['complete', args[1], args[2]]);
+  reshowStatus(id);
   requestIdentify();
 }
 
@@ -74,7 +82,7 @@ function showComplete(id) {
 
   simulation.find('td[name=simulation-server-status] a').css('visibility', 'visible');
   simulation.find('td[name=simulation-server-status]').css('background-color', 'green');
-  simulation.find('td[name=simulation-server-message]').html("Success");
+  simulation.find('div[name=simulation-server-message]').html("Success");
   setProgress(simulation);
 }
 
@@ -86,7 +94,7 @@ function showError(id, res) {
   simulation.find('td[name=simulation-server-status] a').css('visibility', 'visible');
   simulation.find('td[name=simulation-server-status]').css('background-color', 'red');
   if (res)
-    simulation.find('td[name=simulation-server-message]').html('[' + res.id + ':' + res.code + '] ' + res.message);
+    simulation.find('div[name=simulation-server-message]').html('[' + res.id + ':' + res.code + '] ' + res.message);
   setProgress(simulation);
 }
 
@@ -97,7 +105,7 @@ function showDatabaseRequest(id, res) {
 
   simulation.find('td[name=simulation-server-status] a').css('visibility', 'hidden');
   simulation.find('td[name=simulation-server-status]').css('background-color', 'brown');
-  simulation.find('td[name=simulation-server-message]').html(res);
+  simulation.find('div[name=simulation-server-message]').html(res);
   setProgress(simulation);
 }
 
@@ -108,13 +116,13 @@ function showProperties(id, res) {
 
   if (res.location)
   {
-    simulation.find('td[name=simulation-server-message]').prop('title', res.location);
+    simulation.find('div[name=simulation-server-message]').prop('title', res.location);
     simulation.find('span[name=location]').html(res.location);
     simulation.find('.location').css('visibility', 'visible');
   }
   else
   {
-    simulation.find('td[name=simulation-server-message]').prop('title', '');
+    simulation.find('div[name=simulation-server-message]').prop('title', '');
     simulation.find('span[name=location]').html('');
     simulation.find('.location').css('visibility', 'hidden');
   }
@@ -148,7 +156,7 @@ function showMessage(id, res) {
 
   simulation.find('td[name=simulation-server-status] a').css('visibility', 'hidden');
   simulation.find('td[name=simulation-server-status]').css('background-color', 'yellow');
-  simulation.find('td[name=simulation-server-message]').html(res);
+  simulation.find('div[name=simulation-server-message]').html(res);
   setProgress(simulation);
 }
 
@@ -213,6 +221,7 @@ function startSimulation(id) {
     $.get(xmlLink, [], function (xml) {
       var s = freestServer();
       session.call('com.gosmartsimulation.' + s + '.init', [id]).then(function (res) {
+        statuses[id] = [];
         showMessage(id, "Initiated");
         var xmlString = (new XMLSerializer()).serializeToString(xml);
         session.call('com.gosmartsimulation.' + s + '.update_settings_xml', [id, xmlString]).then(function (res) {
@@ -317,7 +326,7 @@ function regenerateBoard() {
       }
       tr.append('<td name="simulation-server-progress"><span name="progress-number"></span><div name="progress-bar"></div></td>');
       tr.append('<td id="simulation-' + Id + '-parameter" class="combination-parameters"></td>');
-      tr.append('<td name="simulation-server-message"></td>');
+      tr.append('<td name="simulation-server-details"><div name="simulation-server-timing"></div><br/><div name="simulation-server-message"></div></td>');
       tr.find('a[name=pick]').unbind("click");
       tr.find('a[name=pick]').bind("click", handlePick);
       tr.find('a[name=start]').unbind("click");
@@ -336,29 +345,54 @@ function reshowStatus(id)
   if (!(id in statuses))
     return;
 
-  var condition = statuses[id][0];
-  var detail = statuses[id][1];
+  var latestStatus = statuses[id][statuses[id].length - 1];
+  var condition = latestStatus[0];
+  var detail = latestStatus[1];
+  var timestamp = latestStatus[2];
   if (condition == 'complete')
     showComplete(id);
   else if (condition == 'fail')
     showError(id, detail);
   else if (condition == 'status')
     showStatus(id, detail[0], detail[1]);
+
+  if (timestamp !== undefined)
+  {
+    var date = new Date(timestamp * 1000);
+    var date_string = "";
+    if (statuses[id].length > 1)
+    {
+      var firstStatus = statuses[id][0];
+      if (firstStatus[2] !== undefined)
+      {
+        var firstDate = new Date(firstStatus[2] * 1000);
+        date_string += firstDate.toUTCString() + ' -> ';
+      }
+    }
+    date_string += date.toUTCString();
+    var tr = $('#' + id);
+    tr.find('div[name=simulation-server-timing]').html(date_string);
+  }
 }
 
 function onStatus(args) {
   var id = args[0];
   var percentage = args[1];
   var statusMessage = args[2];
-  statuses[id] = ['status', [percentage, statusMessage]];
-  showStatus(id, percentage, statusMessage);
+  var timestamp = args[3];
+
+  if (!(id in statuses))
+    statuses[id] = [];
+
+  statuses[id].push(['status', [percentage, statusMessage], timestamp]);
+  reshowStatus(id);
 }
 
 function showStatus(id, percentage, statusMessage) {
   var tr = $('#' + id);
   if (tr.length > 0)
   {
-    tr.find('td[name=simulation-server-message]').html(statusMessage);
+    tr.find('div[name=simulation-server-message]').html(statusMessage);
     setProgress(tr, percentage);
   }
 }

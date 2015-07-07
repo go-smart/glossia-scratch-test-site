@@ -1,7 +1,6 @@
 @extends('master')
 
 @section('content')
-<?php phpinfo(); ?>
 
 {{ Form::open() }}
 <h1>Name: {{ Form::text('name') }}</h1>
@@ -14,7 +13,8 @@
 </ul>
 <p>Regions:</p>
 <ul>
-  <li>{{ Form::select('region-new', ['region1' => 'REPLACE ME']) }} Minimum: {{ Form::text('region-new-min', null) }} Maximum: {{ Form::text('region-new-max', null) }}</p>
+  <li>{{ Form::select('region-new', $regions->lists('Description', 'Id')) }}<br/>
+      Minimum: {{ Form::text('region-new-min', null) }} Maximum: {{ Form::text('region-new-max', null) }} {{ Form::button('Add region') }}</p>
 </ul>
 
 <div style='width: 40%'>

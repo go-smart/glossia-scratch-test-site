@@ -100,4 +100,8 @@ class Region extends UuidModel {
       );
     return $this;
   }
+
+  public function getDescriptionAttribute() {
+    return ucwords($this->Name) . ' (' . implode(', ', array_map(function ($s) { return SegmentationTypeEnum::get($s); }, $this->SegmentationTypes)) . ')';
+  }
 }

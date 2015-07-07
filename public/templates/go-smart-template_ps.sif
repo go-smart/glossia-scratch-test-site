@@ -82,7 +82,7 @@ End
 !====================================================================
 Body 1
 !====================================================================
-  $REGIONS_TISSUES
+  $BODIES_REGIONS_ORGANS
   Name = "Tissue & Blood"
   Equation = Integer 1
   Body Force = Integer 1
@@ -95,7 +95,7 @@ End
 !====================================================================
 Body 2
 !====================================================================
-  $REGIONS_TUMOURS
+  $BODIES_REGIONS_TUMOURS
 
   Name = "Tumour"
   Equation = Integer 1
@@ -271,7 +271,7 @@ End
 !====================================================================
 Boundary Condition 1 !Organ wall + sphere
 !====================================================================
-  $REGIONS_BOUNDARY
+  $BOUNDARIES_REGIONS_BOUNDARY
   Temperature = $CONSTANT_BODY_TEMPERATURE:float
 !====================================================================
 End
@@ -284,7 +284,7 @@ Boundary Condition 2 ! Output vessel (Hepatic vein)
   !--------------------------------------------------------------------
   ! Boundary index(es):
   !--------------------------------------------------------------------
-  $REGIONS_VEINS
+  $BOUNDARIES_REGIONS_VEINS
   !--------------------------------------------------------------------
   ! Convective BC on temperature:
   !--------------------------------------------------------------------
@@ -308,7 +308,7 @@ Boundary Condition 3 ! Input vessel (Portal vein + HA)
   !--------------------------------------------------------------------
   ! Boundary index(es):
   !--------------------------------------------------------------------
-  $REGIONS_ARTERIES
+  $BOUNDARIES_REGIONS_ARTERIES
   !--------------------------------------------------------------------
   ! Dirichlet BC on blood and tissue temperatures (K):
   !--------------------------------------------------------------------
@@ -320,10 +320,32 @@ End
 !====================================================================
 Boundary Condition 4 !Bronchi
 !====================================================================
-  $REGIONS_BRONCHI
+  $BOUNDARIES_REGIONS_BRONCHI
   Heat Flux BC = Logical True
   Flow Pressure = Real -0.00000000
   Heat Transfer Coefficient = $CONSTANT_BRONCHI_HEAT_TRANSFER_COEFFICIENT:float
+  External Temperature = $CONSTANT_BODY_TEMPERATURE:float
+!====================================================================
+End
+!====================================================================
+
+!====================================================================
+Boundary Condition 3 ! Input vessel (Portal vein + HA)
+!====================================================================
+
+  !--------------------------------------------------------------------
+  ! Boundary index(es):
+  !--------------------------------------------------------------------
+  $BOUNDARIES_REGIONS_VESSELS
+  !--------------------------------------------------------------------
+  Heat Flux BC = Logical True
+  !--------------------------------------------------------------------
+  ! Convective transfer coefficient (kg.s^-3.K^-1):
+  !--------------------------------------------------------------------
+  Heat Transfer Coefficient = $CONSTANT_VENOUS_HEAT_TRANSFER_COEFFICIENT:float
+  !--------------------------------------------------------------------
+  ! External temperature (K):
+  !--------------------------------------------------------------------
   External Temperature = $CONSTANT_BODY_TEMPERATURE:float
 !====================================================================
 End

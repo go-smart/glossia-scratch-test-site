@@ -84,7 +84,7 @@ End
 
 !Organ
 Body 9
-  $BODIES_REGIONS_ORGAN
+  $BODIES_REGIONS_ORGANS
     Equation = Integer 1
     Initial Condition = Integer 1
     Material = Integer 1

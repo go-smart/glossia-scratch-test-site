@@ -35,7 +35,7 @@ class RegionSeeder extends Seeder {
   {
     Eloquent::unguard();
 
-    Region::create(['Name' => 'organ', 'Format' => 'surface', 'Groups' => '["boundary", "no-flux", "tissues", "organs"]', 'Segmentation' => ''])
+    Region::create(['Name' => 'organ', 'Format' => 'zone', 'Groups' => '["boundary", "no-flux", "tissues", "organs"]', 'Segmentation' => ''])
       ->addSegmentationType(SegmentationTypeEnum::Liver)
       ->addSegmentationType(SegmentationTypeEnum::Lung)
       ->addSegmentationType(SegmentationTypeEnum::Kidney)

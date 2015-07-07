@@ -102,8 +102,13 @@
   background-color: #ccc;
 }
 
-.simulations-table td[name=simulation-server-message] {
+.simulations-table td[name=simulation-server-details] {
   width: 300px;
+}
+
+.simulations-table div[name=simulation-server-timing] {
+  color: gray;
+  font-size: xx-small;
 }
 
 .simulations-table td[name=simulation-server-progress] {
@@ -148,16 +153,20 @@
 }
 
 .modality-Cryoablation {
-  background-color: blue;
+  background: linear-gradient(to bottom, blue 0%,#000055 44%,blue 100%);
+  /*background-color: blue;*/
 }
 .modality-MWA {
-  background-color: green;
+  background: linear-gradient(to bottom, green 0%,#005500 44%,green 100%);
+  /*background-color: green;*/
 }
 .modality-IRE {
-  background-color: purple;
+  background: linear-gradient(to bottom, purple 0%,magenta 44%,purple 100%);
+  /*background-color: purple;*/
 }
 .modality-RFA {
-  background-color: red;
+  background: linear-gradient(to bottom, red 0%,#550000 44%,red 100%);
+  /*background-color: red;*/
 }
 
 a[name=start], a[name=duplicate], a[name=pick] {
@@ -169,4 +178,5 @@ a[name=start], a[name=duplicate], a[name=pick] {
   opacity: 50%;
   cursor: none;
 }
+
 

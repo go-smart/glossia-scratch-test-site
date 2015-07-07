@@ -81,7 +81,9 @@ class NumericalModelController extends \BaseController {
 	 */
 	public function create()
 	{
-		return View::make('numerical_models.create');
+    $regions = Region::all();
+
+		return View::make('numerical_models.create', ['regions' => $regions]);
 	}
 
 

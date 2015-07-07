@@ -442,7 +442,7 @@ End
 !====================================================================
 Boundary Condition 5
 !====================================================================
-    $REGIONS_BOUNDARY
+    $BOUNDARIES_REGIONS_BOUNDARY
     Temperature = $CONSTANT_BODY_TEMPERATURE:float
 !====================================================================
 End
