@@ -32,10 +32,22 @@
     <constant name="coagulation minimum deposition (tissue)" value="0.0" units="." />
     <constant name="coagulation gradient (tissue)" value="0.0" units="." />
     <constant name="vapourization cut off (tumour)" value="383" units="K" />
+    <constant name="vapourization cut off (lesion)" value="383" units="K" />
+    <constant name="vapourization cut off (TACE)" value="383" units="K" />
     <constant name="vapourization minimum deposition (tumour)" value="0.0" units="." />
+    <constant name="vapourization minimum deposition (lesion)" value="0.0" units="." />
+    <constant name="vapourization minimum deposition (TACE)" value="0.0" units="." />
     <constant name="vapourization gradient (tumour)" value="0.01" units="." />
+    <constant name="vapourization gradient (lesion)" value="0.01" units="." />
+    <constant name="vapourization gradient (TACE)" value="0.01" units="." />
     <constant name="coagulation cut off (tumour)" value="0.9" units="K" />
+    <constant name="coagulation cut off (lesion)" value="0.9" units="K" />
+    <constant name="coagulation cut off (TACE)" value="0.9" units="K" />
     <constant name="coagulation minimum deposition (tumour)" value="0.0" units="." />
+    <constant name="coagulation minimum deposition (lesion)" value="0.0" units="." />
+    <constant name="coagulation minimum deposition (TACE)" value="0.0" units="." />
     <constant name="coagulation gradient (tumour)" value="0.0" units="." />
+    <constant name="coagulation gradient (lesion)" value="0.0" units="." />
+    <constant name="coagulation gradient (TACE)" value="0.0" units="." />
     <constant name="pid controller proportional gain" value="0.025" units="W/K" />
 </constants>

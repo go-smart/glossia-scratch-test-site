@@ -29,7 +29,11 @@
     <constant name="MW relative permeability (tissue)" value="1" note="at 2.45 GHz" />
     <constant name="MW relative permittivity (tissue)" value="43.3" note="at 2.45 GHz" />
     <constant name="MW relative permeability (tumour)" value="1" note="at 2.45 GHz" />
+    <constant name="MW relative permeability (lesion)" value="1" note="at 2.45 GHz" />
+    <constant name="MW relative permeability (TACE)" value="1" note="at 2.45 GHz" />
     <constant name="MW relative permittivity (tumour)" value="43.3" note="at 2.45 GHz" />
+    <constant name="MW relative permittivity (lesion)" value="43.3" note="at 2.45 GHz" />
+    <constant name="MW relative permittivity (TACE)" value="43.3" note="at 2.45 GHz" />
     <constant name="MW effective electric conductivity (tissue)" value="1.69" note="at 2.45 GHz" />
     <constant name="MW electric conductivity (air)" value="0" note="at 2.45 GHz" />
     <constant name="MW relative permeability (air)" value="1" note="at 2.45 GHz" />

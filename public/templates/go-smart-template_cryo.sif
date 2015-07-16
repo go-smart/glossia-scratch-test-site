@@ -91,6 +91,34 @@ End
 !====================================================================
 
 !====================================================================
+Body 4
+!====================================================================
+  $BODIES_REGIONS_TACE
+
+  Name = "TACE"
+  Equation = Integer 1
+  Initial condition = Integer 1
+  Material = Integer 4
+  Body Force = Integer 1
+!====================================================================
+End
+!====================================================================
+
+!====================================================================
+Body 5
+!====================================================================
+  $BODIES_REGIONS_LESIONS
+
+  Name = "Lesion"
+  Equation = Integer 1
+  Initial condition = Integer 1
+  Material = Integer 5
+  Body Force = Integer 1
+!====================================================================
+End
+!====================================================================
+
+!====================================================================
 Equation 1
 !====================================================================
   Name = "NUMA Cryoablation"
@@ -290,6 +318,88 @@ Material 3 ! Fat
     313 500000
     500 500000
   End
+!====================================================================
+End
+!====================================================================
+
+!====================================================================
+Material 4 ! TACE
+!====================================================================
+  Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  Freezable = Logical True
+  Heat Conductivity = Variable Temperature
+  Real
+    0.0 $CONSTANT_THERMAL_CONDUCTIVITY_TACE_FROZEN:float
+    265.0 $CONSTANT_THERMAL_CONDUCTIVITY_TACE_FROZEN:float
+    266.0 $CONSTANT_THERMAL_CONDUCTIVITY_TACE_MUSHY:float
+    271.0 $CONSTANT_THERMAL_CONDUCTIVITY_TACE_MUSHY:float
+    272.0 $CONSTANT_THERMAL_CONDUCTIVITY_TACE:float
+    500.0 $CONSTANT_THERMAL_CONDUCTIVITY_TACE:float
+  End
+
+  Heat Capacity = Variable Temperature
+  Real 
+    0.0 1860.0
+    265.0 1860.0
+    266.0 3087.0
+    271.0 3087.0
+    272.0 3600.0
+    500.0 3600.0
+  End
+
+  !--------------------------------------------------------------------
+  ! Enthalpy of Tissue (m^2.s^-2): -->[J/kg]
+  !--------------------------------------------------------------------
+  Specific Enthalpy = Variable Temperature
+  Real
+    0         -0.120900
+    265.0     0.0
+    272.0     250000.019110
+    500.0     250000.826890
+  End
+  Density = $CONSTANT_DENSITY_TACE:float
+
+!====================================================================
+End
+!====================================================================
+
+!====================================================================
+Material 5 ! Lesion
+!====================================================================
+  Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  Freezable = Logical True
+  Heat Conductivity = Variable Temperature
+  Real
+    0.0 $CONSTANT_THERMAL_CONDUCTIVITY_LESION_FROZEN:float
+    265.0 $CONSTANT_THERMAL_CONDUCTIVITY_LESION_FROZEN:float
+    266.0 $CONSTANT_THERMAL_CONDUCTIVITY_LESION_MUSHY:float
+    271.0 $CONSTANT_THERMAL_CONDUCTIVITY_LESION_MUSHY:float
+    272.0 $CONSTANT_THERMAL_CONDUCTIVITY_LESION:float
+    500.0 $CONSTANT_THERMAL_CONDUCTIVITY_LESION:float
+  End
+
+  Heat Capacity = Variable Temperature
+  Real 
+    0.0 1860.0
+    265.0 1860.0
+    266.0 3087.0
+    271.0 3087.0
+    272.0 3600.0
+    500.0 3600.0
+  End
+
+  !--------------------------------------------------------------------
+  ! Enthalpy of Tissue (m^2.s^-2): -->[J/kg]
+  !--------------------------------------------------------------------
+  Specific Enthalpy = Variable Temperature
+  Real
+    0         -0.120900
+    265.0     0.0
+    272.0     250000.019110
+    500.0     250000.826890
+  End
+  Density = $CONSTANT_DENSITY_LESION:float
+
 !====================================================================
 End
 !====================================================================

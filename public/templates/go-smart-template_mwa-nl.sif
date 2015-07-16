@@ -154,6 +154,32 @@ End
 !====================================================================
 
 !====================================================================
+Body 8
+!====================================================================
+  $BODIES_REGIONS_TACE
+  Name = "TACE"
+  Equation = Integer 1
+  Initial condition = Integer 1
+  Material = Integer 7
+  Body Force = 1
+!====================================================================
+End
+!====================================================================
+
+!====================================================================
+Body 9
+!====================================================================
+  $BODIES_REGIONS_LESIONS
+  Name = "Lesion"
+  Equation = Integer 1
+  Initial condition = Integer 1
+  Material = Integer 8
+  Body Force = 1
+!====================================================================
+End
+!====================================================================
+
+!====================================================================
 Equation 1
 !====================================================================
   Name = "NUMA Harmonic TM Wave"
@@ -453,6 +479,52 @@ Material 6 ! Needle
     !Coagulation Cut Off = $CONSTANT_COAGULATION_CUT_OFF_TUMOUR
     !Coagulation Minimum Deposition = $CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TUMOUR
     !Coagulation Gradient = $CONSTANT_COAGULATION_GRADIENT_TUMOUR
+!====================================================================
+End
+!====================================================================
+
+!====================================================================
+Material 5 ! Tumour
+!====================================================================
+    Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
+    Heat Conductivity = $CONSTANT_THERMAL_CONDUCTIVITY_TACE:float
+    Heat Capacity = $CONSTANT_SPECIFIC_HEAT_CAPACITY_TACE:float
+    Density = $CONSTANT_DENSITY_TACE:float
+
+    In Tissue = Real 1.0
+    Electric Conductivity = Equals MyElectricConductivity
+    Relative Permeability = $CONSTANT_MW_RELATIVE_PERMEABILITY_TACE:float
+    Relative Permittivity = Equals MyRelativePermittivity
+
+    Vapourization Cut Off = $CONSTANT_VAPOURIZATION_CUT_OFF_TACE
+    !Vapourization Minimum Deposition = $CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TACE
+    !Vapourization Gradient = $CONSTANT_VAPOURIZATION_GRADIENT_TACE
+    !Coagulation Cut Off = $CONSTANT_COAGULATION_CUT_OFF_TACE
+    !Coagulation Minimum Deposition = $CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TACE
+    !Coagulation Gradient = $CONSTANT_COAGULATION_GRADIENT_TACE
+!====================================================================
+End
+!====================================================================
+
+!====================================================================
+Material 5 ! Lesion
+!====================================================================
+    Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
+    Heat Conductivity = $CONSTANT_THERMAL_CONDUCTIVITY_LESION:float
+    Heat Capacity = $CONSTANT_SPECIFIC_HEAT_CAPACITY_LESION:float
+    Density = $CONSTANT_DENSITY_LESION:float
+
+    In Tissue = Real 1.0
+    Electric Conductivity = Equals MyElectricConductivity
+    Relative Permeability = $CONSTANT_MW_RELATIVE_PERMEABILITY_LESION:float
+    Relative Permittivity = Equals MyRelativePermittivity
+
+    Vapourization Cut Off = $CONSTANT_VAPOURIZATION_CUT_OFF_LESION
+    !Vapourization Minimum Deposition = $CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_LESION
+    !Vapourization Gradient = $CONSTANT_VAPOURIZATION_GRADIENT_LESION
+    !Coagulation Cut Off = $CONSTANT_COAGULATION_CUT_OFF_LESION
+    !Coagulation Minimum Deposition = $CONSTANT_COAGULATION_MINIMUM_DEPOSITION_LESION
+    !Coagulation Gradient = $CONSTANT_COAGULATION_GRADIENT_LESION
 !====================================================================
 End
 !====================================================================

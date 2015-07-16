@@ -428,29 +428,30 @@ function onAnnounce(args) {
   //  simulations[args[0]] = {"Id": args[0], "asHtml": "[-- Unknown --]", "asString": "", "interactive": false};
   //}
 
-  serverId = args[0];
+  var serverId = args[0];
   tr = $('#' + args[1]);
   simulationToServer[args[1]] = serverId;
 
   if (args[2])
   {
-    stat = args[2][1];
+    var stat = args[2][1];
+    var timestamp = args[4];
     if (stat.code == 'SUCCESS')
     {
-      onComplete([args[1]]);
+      onComplete([args[1], timestamp]);
     }
     else if (stat.code == 'IN_PROGRESS')
     {
-      onStatus([args[1], args[2][0], stat.message]);
+      onStatus([args[1], args[2][0], stat.message, timestamp]);
     }
     else
     {
-      onFail([args[1], stat]);
+      onFail([args[1], stat, timestamp]);
     }
   }
 
-  var properties = {location: args[2]};
-  showProperties(args[0], properties);
+  var properties = {location: args[3]};
+  showProperties(args[1], properties);
 
   //regenerateBoard();
 };

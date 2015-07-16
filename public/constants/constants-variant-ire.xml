@@ -20,13 +20,15 @@
  */
 -->
 <constants class="NumericalModel" name="NUMA IRE 3D SIF">
-    <constant name="IRE sequence count" value="9" note="Total number of anode-cathode pairings" type="int" />
-    <constant name="IRE anode sequence" value="[1, 1, 2, 2, 3, 3, 4, 4, 5]" note="Sequence of IRE anodes for consecutive pairings" type="array(int)" />
-    <constant name="IRE cathode sequence" value="[5, 6, 5, 6, 5, 6, 5, 6, 6]" note="Sequence of IRE cathodes for consecutive pairings" type="array(int)"/>
+    <constant name="IRE sequence count" note="Total number of anode-cathode pairings" type="int" />
+    <constant name="IRE anode sequence" note="Sequence of IRE anodes for consecutive pairings" type="array(int)" />
+    <constant name="IRE cathode sequence" note="Sequence of IRE cathodes for consecutive pairings" type="array(int)"/>
     <constant name="IRE nonlinear iterations" value="1" note="Number of iterations performed to account for nonlinear interaction of conductivity and energy deposition" type="int" />
     <constant name="IRE relative permittivity (tissue)" value="1.0" units="F/m" />
     <constant name="IRE relative permittivity (needle)" value="1.0" units="F/m" />
     <constant name="IRE relative permittivity (tumour)" value="1.0" units="F/m" />
+    <constant name="IRE relative permittivity (lesion)" value="1.0" units="F/m" />
+    <constant name="IRE relative permittivity (TACE)" value="1.0" units="F/m" />
     <constant name="IRE relative permittivity (background)" value="1.0" units="F/m" />
     <constant name="IRE relative permittivity (vessels)" value="1.0" units="F/m" />
     <constant name="IRE electric conductivity (lower) (tissue)" value="0.08" units="S/m" />
@@ -35,9 +37,17 @@
     <constant name="IRE electric conductivity threshold (upper) (tissue)" value="70000" units="J" />
     <constant name="IRE electric conductivity (needle)" value="1e4" units="S/m" />
     <constant name="IRE electric conductivity (lower) (tumour)" value="0.2" units="S/m" />
+    <constant name="IRE electric conductivity (lower) (lesion)" value="0.2" units="S/m" />
+    <constant name="IRE electric conductivity (lower) (TACE)" value="0.2" units="S/m" />
     <constant name="IRE electric conductivity (upper) (tumour)" value="0.7" units="S/m" />
+    <constant name="IRE electric conductivity (upper) (lesion)" value="0.7" units="S/m" />
+    <constant name="IRE electric conductivity (upper) (TACE)" value="0.7" units="S/m" />
     <constant name="IRE electric conductivity threshold (lower) (tumour)" value="40000" units="J" />
+    <constant name="IRE electric conductivity threshold (lower) (lesion)" value="40000" units="J" />
+    <constant name="IRE electric conductivity threshold (lower) (TACE)" value="40000" units="J" />
     <constant name="IRE electric conductivity threshold (upper) (tumour)" value="80000" units="J" />
+    <constant name="IRE electric conductivity threshold (upper) (lesion)" value="80000" units="J" />
+    <constant name="IRE electric conductivity threshold (upper) (TACE)" value="80000" units="J" />
     <constant name="IRE electric conductivity (lower) (background)" value="0.02" units="S/m" />
     <constant name="IRE electric conductivity (upper) (background)" value="0.08" units="S/m" />
     <constant name="IRE electric conductivity threshold (lower) (background)" value="10000" units="J" />

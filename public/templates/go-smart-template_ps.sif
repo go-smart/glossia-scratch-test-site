@@ -107,6 +107,34 @@ End
 !====================================================================
 
 !====================================================================
+Body 3
+!====================================================================
+  $BODIES_REGIONS_TACE
+
+  Name = "TACE"
+  Equation = Integer 1
+  Initial condition = Integer 1
+  Material = Integer 2
+  Body Force = Integer 3
+!====================================================================
+End
+!====================================================================
+
+!====================================================================
+Body 4
+!====================================================================
+  $BODIES_REGIONS_LESIONS
+
+  Name = "Lesion"
+  Equation = Integer 1
+  Initial condition = Integer 1
+  Material = Integer 2
+  Body Force = Integer 4
+!====================================================================
+End
+!====================================================================
+
+!====================================================================
 Equation 1
 !====================================================================
   Name = "NUMA RFA Point Sources"
@@ -264,6 +292,42 @@ Material 2 ! Tumour
     !Coagulation Cut Off = $CONSTANT_COAGULATION_CUT_OFF_TUMOUR:float
     !Coagulation Minimum Deposition = $CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TUMOUR:float
     !Coagulation Gradient = $CONSTANT_COAGULATION_GRADIENT_TUMOUR:float
+!====================================================================
+End
+!====================================================================
+
+!====================================================================
+Material 3 ! TACE
+!====================================================================
+  Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  Heat Conductivity = $CONSTANT_THERMAL_CONDUCTIVITY_TACE:float
+  Heat Capacity = $CONSTANT_SPECIFIC_HEAT_CAPACITY_TACE:float
+  Density = $CONSTANT_DENSITY_TACE:float
+
+    Vapourization Cut Off = $CONSTANT_VAPOURIZATION_CUT_OFF_TACE:float
+    !Vapourization Minimum Deposition = $CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TACE:float
+    !Vapourization Gradient = $CONSTANT_VAPOURIZATION_GRADIENT_TACE:float
+    !Coagulation Cut Off = $CONSTANT_COAGULATION_CUT_OFF_TACE:float
+    !Coagulation Minimum Deposition = $CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TACE:float
+    !Coagulation Gradient = $CONSTANT_COAGULATION_GRADIENT_TACE:float
+!====================================================================
+End
+!====================================================================
+
+!====================================================================
+Material 4 ! Lesion
+!====================================================================
+  Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  Heat Conductivity = $CONSTANT_THERMAL_CONDUCTIVITY_LESION:float
+  Heat Capacity = $CONSTANT_SPECIFIC_HEAT_CAPACITY_LESION:float
+  Density = $CONSTANT_DENSITY_LESION:float
+
+    Vapourization Cut Off = $CONSTANT_VAPOURIZATION_CUT_OFF_LESION:float
+    !Vapourization Minimum Deposition = $CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_LESION:float
+    !Vapourization Gradient = $CONSTANT_VAPOURIZATION_GRADIENT_LESION:float
+    !Coagulation Cut Off = $CONSTANT_COAGULATION_CUT_OFF_LESION:float
+    !Coagulation Minimum Deposition = $CONSTANT_COAGULATION_MINIMUM_DEPOSITION_LESION:float
+    !Coagulation Gradient = $CONSTANT_COAGULATION_GRADIENT_LESION:float
 !====================================================================
 End
 !====================================================================

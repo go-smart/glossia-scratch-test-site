@@ -18,64 +18,56 @@ Simulation
                                               0    0    0    0    0    0    0    0    0
 End
 
-!Needle 1
-Body 1
-  $BODIES_REGIONS_NEEDLE_1
+@foreachneedle
+!$_BODY+
+Body $ITERATOR_NAME
+  $BODIES_REGIONS_NEEDLE
     Equation = Integer 1
     Initial Condition = Integer 2
     Material = Integer 2
 End
 
-!Needle 2
-Body 2
-  $BODIES_REGIONS_NEEDLE_2
-    Equation = Integer 1
-    Initial Condition = Integer 2
-    Material = Integer 2
+Boundary Condition $_BOUNDARY+
+    $BOUNDARIES_REGIONS_NEEDLE
+    Body Id = Integer $ITERATOR_NAME
+    Potential = Variable Time
+        Real Procedure "libnuma-ire" "AlternatingBoundaryCondition"
+    Alternating Boundary Condition = Logical True
 End
 
-!Needle 3
-Body 3
-  $BODIES_REGIONS_NEEDLE_3
-    Equation = Integer 1
-    Initial Condition = Integer 2
-    Material = Integer 2
+Boundary Condition $_BOUNDARY+
+    $BOUNDARIES_REGIONS_NEEDLE_INACTIVE
+    Current Density = Real 0.0
+    Current Density BC = Logical True
 End
-
-!Needle 4
-Body 4
-  $BODIES_REGIONS_NEEDLE_4
-    Equation = Integer 1
-    Initial Condition = Integer 2
-    Material = Integer 2
-End
-
-!Needle 5
-Body 5
-  $BODIES_REGIONS_NEEDLE_5
-    Equation = Integer 1
-    Initial Condition = Integer 2
-    Material = Integer 2
-End
-
-!Needle 6
-Body 6
-  $BODIES_REGIONS_NEEDLE_6
-    Equation = Integer 1
-    Initial Condition = Integer 2
-    Material = Integer 2
-End
+@endforeachneedle
 
 !Tumour
-Body 7
+Body $_BODY+
   $BODIES_REGIONS_TUMOURS
     Equation = Integer 1
     Initial Condition = Integer 3
     Material = Integer 3
 End
 
+!TACE
+Body $_BODY+
+  $BODIES_REGIONS_TACE
+    Equation = Integer 1
+    Initial Condition = Integer 3
+    Material = Integer 6
+End
+
+!Lesion
+Body $_BODY+
+  $BODIES_REGIONS_LESIONS
+    Equation = Integer 1
+    Initial Condition = Integer 3
+    Material = Integer 7
+End
+
 !Vessel 1
-Body 8
+Body $_BODY+
   $BODIES_REGIONS_VESSELS
     Equation = Integer 1
     Initial Condition = Integer 5
@@ -83,7 +75,7 @@ Body 8
 End
 
 !Organ
-Body 9
+Body $_BODY+
   $BODIES_REGIONS_ORGANS
     Equation = Integer 1
     Initial Condition = Integer 1
@@ -91,9 +83,8 @@ Body 9
 End
 
 !Background
-Body 10
+Body $_BODY+
   $BODIES_REGIONS_BACKGROUND
-    Target Bodies = Integer 12
     Equation = Integer 1
     Initial Condition = Integer 1
     Material = Integer 4
@@ -205,62 +196,30 @@ Material 5
     End
 End
 
-Boundary Condition 1
-    $BOUNDARIES_REGIONS_NEEDLE_1
-    Body Id = 1
-    Potential = Variable Time
-        Real Procedure "libnuma-ire" "AlternatingBoundaryCondition"
-    Alternating Boundary Condition = Logical True
+Material 6
+    Relative Permittivity = $CONSTANT_IRE_RELATIVE_PERMITTIVITY_TACE
+   Electric Conductivity = Variable Max_E
+     Real
+       0        $CONSTANT_IRE_ELECTRIC_CONDUCTIVITY_LOWER_TACE
+       $CONSTANT_IRE_ELECTRIC_CONDUCTIVITY_THRESHOLD_LOWER_TACE   $CONSTANT_IRE_ELECTRIC_CONDUCTIVITY_LOWER_TACE
+       $CONSTANT_IRE_ELECTRIC_CONDUCTIVITY_THRESHOLD_UPPER_TACE   $CONSTANT_IRE_ELECTRIC_CONDUCTIVITY_UPPER_TACE
+       1e20     $CONSTANT_IRE_ELECTRIC_CONDUCTIVITY_UPPER_TACE
+    End
 End
 
-Boundary Condition 2
-    $BOUNDARIES_REGIONS_NEEDLE_2
-    Body Id = 2
-    Potential = Variable Time
-        Real Procedure "libnuma-ire" "AlternatingBoundaryCondition"
-    Alternating Boundary Condition = Logical True
+Material 7
+    Relative Permittivity = $CONSTANT_IRE_RELATIVE_PERMITTIVITY_LESION
+   Electric Conductivity = Variable Max_E
+     Real
+       0        $CONSTANT_IRE_ELECTRIC_CONDUCTIVITY_LOWER_LESION
+       $CONSTANT_IRE_ELECTRIC_CONDUCTIVITY_THRESHOLD_LOWER_LESION   $CONSTANT_IRE_ELECTRIC_CONDUCTIVITY_LOWER_LESION
+       $CONSTANT_IRE_ELECTRIC_CONDUCTIVITY_THRESHOLD_UPPER_LESION   $CONSTANT_IRE_ELECTRIC_CONDUCTIVITY_UPPER_LESION
+       1e20     $CONSTANT_IRE_ELECTRIC_CONDUCTIVITY_UPPER_LESION
+    End
 End
 
-Boundary Condition 3
-    $BOUNDARIES_REGIONS_NEEDLE_3
-    Body Id = 3
-    Potential = Variable Time
-        Real Procedure "libnuma-ire" "AlternatingBoundaryCondition"
-    Alternating Boundary Condition = Logical True
-End
-
-Boundary Condition 4
-    $BOUNDARIES_REGIONS_NEEDLE_4
-    Body Id = 4
-    Potential = Variable Time
-        Real Procedure "libnuma-ire" "AlternatingBoundaryCondition"
-    Alternating Boundary Condition = Logical True
-End
-
-Boundary Condition 5
-    $BOUNDARIES_REGIONS_NEEDLE_5
-    Body Id = 5
-    Potential = Variable Time
-        Real Procedure "libnuma-ire" "AlternatingBoundaryCondition"
-    Alternating Boundary Condition = Logical True
-End
-
-Boundary Condition 6
-    $BOUNDARIES_REGIONS_NEEDLE_6
-    Body Id = 6
-    Potential = Variable Time
-        Real Procedure "libnuma-ire" "AlternatingBoundaryCondition"
-    Alternating Boundary Condition = Logical True
-End
-
-Boundary Condition 7
+Boundary Condition $_BOUNDARY+
     $BOUNDARIES_REGIONS_NO_FLUX
-    Current Density = Real 0.0
-    Current Density BC = Logical True
-End
-
-Boundary Condition 8
-    $BOUNDARIES_REGIONS_NEEDLES_INACTIVE
     Current Density = Real 0.0
     Current Density BC = Logical True
 End
