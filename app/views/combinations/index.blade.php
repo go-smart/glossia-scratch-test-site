@@ -9,6 +9,7 @@
 <table>
   <thead>
     <tr>
+      <th></th>
       <th>Modality</th>
       <th>Protocol</th>
       <th>Numerical Model</th>
@@ -21,6 +22,7 @@
   <tbody>
 @foreach ($combinations as $combination)
     <tr>
+      <td>{{ link_to_route('combination.show', '&#x1f441;', [$combination->Id]) }}</td>
       <td style='font-weight: bold'>{{ $combination->Power_Generator->Modality->Name }}</td>
       <td>{{ link_to_route('protocol.show', $combination->Protocol->Name, [$combination->Protocol->Id]) }}</td>
       <td>{{ link_to_route('numerical_model.show', $combination->Numerical_Model->Name, [$combination->Numerical_Model->Id]) }}</td>

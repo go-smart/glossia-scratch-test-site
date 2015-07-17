@@ -7,7 +7,7 @@
 
 {{ Form::open(['route' => ['simulation.update', $simulation->Id], 'method' => 'PATCH']) }}
 <input type='hidden' value=0 name='removing' />
-<p>{{ $simulation->Combination->asString }}</p>
+<p>{{ link_to_route('combination.show', $simulation->Combination->asString, $simulation->Combination->Id) }}</p>
 
 <p>{{ Form::label('caption', 'Caption') }}: {{ Form::text('caption', $simulation->Caption) }}</p>
 <p>{{ Form::submit() }}</p>
