@@ -12,7 +12,7 @@ Header
 !====================================================================
 !  Computational mesh directory (also used to save the vtu files):
 !--------------------------------------------------------------------
-  Mesh DB "." "$MESHLOCATION_MESHER"           ![H1]! 
+  Mesh DB "." "{{ p.MESHLOCATION_MESHER }}"           ![H1]! 
   Include Path ""
   Results Directory ""
 !====================================================================
@@ -24,11 +24,11 @@ Simulation
 !====================================================================
   ! Test name:
   !--------------------------------------------------------------------
-  Test Name = String "$RUNNAME"          ![Si1]!
+  Test Name = String "{{ p.RUNNAME }}"          ![Si1]!
   !--------------------------------------------------------------------
   ! Simulation length (number of timesteps):
   !--------------------------------------------------------------------
-  Timestep intervals = $SETTING_FINAL_TIMESTEP:int    ![Si2]!
+  Timestep intervals = {{ p.SETTING_FINAL_TIMESTEP|typed }}:int    ![Si2]!
   !--------------------------------------------------------------------
   ! Problem characteristics:
   !--------------------------------------------------------------------
@@ -37,7 +37,7 @@ Simulation
   !--------------------------------------------------------------------
   ! Timestepping scheme:
   !--------------------------------------------------------------------
-  Timestep Sizes = $SETTING_TIMESTEP_SIZE:float
+  Timestep Sizes = {{ p.SETTING_TIMESTEP_SIZE|typed }}:float
   Timestepping Method = BDF
   BDF Order = 1
 !  Output File = "cryo_test.result"
@@ -52,7 +52,7 @@ End
 !====================================================================
 Body 1
 !====================================================================
-  $BODIES_REGIONS_ORGANS
+  {{ p.BODIES_REGIONS_ORGANS }}
   Name = "Tissue & Blood"
   Equation = Integer 1
   Body Force = Integer 1
@@ -65,7 +65,7 @@ End
 !====================================================================
 Body 2
 !====================================================================
-  $BODIES_REGIONS_TUMOURS
+  {{ p.BODIES_REGIONS_TUMOURS }}
 
   Name = "Tumour"
   Equation = Integer 1
@@ -79,7 +79,7 @@ End
 !====================================================================
 Body 3
 !====================================================================
-  $BODIES_REGIONS_BACKGROUND
+  {{ p.BODIES_REGIONS_BACKGROUND }}
 
   Name = "Tumour"
   Equation = Integer 1
@@ -93,7 +93,7 @@ End
 !====================================================================
 Body 4
 !====================================================================
-  $BODIES_REGIONS_TACE
+  {{ p.BODIES_REGIONS_TACE }}
 
   Name = "TACE"
   Equation = Integer 1
@@ -107,7 +107,7 @@ End
 !====================================================================
 Body 5
 !====================================================================
-  $BODIES_REGIONS_LESIONS
+  {{ p.BODIES_REGIONS_LESIONS }}
 
   Name = "Lesion"
   Equation = Integer 1
@@ -191,8 +191,8 @@ Body Force 1
     Real 
       0.0 0.0
       271.0 0.0
-      272.0 $CONSTANT_METABOLIC_HEAT:float
-      500.0 $CONSTANT_METABOLIC_HEAT:float
+      272.0 {{ p.CONSTANT_METABOLIC_HEAT }}:float
+      500.0 {{ p.CONSTANT_METABOLIC_HEAT }}:float
     End
   Lesion = Variable Temperature, Time
     Real Procedure "libnuma-lesion" "LesionExtract"
@@ -204,12 +204,12 @@ Body Force 1
   Real 
     0.0 0.0
     271.0 0.0
-    272.0 $CONSTANT_PERFUSION_RATE:float
-    500.0 $CONSTANT_PERFUSION_RATE:float
+    272.0 {{ p.CONSTANT_PERFUSION_RATE }}:float
+    500.0 {{ p.CONSTANT_PERFUSION_RATE }}:float
   End
-  Perfusion Density = $CONSTANT_PERFUSION_DENSITY:float
-  Perfusion Heat Capacity = $CONSTANT_PERFUSION_HEAT_CAPACITY:float
-  Perfusion Reference Temperature = $CONSTANT_PERFUSION_REFERENCE_TEMPERATURE:float
+  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY|typed }}:float
+  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY|typed }}:float
+  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE|typed }}:float
 !====================================================================
 End
 !====================================================================
@@ -220,17 +220,17 @@ Material 1 ! Body
   Name = "Tissue"
 
   Freezable = Logical True
-  Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
-  Heat Capacity = $CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE:float
-  Density = $CONSTANT_DENSITY_TISSUE:float
+  Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
+  Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE|typed }}:float
+  Density = {{ p.CONSTANT_DENSITY_TISSUE|typed }}:float
   Heat Conductivity = Variable Temperature
   Real 
-    0.0 $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE_FROZEN:float
-    265.0 $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE_FROZEN:float
-    266.0 $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE_MUSHY:float
-    271.0 $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE_MUSHY:float
-    272.0 $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE:float
-    500.0 $CONSTANT_THERMAL_CONDUCTIVITY_TISSUE:float
+    0.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TISSUE_FROZEN }}:float
+    265.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TISSUE_FROZEN }}:float
+    266.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TISSUE_MUSHY }}:float
+    271.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TISSUE_MUSHY }}:float
+    272.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TISSUE }}:float
+    500.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TISSUE }}:float
   End
 
   !--------------------------------------------------------------------
@@ -263,16 +263,16 @@ End
 !====================================================================
 Material 2 ! Tumour
 !====================================================================
-  Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
   Freezable = Logical True
   Heat Conductivity = Variable Temperature
   Real
-    0.0 $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR_FROZEN:float
-    265.0 $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR_FROZEN:float
-    266.0 $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR_MUSHY:float
-    271.0 $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR_MUSHY:float
-    272.0 $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR:float
-    500.0 $CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR:float
+    0.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR_FROZEN }}:float
+    265.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR_FROZEN }}:float
+    266.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR_MUSHY }}:float
+    271.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR_MUSHY }}:float
+    272.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR }}:float
+    500.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR }}:float
   End
 
   Heat Capacity = Variable Temperature
@@ -295,7 +295,7 @@ Material 2 ! Tumour
     272.0     250000.019110
     500.0     250000.826890
   End
-  Density = $CONSTANT_DENSITY_TUMOUR:float
+  Density = {{ p.CONSTANT_DENSITY_TUMOUR|typed }}:float
 
 !====================================================================
 End
@@ -306,11 +306,11 @@ Material 3 ! Fat
 !====================================================================
   Name = "Fat"
 
-  Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
-  Density = $CONSTANT_DENSITY_FAT:float
+  Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
+  Density = {{ p.CONSTANT_DENSITY_FAT|typed }}:float
   Freezable = Logical False
-  Heat Conductivity = $CONSTANT_THERMAL_CONDUCTIVITY_FAT:float
-  Heat Capacity = $CONSTANT_SPECIFIC_HEAT_CAPACITY_FAT:float
+  Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_FAT|typed }}:float
+  Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_FAT|typed }}:float
   Specific Enthalpy = Variable Temperature
     0 0
     233 0
@@ -325,16 +325,16 @@ End
 !====================================================================
 Material 4 ! TACE
 !====================================================================
-  Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
   Freezable = Logical True
   Heat Conductivity = Variable Temperature
   Real
-    0.0 $CONSTANT_THERMAL_CONDUCTIVITY_TACE_FROZEN:float
-    265.0 $CONSTANT_THERMAL_CONDUCTIVITY_TACE_FROZEN:float
-    266.0 $CONSTANT_THERMAL_CONDUCTIVITY_TACE_MUSHY:float
-    271.0 $CONSTANT_THERMAL_CONDUCTIVITY_TACE_MUSHY:float
-    272.0 $CONSTANT_THERMAL_CONDUCTIVITY_TACE:float
-    500.0 $CONSTANT_THERMAL_CONDUCTIVITY_TACE:float
+    0.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TACE_FROZEN }}:float
+    265.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TACE_FROZEN }}:float
+    266.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TACE_MUSHY }}:float
+    271.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TACE_MUSHY }}:float
+    272.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TACE }}:float
+    500.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TACE }}:float
   End
 
   Heat Capacity = Variable Temperature
@@ -357,7 +357,7 @@ Material 4 ! TACE
     272.0     250000.019110
     500.0     250000.826890
   End
-  Density = $CONSTANT_DENSITY_TACE:float
+  Density = {{ p.CONSTANT_DENSITY_TACE|typed }}:float
 
 !====================================================================
 End
@@ -366,16 +366,16 @@ End
 !====================================================================
 Material 5 ! Lesion
 !====================================================================
-  Body Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
   Freezable = Logical True
   Heat Conductivity = Variable Temperature
   Real
-    0.0 $CONSTANT_THERMAL_CONDUCTIVITY_LESION_FROZEN:float
-    265.0 $CONSTANT_THERMAL_CONDUCTIVITY_LESION_FROZEN:float
-    266.0 $CONSTANT_THERMAL_CONDUCTIVITY_LESION_MUSHY:float
-    271.0 $CONSTANT_THERMAL_CONDUCTIVITY_LESION_MUSHY:float
-    272.0 $CONSTANT_THERMAL_CONDUCTIVITY_LESION:float
-    500.0 $CONSTANT_THERMAL_CONDUCTIVITY_LESION:float
+    0.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_LESION_FROZEN }}:float
+    265.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_LESION_FROZEN }}:float
+    266.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_LESION_MUSHY }}:float
+    271.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_LESION_MUSHY }}:float
+    272.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_LESION }}:float
+    500.0 {{ p.CONSTANT_THERMAL_CONDUCTIVITY_LESION }}:float
   End
 
   Heat Capacity = Variable Temperature
@@ -398,7 +398,7 @@ Material 5 ! Lesion
     272.0     250000.019110
     500.0     250000.826890
   End
-  Density = $CONSTANT_DENSITY_LESION:float
+  Density = {{ p.CONSTANT_DENSITY_LESION|typed }}:float
 
 !====================================================================
 End
@@ -407,8 +407,8 @@ End
 !====================================================================
 Boundary Condition 1 !Organ wall + sphere
 !====================================================================
-  $BOUNDARIES_REGIONS_BOUNDARY
-  !Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  {{ p.BOUNDARIES_REGIONS_BOUNDARY }}
+  !Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
   Heat Flux BC = Logical True
   Heat Flux = Real 0.0
   Flow Pressure = Real -0.00000000
@@ -423,7 +423,7 @@ Boundary Condition 2 ! Output vessel (Hepatic vein)
   !--------------------------------------------------------------------
   ! Boundary index(es):
   !--------------------------------------------------------------------
-  $BOUNDARIES_REGIONS_VEINS
+  {{ p.BOUNDARIES_REGIONS_VEINS }}
   !--------------------------------------------------------------------
   ! Convective BC on temperature:
   !--------------------------------------------------------------------
@@ -431,11 +431,11 @@ Boundary Condition 2 ! Output vessel (Hepatic vein)
   !--------------------------------------------------------------------
   ! Convective transfer coefficient (kg.s^-3.K^-1):
   !--------------------------------------------------------------------
-  Heat Transfer Coefficient = $CONSTANT_VENOUS_HEAT_TRANSFER_COEFFICIENT:float
+  Heat Transfer Coefficient = {{ p.CONSTANT_VENOUS_HEAT_TRANSFER_COEFFICIENT|typed }}:float
   !--------------------------------------------------------------------
   ! External temperature (K):
   !--------------------------------------------------------------------
-  External Temperature = Real $CONSTANT_BODY_TEMPERATURE:float
+  External Temperature = Real {{ p.CONSTANT_BODY_TEMPERATURE }}:float
 !====================================================================
 End
 !====================================================================
@@ -447,11 +447,11 @@ Boundary Condition 3 ! Input vessel (Portal vein + HA)
   !--------------------------------------------------------------------
   ! Boundary index(es):
   !--------------------------------------------------------------------
-  $BOUNDARIES_REGIONS_ARTERIES
+  {{ p.BOUNDARIES_REGIONS_ARTERIES }}
   !--------------------------------------------------------------------
   ! Dirichlet BC on blood and tissue temperatures (K):
   !--------------------------------------------------------------------
-  Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
 !====================================================================
 End
 !====================================================================
@@ -459,7 +459,7 @@ End
 !====================================================================
 Boundary Condition 4 !Probe
 !====================================================================
-  $REGIONS_NEEDLES
+  {{ p.REGIONS_NEEDLES }}
   Procedure = File "libnuma-alternatebc" "AlternatingBCSolver"
   Body Id = Integer 1
   BoundaryCheck = Variable Time
@@ -499,7 +499,7 @@ End
 !====================================================================
 Boundary Condition 5 !Probe
 !====================================================================
-  $REGIONS_NEEDLES_INACTIVE
+  {{ p.REGIONS_NEEDLES_INACTIVE }}
   Heat Flux BC = Logical True
   Heat Flux = Real 0.0
   Flow Pressure = Real -0.00000000
@@ -515,7 +515,7 @@ Boundary Condition 6 ! Output vessel (Hepatic vein)
   !--------------------------------------------------------------------
   ! Boundary index(es):
   !--------------------------------------------------------------------
-  $BOUNDARIES_REGIONS_VESSELS
+  {{ p.BOUNDARIES_REGIONS_VESSELS }}
   !--------------------------------------------------------------------
   ! Convective BC on temperature:
   !--------------------------------------------------------------------
@@ -523,11 +523,11 @@ Boundary Condition 6 ! Output vessel (Hepatic vein)
   !--------------------------------------------------------------------
   ! Convective transfer coefficient (kg.s^-3.K^-1):
   !--------------------------------------------------------------------
-  Heat Transfer Coefficient = $CONSTANT_VENOUS_HEAT_TRANSFER_COEFFICIENT:float
+  Heat Transfer Coefficient = {{ p.CONSTANT_VENOUS_HEAT_TRANSFER_COEFFICIENT|typed }}:float
   !--------------------------------------------------------------------
   ! External temperature (K):
   !--------------------------------------------------------------------
-  External Temperature = Real $CONSTANT_BODY_TEMPERATURE:float
+  External Temperature = Real {{ p.CONSTANT_BODY_TEMPERATURE }}:float
 !====================================================================
 End
 !====================================================================
@@ -536,9 +536,9 @@ End
 Initial Condition 1
 !====================================================================
 
-  Temperature = $CONSTANT_BODY_TEMPERATURE:float
+  Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
 
-  LesionPrevious = $CONSTANT_BODY_TEMPERATURE:float
+  LesionPrevious = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
 !====================================================================
 End
 !====================================================================
