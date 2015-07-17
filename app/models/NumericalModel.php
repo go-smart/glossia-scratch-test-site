@@ -67,10 +67,10 @@ class NumericalModel extends Paramable {
     $parameterRegex = Config::get('gosmart.parameterRegex');
 
     if (empty($parameterRegex))
-      $parameterRegex = '/\$((CONSTANT|SETTING)_[A-Z_]+):?([a-z0-9\(\)A-Z_]*)/';
+      $parameterRegex = '/({{ p.((CONSTANT|SETTING|PARAMETER)_[A-Z_]+)\|?[a-zA-Z0-9_]* }}):?([a-z0-9\(\)A-Z_]*)/';
 
     $this->updatePlaceholdersFromString($parameterRegex, $definition);
-    $definition = preg_replace($parameterRegex, '\$${1}', $definition);
+    $definition = preg_replace($parameterRegex, '${1}', $definition);
 
     $this->Definition = $definition;
   }
@@ -80,7 +80,7 @@ class NumericalModel extends Paramable {
     preg_match_all($parameterRegex, $definition, $matches, PREG_SET_ORDER);
 
     foreach ($matches as $match) {
-      $this->placeholder($match[1], null, $match[3]);
+      $this->placeholder($match[2], null, $match[4], false);
     }
   }
 
@@ -210,7 +210,7 @@ class NumericalModel extends Paramable {
 
     foreach ($matches[1] as $key)
     {
-      if (strpos($key, 'CONSTANT_') === 0 || strpos($key, 'SETTING_') === 0)
+      if (strpos($key, 'CONSTANT_') === 0 || strpos($key, 'SETTING_') === 0 || strpos($key, 'PARAMETER_') === 0)
         $this->placeholder($key);
     }
      */
