@@ -251,10 +251,6 @@ Body Force 1
 !====================================================================
   Heat Source = Equals SAR
   Volumetric Heat Source = Logical True
-  Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE|typed }}:float
-  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY|typed }}:float
-  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY|typed }}:float
-  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE|typed }}:float
 !====================================================================
 End
 !====================================================================
@@ -268,6 +264,10 @@ Material 1 ! Body
   Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TISSUE|typed }}:float
   Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE|typed }}:float
   Density = {{ p.CONSTANT_DENSITY_TISSUE|typed }}:float
+  Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_TISSUE|typed }}:float
+  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_TISSUE|typed }}:float
+  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_TISSUE|typed }}:float
+  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_TISSUE|typed }}:float
   Vapourization Cut Off = {{ p.CONSTANT_VAPOURIZATION_CUT_OFF_TISSUE|typed }}:float
   !Vapourization Minimum Deposition = {{ p.CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TISSUE|typed }}:float
   !Vapourization Gradient = {{ p.CONSTANT_VAPOURIZATION_GRADIENT_TISSUE|typed }}:float
@@ -286,6 +286,10 @@ Material 2 ! Tumour
   Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TUMOUR|typed }}:float
   Density = {{ p.CONSTANT_DENSITY_TUMOUR|typed }}:float
 
+  Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_TUMOUR|typed }}:float
+  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_TUMOUR|typed }}:float
+  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_TUMOUR|typed }}:float
+  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_TUMOUR|typed }}:float
     Vapourization Cut Off = {{ p.CONSTANT_VAPOURIZATION_CUT_OFF_TUMOUR|typed }}:float
     !Vapourization Minimum Deposition = {{ p.CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TUMOUR|typed }}:float
     !Vapourization Gradient = {{ p.CONSTANT_VAPOURIZATION_GRADIENT_TUMOUR|typed }}:float
@@ -304,6 +308,10 @@ Material 3 ! TACE
   Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TACE|typed }}:float
   Density = {{ p.CONSTANT_DENSITY_TACE|typed }}:float
 
+  Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_TACE|typed }}:float
+  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_TACE|typed }}:float
+  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_TACE|typed }}:float
+  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_TACE|typed }}:float
     Vapourization Cut Off = {{ p.CONSTANT_VAPOURIZATION_CUT_OFF_TACE|typed }}:float
     !Vapourization Minimum Deposition = {{ p.CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TACE|typed }}:float
     !Vapourization Gradient = {{ p.CONSTANT_VAPOURIZATION_GRADIENT_TACE|typed }}:float
@@ -322,6 +330,10 @@ Material 4 ! Lesion
   Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_LESION|typed }}:float
   Density = {{ p.CONSTANT_DENSITY_LESION|typed }}:float
 
+  Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_LESION|typed }}:float
+  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_LESION|typed }}:float
+  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_LESION|typed }}:float
+  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_LESION|typed }}:float
     Vapourization Cut Off = {{ p.CONSTANT_VAPOURIZATION_CUT_OFF_LESION|typed }}:float
     !Vapourization Minimum Deposition = {{ p.CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_LESION|typed }}:float
     !Vapourization Gradient = {{ p.CONSTANT_VAPOURIZATION_GRADIENT_LESION|typed }}:float

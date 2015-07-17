@@ -196,20 +196,6 @@ Body Force 1
     End
   Lesion = Variable Temperature, Time
     Real Procedure "libnuma-lesion" "LesionExtract"
-  !--------------------------------------------------------------------
-  ! Perfusion rate in tissue (s^-1):
-  ! (Null in frozen tissue)
-  !--------------------------------------------------------------------
-  Perfusion Rate = Variable Temperature
-  Real 
-    0.0 0.0
-    271.0 0.0
-    272.0 {{ p.CONSTANT_PERFUSION_RATE }}:float
-    500.0 {{ p.CONSTANT_PERFUSION_RATE }}:float
-  End
-  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY|typed }}:float
-  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY|typed }}:float
-  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE|typed }}:float
 !====================================================================
 End
 !====================================================================
@@ -256,6 +242,21 @@ Material 1 ! Body
     272.0     250000.019110
     500.0     250000.826890
   End
+
+  !--------------------------------------------------------------------
+  ! Perfusion rate in tissue (s^-1):
+  ! (Null in frozen tissue)
+  !--------------------------------------------------------------------
+  Perfusion Rate = Variable Temperature
+  Real 
+    0.0 0.0
+    271.0 0.0
+    272.0 {{ p.CONSTANT_PERFUSION_RATE_TISSUE }}:float
+    500.0 {{ p.CONSTANT_PERFUSION_RATE_TISSUE }}:float
+  End
+  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_TISSUE|typed }}:float
+  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_TISSUE|typed }}:float
+  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_TISSUE|typed }}:float
 !====================================================================
 End
 !====================================================================
@@ -297,6 +298,21 @@ Material 2 ! Tumour
   End
   Density = {{ p.CONSTANT_DENSITY_TUMOUR|typed }}:float
 
+  !--------------------------------------------------------------------
+  ! Perfusion rate in tissue (s^-1):
+  ! (Null in frozen tissue)
+  !--------------------------------------------------------------------
+  Perfusion Rate = Variable Temperature
+  Real 
+    0.0 0.0
+    271.0 0.0
+    272.0 {{ p.CONSTANT_PERFUSION_RATE_TUMOUR }}:float
+    500.0 {{ p.CONSTANT_PERFUSION_RATE_TUMOUR }}:float
+  End
+  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_TUMOUR|typed }}:float
+  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_TUMOUR|typed }}:float
+  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_TUMOUR|typed }}:float
+
 !====================================================================
 End
 !====================================================================
@@ -318,6 +334,21 @@ Material 3 ! Fat
     313 500000
     500 500000
   End
+
+  !--------------------------------------------------------------------
+  ! Perfusion rate in tissue (s^-1):
+  ! (Null in frozen tissue)
+  !--------------------------------------------------------------------
+  Perfusion Rate = Variable Temperature
+  Real 
+    0.0 0.0
+    271.0 0.0
+    272.0 {{ p.CONSTANT_PERFUSION_RATE_FAT }}:float
+    500.0 {{ p.CONSTANT_PERFUSION_RATE_FAT }}:float
+  End
+  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_FAT|typed }}:float
+  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_FAT|typed }}:float
+  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_FAT|typed }}:float
 !====================================================================
 End
 !====================================================================
@@ -359,6 +390,21 @@ Material 4 ! TACE
   End
   Density = {{ p.CONSTANT_DENSITY_TACE|typed }}:float
 
+  !--------------------------------------------------------------------
+  ! Perfusion rate in tissue (s^-1):
+  ! (Null in frozen tissue)
+  !--------------------------------------------------------------------
+  Perfusion Rate = Variable Temperature
+  Real 
+    0.0 0.0
+    271.0 0.0
+    272.0 {{ p.CONSTANT_PERFUSION_RATE_TACE }}:float
+    500.0 {{ p.CONSTANT_PERFUSION_RATE_TACE }}:float
+  End
+  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_TACE|typed }}:float
+  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_TACE|typed }}:float
+  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_TACE|typed }}:float
+
 !====================================================================
 End
 !====================================================================
@@ -399,6 +445,21 @@ Material 5 ! Lesion
     500.0     250000.826890
   End
   Density = {{ p.CONSTANT_DENSITY_LESION|typed }}:float
+
+  !--------------------------------------------------------------------
+  ! Perfusion rate in tissue (s^-1):
+  ! (Null in frozen tissue)
+  !--------------------------------------------------------------------
+  Perfusion Rate = Variable Temperature
+  Real 
+    0.0 0.0
+    271.0 0.0
+    272.0 {{ p.CONSTANT_PERFUSION_RATE_LESION }}:float
+    500.0 {{ p.CONSTANT_PERFUSION_RATE_LESION }}:float
+  End
+  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_LESION|typed }}:float
+  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_LESION|typed }}:float
+  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_LESION|typed }}:float
 
 !====================================================================
 End
