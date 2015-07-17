@@ -120,29 +120,33 @@ class CombinationController extends \BaseController {
       return ["error" => "Combination not found"];
     }
 
+    $needleIds = Input::get('needles');
+    if (is_array($needleIds))
+      $needles = Needle::whereIn('Id', $needleIds)->get();
+    else
+      $needles = new Collection;
+
     $incompatibilities = [];
+    $userRequiredParameters = [];
 
-    $xml = new DOMDocument('1.0');
-    $root = $xml->createElement('simulationDefinition');
-    $xml->appendChild($root);
+    $userSuppliedParameters = new Collection;
+    $needleUserParameters = new Collection;
+    list($parameters, $needleParameters) = $combination->compileParameters(
+      $userSuppliedParameters,
+      $needles,
+      $needleUserParameters,
+      $incompatibilities,
+      $userRequiredParameters
+    );
 
-    $combination->xml($root, new Collection, new Collection, $incompatibilities, []);
-
-    if (!empty($incompatibilities))
-      return Response::make(array_map('trim', $incompatibilities), 400);
-
-    if ($xml === null)
-      return Response::make("Combination could not be built from input (reasons unknown)", 400);
-
-    if (Input::get('html'))
-    {
-      $xml->preserveWhiteSpace = false;
-      $xml->formatOutput = true;
-
-      return View::make('combinations.show', ['combinationXml' => $xml]);
-    }
-
-    return $xml->saveXML();
+    return View::make('combinations.show', compact(
+      'combination',
+      'needles',
+      'incompatibilities',
+      'parameters',
+      'needleParameters',
+      'userRequiredParameters'
+    ));
 	}
 
   /**

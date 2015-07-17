@@ -106,10 +106,11 @@ class SimulationController extends \BaseController {
       return Response::json(["msg" => "No such simulation found"], 400);
 
     $incompatibilities = [];
+    $userRequiredParameters = [];
 
     $needles = $simulation->SimulationNeedles->lists('Needle', 'Id');
     list($parameters, $needleParameters) = $simulation->Combination->compileParameters(new Collection,
-      $needles, new Collection, $incompatibilities);
+      $needles, new Collection, $incompatibilities, $userRequiredParameters);
 
     foreach ($parameters as $parameter) {
       $simulation->parameters()->detach($parameter);
@@ -123,6 +124,7 @@ class SimulationController extends \BaseController {
       {
         foreach ($needleParameters[$needleIx] as $needleParameter)
         {
+          \Log::error($needleParameter->ValueSet);
           $simulationNeedle->Parameters()->attach($needleParameter, ['ValueSet' => $needleParameter->ValueSet]);
         }
       }
@@ -145,8 +147,15 @@ class SimulationController extends \BaseController {
     $caption = Input::get('caption');
 
     $incompatibilities = [];
+    $userRequiredParameters = [];
 
-    list($parameters, $needleParameters) = $combination->compileParameters(new Collection, [], new Collection, $incompatibilities);
+    list($parameters, $needleParameters) = $combination->compileParameters(
+      new Collection,
+      [],
+      new Collection,
+      $incompatibilities,
+      $userRequiredParameters
+    );
 
     $simulation = new Simulation;
     $simulation->Combination_Id = $combination->Combination_Id;

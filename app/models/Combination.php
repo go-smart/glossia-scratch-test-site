@@ -56,6 +56,13 @@ class Combination extends UuidModel {
     return $id;
   }
 
+  public function getModalityAttribute() {
+    if (!$this->PowerGenerator)
+      return null;
+
+    return $this->PowerGenerator->Modality;
+  }
+
   public function Simulations() {
     return $this->hasMany('Simulation', 'Combination_Id');
   }
@@ -184,7 +191,13 @@ class Combination extends UuidModel {
     return $parameters;
   }
 
-  public function compileParameters($userSupplied, $needles, $needleUserParameters, &$incompatibilities = array()) {
+  public function compileParameters(
+        $userSupplied,
+        $needles,
+        $needleUserParameters,
+        &$incompatibilities = array(),
+        &$userRequiredParameters
+      ) {
     if (is_array($needles))
       $needlesCollection = new Collection($needles);
     else
@@ -265,32 +278,54 @@ class Combination extends UuidModel {
 
         $needleParametersByNeedle[$needleIx] = $needleParameters;
 
-        $requirements = $requirements->lists("parameterName");
+        $requirementsList = $requirements->lists("parameterName");
         $supplyList = $supplies->lists("parameterName");
 
         $needleUserSupplied = [];
         if (isset($needleUserParameters[$needleIx]))
           $needleUserSupplied = $needleUserParameters[$needleIx]->lists('Name');
 
-        $undefinedList = array_diff($requirements, $supplyList, $needleUserSupplied, $userSupplied->lists('Name'));
+        $undefinedList = array_diff($requirementsList, $supplyList, $needleUserSupplied, $userSupplied->lists('Name'));
         $undefinedList = array_diff($undefinedList, $resultList->lists("Name"));
 
-        foreach ($undefinedList as $missingParameterName)
-          $incompatibilities[] = "Parameter $missingParameterName is missing";
+        if (!empty($undefinedList))
+        {
+          $requirementsMap = array_combine($requirements->lists("parameterName"), $requirements->get()->all());
+          foreach ($undefinedList as $missingParameterName)
+          {
+            $editable = ($requirementsMap[$missingParameterName]->Editable >= 2);
+
+            if ($editable)
+              $userRequiredParameters[] = $requirementsMap[$missingParameterName]->Parameter;
+            else
+              $incompatibilities[] = "Parameter $missingParameterName is missing";
+          }
+        }
       }
     }
     else {
       $requirements = with(clone $attributionsWithoutNeedle)->whereNull("Parameter_Attribution.Value");
       $supplies = with(clone $attributionsWithoutNeedle)->whereNotNull("Parameter_Attribution.Value");
 
-      $requirements = $requirements->lists("parameterName");
+      $requirementsList = $requirements->lists("parameterName");
       $supplyList = $supplies->lists("parameterName");
 
-      $undefinedList = array_diff($requirements, $supplyList, $userSupplied->lists('Name'));
+      $undefinedList = array_diff($requirementsList, $supplyList, $userSupplied->lists('Name'));
       $undefinedList = array_diff($undefinedList, $resultList->lists("Name"));
 
-      foreach ($undefinedList as $missingParameterName)
-        $incompatibilities[] = "Parameter $missingParameterName is missing";
+      if (!empty($undefinedList))
+      {
+        $requirementsMap = array_combine($requirements->lists("parameterName"), $requirements->get()->all());
+        foreach ($undefinedList as $missingParameterName)
+        {
+          $editable = ($requirementsMap[$missingParameterName]->Editable >= 2);
+
+          if ($editable)
+            $userRequiredParameters[] = $requirementsMap[$missingParameterName]->Parameter;
+          else
+            $incompatibilities[] = "Parameter $missingParameterName is missing";
+        }
+      }
     }
 
     $supplies = $attributionsWithoutNeedle->whereNull("Needle_Id")->whereNotNull("Parameter_Attribution.Value");
@@ -305,13 +340,24 @@ class Combination extends UuidModel {
 
     $parameters = [];
     foreach ($attributions as $name => $available)
+    {
       $parameters[$name] = $this->chooseAttribution($available);
+    }
 
     foreach ($userSupplied as $userParameter) {
       if ($userParameter->Value === null)
         $userParameter->Value = $userParameter->pivot->ValueSet;
       $parameters[$userParameter->Name] = $userParameter;
     }
+
+    foreach ($parameters as $parameter)
+      if ($parameter->Editable == 3) /* Always editable */
+        $userRequiredParameters[] = $parameter;
+
+    foreach ($needleParametersByNeedle as $needle => $needleParameters)
+      foreach ($needleParameters as $parameter)
+        if ($parameter->Editable == 3) /* Always editable */
+          $userRequiredParameters[] = $parameter;
 
     return [$parameters, $needleParametersByNeedle];
   }
@@ -325,6 +371,7 @@ class Combination extends UuidModel {
     {
       $parameter = $attributions[0]->Parameter;
       $parameter->Value = $attributions[0]->Value;
+      $parameter->Editable = $attributions[0]->Editable;
       $parameter->Format = $attributions[0]->Format;
       return $parameter;
     }
@@ -363,6 +410,7 @@ class Combination extends UuidModel {
     }
 
     $parameter = $winningAttribution->Parameter;
+    $parameter->Editable = $winningAttribution->Editable;
     $parameter->Value = $winningAttribution->Value;
     $parameter->Format = $winningAttribution->Format;
     return $parameter;
