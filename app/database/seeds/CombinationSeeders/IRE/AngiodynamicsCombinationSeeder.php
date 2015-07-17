@@ -60,6 +60,7 @@ class AngiodynamicsCombinationSeeder extends Seeder {
     $modality['ire']->needles()->save($probe);
 
     $probe->attribute(['Name' => 'NEEDLE_GAUGE', 'Type' => 'float', 'Value' => "A", 'Widget' => 'textbox']);
+    $probe->attribute(['Name' => 'NEEDLE_ACTIVE_LENGTH', 'Type' => 'float', 'Value' => "20", 'Widget' => 'textbox', 'Editable' => 3]);
     $probe->attribute(['Name' => 'NEEDLE_SHAFT_LENGTH', 'Type' => 'float', 'Value' => "B", 'Widget' => 'textbox']);
     $probe->powerGenerators()->attach($generator);
 

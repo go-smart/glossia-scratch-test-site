@@ -51,6 +51,12 @@ class RegionSeeder extends Seeder {
 
     Region::create(['Name' => 'bronchi', 'Format' => 'surface', 'Groups' => '["bronchi"]', 'Segmentation' => ''])
       ->addSegmentationType(SegmentationTypeEnum::Bronchi);
+
+    Region::create(['Name' => 'existing-lesion', 'Format' => 'zone', 'Groups' => '["lesions"]', 'Segmentation' => ''])
+      ->addSegmentationType(SegmentationTypeEnum::Simulation);
+
+    Region::create(['Name' => 'tace', 'Format' => 'zone', 'Groups' => '["tace"]', 'Segmentation' => ''])
+      ->addSegmentationType(SegmentationTypeEnum::TACE);
   }
 
 }

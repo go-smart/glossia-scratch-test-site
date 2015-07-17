@@ -42,7 +42,7 @@ class AmicaCombinationSeeder extends Seeder {
 	public function run()
 	{
     $modality['mwa'] = Modality::whereName('MWA')->first();
-    $model['mwa linear sif'] = NumericalModel::whereName('NUMA MWA Linear SIF')->first();
+    //$model['mwa linear sif'] = NumericalModel::whereName('NUMA MWA Linear SIF')->first();
     $model['mwa nonlinear sif'] = NumericalModel::whereName('NUMA MWA Nonlinear SIF')->first();
 
     /* Add generators */

@@ -45,6 +45,7 @@ class MWACombinationSeeder extends Seeder {
     $modality['mwa'] = Modality::create(array("Name" => "MWA"));
 
     /* Add model */
+    /*
     $model['mwa linear sif'] = new NumericalModel;
     $model['mwa linear sif']->fill(array('Name' => 'NUMA MWA Linear SIF', 'Family' => 'elmer-libnuma'));
     $modality['mwa']->numericalModels()->save($model['mwa linear sif']);
@@ -57,7 +58,6 @@ class MWACombinationSeeder extends Seeder {
     $model['mwa linear sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_UPPER', 'Type' => 'float', 'Value' => 'null', 'Widget' => 'textbox']);
     $model['mwa linear sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_LOWER', 'Type' => 'float', 'Value' => '0.8', 'Widget' => 'textbox']);
 
-    /* Defaults */
     $model['mwa linear sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '2', 'Widget' => 'textbox']);
     // Allows an upper limit if protocol mucks up:
     $model['mwa linear sif']->attribute(['Name' => 'SETTING_FINAL_TIMESTEP', 'Type' => 'int', 'Value' => '10000', 'Widget' => 'textbox']);
@@ -66,6 +66,7 @@ class MWACombinationSeeder extends Seeder {
     $model['mwa linear sif']->attribute(['Name' => 'SIMULATION_DOMAIN_RADIUS', 'Type' => 'float', 'Value' => '40.0', 'Widget' => 'textbox']);
     $model['mwa linear sif']->attribute(['Name' => 'SETTING_AXISYMMETRIC_INNER', 'Type' => 'string', 'Value' => 'basic-mwa', 'Widget' => 'textbox']);
     $model['mwa linear sif']->attribute(['Name' => 'SETTING_AXISYMMETRIC_INNER_COARSE', 'Type' => 'string', 'Value' => 'basic-mwa-coarse', 'Widget' => 'textbox']);
+     */
 
     $model['mwa nonlinear sif'] = new NumericalModel;
     $model['mwa nonlinear sif']->fill(array('Name' => 'NUMA MWA Nonlinear SIF', 'Family' => 'elmer-libnuma'));
@@ -98,6 +99,8 @@ class MWACombinationSeeder extends Seeder {
     $veins = Region::whereName('veins')->first();
     $arteries = Region::whereName('arteries')->first();
     $bronchi = Region::whereName('bronchi')->first();
+    $simulatedLesion = Region::whereName('existing-lesion')->first();
+    $tace = Region::whereName('tace')->first();
     $tumour = Region::whereName('tumour')->first();
     $model['mwa nonlinear sif']->regions()->attach($organ, ['Minimum' => 1, 'Maximum' => 1]);
     $model['mwa nonlinear sif']->regions()->attach($vessels);
@@ -105,6 +108,8 @@ class MWACombinationSeeder extends Seeder {
     $model['mwa nonlinear sif']->regions()->attach($arteries);
     $model['mwa nonlinear sif']->regions()->attach($tumour);
     $model['mwa nonlinear sif']->regions()->attach($bronchi);
+    $model['mwa nonlinear sif']->regions()->attach($simulatedLesion);
+    $model['mwa nonlinear sif']->regions()->attach($tace);
 
     $this->call('\CombinationSeeders\MWA\AmicaCombinationSeeder');
   }

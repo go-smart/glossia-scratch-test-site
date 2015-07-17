@@ -59,6 +59,8 @@ class RFACombinationSeeder extends Seeder {
     $arteries = Region::whereName('veins')->first();
     $veins = Region::whereName('arteries')->first();
     $bronchi = Region::whereName('bronchi')->first();
+    $simulatedLesion = Region::whereName('existing-lesion')->first();
+    $tace = Region::whereName('tace')->first();
     $tumour = Region::whereName('tumour')->first();
     $model['rfa basic sif']->regions()->attach($organ, ['Minimum' => 1, 'Maximum' => 1]);
     $model['rfa basic sif']->regions()->attach($vessels);
@@ -66,6 +68,8 @@ class RFACombinationSeeder extends Seeder {
     $model['rfa basic sif']->regions()->attach($veins);
     $model['rfa basic sif']->regions()->attach($tumour);
     $model['rfa basic sif']->regions()->attach($bronchi);
+    $model['rfa basic sif']->regions()->attach($simulatedLesion);
+    $model['rfa basic sif']->regions()->attach($tace);
 
     /* Defaults */
     $model['rfa basic sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);

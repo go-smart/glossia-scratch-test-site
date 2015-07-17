@@ -65,11 +65,15 @@ class CryoablationCombinationSeeder extends Seeder {
     $veins = Region::whereName('Veins')->first();
     $arteries = Region::whereName('Arteries')->first();
     $tumour = Region::whereName('Tumour')->first();
+    $simulatedLesion = Region::whereName('existing-lesion')->first();
+    $tace = Region::whereName('tace')->first();
     $model['numa sif']->regions()->attach($organ, ['Minimum' => 1, 'Maximum' => 1]);
     $model['numa sif']->regions()->attach($vessels);
     $model['numa sif']->regions()->attach($veins);
     $model['numa sif']->regions()->attach($arteries);
     $model['numa sif']->regions()->attach($tumour);
+    $model['numa sif']->regions()->attach($simulatedLesion);
+    $model['numa sif']->regions()->attach($tace);
 
     $model['Galilfoam'] = new NumericalModel;
     $model['Galilfoam']->fill(array('Name' => 'Galil OpenFOAM', 'Family' => 'elmer-libnuma', 'Definition' => 'lorem ipsum'));

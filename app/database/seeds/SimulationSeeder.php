@@ -219,6 +219,7 @@ class SimulationSeeder extends Seeder {
 
   public function makeSimulation($caption, $patient, $organ, $model, $protocol, $parameterData, $regionData, $needles)
   {
+
     $numerical_model = NumericalModel::whereName($model)->first();
     $protocol = Protocol::whereName($protocol)->whereModalityId($numerical_model->Modality_Id)->first();
     $context = Context::byNameFamily($organ, 'organ');
@@ -291,7 +292,14 @@ class SimulationSeeder extends Seeder {
       $parameters[$parameter->Name] = $parameter;
     }
 
-    list($parameters, $needleParameters) = $combination->compileParameters($parameters, $simulationNeedles, $needleUserParameters, $incompatibilities);
+    $incompatibilities = [];
+    $userRequiredParameters = [];
+    list($parameters, $needleParameters) = $combination->compileParameters($parameters, $simulationNeedles, $needleUserParameters, $incompatibilities, $userRequiredParameters);
+    if (count($incompatibilities))
+    {
+      var_dump($incompatibilities);
+      var_dump($userRequiredParameters);
+    }
 
     foreach ($parameters as $parameterName => $parameter)
     {
