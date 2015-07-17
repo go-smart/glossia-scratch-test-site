@@ -90,7 +90,8 @@ class ParameterAttribution extends UuidModel {
 
   public function activeFields() {
     return array_filter($this->specifyingFields, function ($field) {
-      return !empty($this->$field);
+      $fieldName = train_case($field) . "_Id";
+      return $this->{$fieldName};
     });
   }
 

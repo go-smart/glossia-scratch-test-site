@@ -27,40 +27,44 @@ abstract class Paramable extends UuidModel
    * (or more specific) on this parameter. If none exists,
    * it adds it
    */
-  public function placeholder($name, $context = null, $type = '') {
+  public function placeholder($name, $context = null, $type = null, $overwrite = true) {
+    $data = ['Name' => $name, 'Value' => null];
+
+    if ($type)
+      $data['Type'] = $type;
+
+    $this->attribute($data, $context, $overwrite);
+  }
+
+  public function attribute($data, $context = null, $overwrite = true) {
+    $name = $data['Name'];
+
+    if (!$this->Id)
+      throw new InvalidArgumentException("Cowardly refusing to create an empty (universal) attribute");
+
     /* Convention over configuration */
     $id_name = train_case(get_class($this)) . '_Id';
 
-    if (!$this->Id)
-      throw new InvalidArgumentException("Cowardly refusing to create an empty (universal) placeholder");
-
     $parameterClause = ParameterAttribution::where($id_name, '=', $this->Id);
+    $activeFields = [snake_case(get_class($this))];
 
     if ($context !== null)
+    {
+      $activeFields[] = 'context';
       $parameterClause = $parameterClause->where(Context::$idContext, '=', $context->Id);
-
-    $placeholderExists = ($parameterClause
-      ->whereHas('parameter', function ($q) use ($name) {
-        $q->where('Name', '=', $name);
-      })->count() > 0);
-
-    if (!$placeholderExists) {
-      $parameter = Parameter::whereName($name)->first();
-
-      if (empty($parameter))
-        $parameter = Parameter::create(['Name' => $name, 'Type' => $type]);
-      else if (empty($parameter->Type))
-        $parameter->update(['Type' => $type]);
-
-      $attribution = [$id_name => $this->Id, 'Parameter_Id' => $parameter->Id, 'Value' => null, 'Format' => $type];
-
-      $parameterAttribution = ParameterAttribution::create($attribution);
     }
-  }
 
-  public function attribute($data, $context = null) {
-    if (!$this->Id)
-      throw new InvalidArgumentException("Cowardly refusing to create an empty (universal) attribute");
+    $parameterAttributions = $parameterClause
+        ->whereHas('parameter', function ($q) use ($name) {
+          $q->where('Name', '=', $name);
+        })
+        ->get()
+        ->filter(function ($pa) use ($activeFields) {
+          return empty(array_diff(array_values($pa->activeFields()), array_values($activeFields)));
+        });
+    $parameterAttribution = $parameterAttributions->first();
+    $parameterAttributions->each(function ($pa) { $pa->delete(); });
+
 
     if (array_key_exists('Value', $data))
     {
@@ -72,26 +76,62 @@ abstract class Paramable extends UuidModel
       $value = null;
     }
 
-    $parameter = Parameter::whereName($data['Name'])->first();
-
-    if (empty($parameter))
-      $parameter = Parameter::create($data);
+    if (array_key_exists('Editable', $data))
+    {
+      $editable = $data['Editable'];
+      unset($data['Editable']);
+    }
     else
-      $parameter->update(array_filter($data));
+    {
+      $editable = 2;
+    }
 
-    /* Convention over configuration */
-    $id_name = train_case(get_class($this)) . '_Id';
+    if ($parameterAttribution)
+    {
+      $parameter = $parameterAttribution->parameter;
+      if ($overwrite)
+      {
+        $parameterAttribution->Value = $value;
+        $parameterAttribution->Editable = $editable;
+        $parameterAttribution->save();
+      }
+      else
+      {
+        $value = $parameterAttribution->Value;
+        $editable = $parameterAttribution->Editable;
+      }
+    }
+    else
+    {
+      $parameter = Parameter::whereName($data['Name'])->first();
 
-    $type = array_key_exists('Type', $data) ? $data['Type'] : $parameter->Type;
+      if (empty($parameter))
+        $parameter = Parameter::create($data);
+      else
+        $parameter->update(array_filter($data));
 
-    $attribution = [$id_name => $this->Id, 'Parameter_Id' => $parameter->Id, 'Value' => $value, 'Format' => $type];
+      /* Convention over configuration */
+      $id_name = train_case(get_class($this)) . '_Id';
 
-    if ($context !== null)
-      $attribution[Context::$idContext] = $context->Id;
+      $type = array_key_exists('Type', $data) ? $data['Type'] : $parameter->Type;
 
-    $parameterAttribution = ParameterAttribution::create($attribution);
+      $attribution = [
+        $id_name => $this->Id,
+        'Parameter_Id' => $parameter->Id,
+        'Value' => $value,
+        'Format' => $type,
+        'Editable' => $editable
+      ];
+
+      if ($context !== null)
+        $attribution[Context::$idContext] = $context->Id;
+
+      $parameterAttribution = ParameterAttribution::create($attribution);
+    }
 
     $parameter->value = $value;
+    $parameter->Editable = $editable;
+
     return $parameter;
   }
 

@@ -25,6 +25,14 @@ class Parameter extends UuidModel {
 
   public $value = null;
 
+  protected $editableStrings = [
+    "[NOTDEFINED]",
+    "Never shown",
+    "Shown when needed",
+    "Always shown"
+  ];
+
+
   /**
    * Look after created_at and modified_at properties automatically
    *
@@ -55,7 +63,18 @@ class Parameter extends UuidModel {
    * Accessors that should really be in a ViewModel/Presenter decorator
    */
 
+  public function getEditableStringAttribute()
+  {
+    return $this->editableStrings[$this->Editable];
+  }
+
+  //FIXME: deprecated
   public function as_html()
+  {
+    return $this->asHtml;
+  }
+
+  public function getAsHtmlAttribute()
   {
     $combined = "<span class='parameter' title='Type: $this->Type";
 
