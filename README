@@ -1,6 +1,9 @@
 (Go-Smart) SIMULATION-MODEL-LARAVEL
 ===================================
 
+This project is co-funded by: European Commission under grant agreement no. 600641.
+http://www.gosmart-project.eu/
+
 This tool is the reference implementation of the Go-Smart domain model. It provides basic GSSA-XML generation, which is the input for the go-smart-simulation-server, from a simulation defined in the database.
 
 DEPENDENCIES
