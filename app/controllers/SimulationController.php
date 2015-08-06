@@ -4,7 +4,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class SimulationController extends \BaseController {
 
-  protected $httpTransferrerBase = 'http://gosmartfiles.blob.core.windows.net/gosmart';
+  protected $httpTransferrerBase = 'https://smart-mict.de/api/downloadFile';
 
 	/**
 	 * Display a listing of the resource.
@@ -19,7 +19,25 @@ class SimulationController extends \BaseController {
       'Combination.Protocol',
       'Combination.PowerGenerator',
       'Combination.PowerGenerator.Modality'
-    ])->get();
+    ])
+    ->leftJoin('ItemSet as SimulationItem', 'SimulationItem.Id', '=', 'Simulation.Id')
+    ->leftJoin('ItemSet as PatientItem', 'PatientItem.Id', '=', 'Simulation.Patient_Id')
+    ->leftJoin('ItemSet_Patient', 'ItemSet_Patient.Id', '=', 'Simulation.Patient_Id')
+    ->leftJoin('ItemSet_Segmentation', function ($leftJoin) {
+      $leftJoin->on('ItemSet_Segmentation.Patient_Id', '=', 'Simulation.Patient_Id');
+      $leftJoin->on('ItemSet_Segmentation.State', '=', DB::raw('3'));
+      $leftJoin->on('ItemSet_Segmentation.SegmentationType', '=', DB::raw(SegmentationTypeEnum::Lesion));
+    })
+    ->leftJoin('ItemSet_VtkFile as LesionFile', 'LesionFile.Segmentation_Id', '=', 'ItemSet_Segmentation.Id')
+    ->leftJoin('AspNetUsers as Clinician', 'Clinician.Id', '=', 'ItemSet_Patient.AspNetUsersId')
+    ->select(
+      'Simulation.*',
+      'SimulationItem.CreationDate as creationDate',
+      'LesionFile.Id as SegmentedLesionId',
+      'Clinician.Id as ClinicianId',
+      'Clinician.UserName as ClinicianUserName'
+    )
+    ->get();
 
 		return View::make('simulations.index', compact('simulations', 'backups'));
 	}

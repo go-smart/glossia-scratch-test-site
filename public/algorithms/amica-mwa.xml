@@ -24,9 +24,6 @@
     <argument name='Time' />
   </arguments>
   <parameters>
-    <parameter name='CONSTANT_INPUT_POWER' value='[45, 65, 85, -1]' type='array(int)' />
-    <parameter name='CONSTANT_INPUT_POWER_TIMES' value='[0, 60, 120, 720]' type='array(float)' />
-    <parameter name='CONSTANT_INPUT_POWER_COUNT' value='4' type='int' />
   </parameters>
   <description>
   </description>

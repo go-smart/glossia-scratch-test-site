@@ -15,7 +15,7 @@
 !  * GNU General Public License for more details.
 !  *
 !  * You should have received a copy of the GNU Affero General Public License
-!  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+!  * along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 !  */
 ! 
 !====================================================================
@@ -48,7 +48,7 @@ Simulation
         !--------------------------------------------------------------------
         ! Simulation length (number of timesteps):
         !--------------------------------------------------------------------
-        Timestep intervals = {{ p.SETTING_FINAL_TIMESTEP|typed }}:int                ![Si2]!
+        Timestep intervals = {{ p.SETTING_FINAL_TIMESTEP|typed }}                ![Si2]!
         !--------------------------------------------------------------------
         ! Problem characteristics:
         !--------------------------------------------------------------------
@@ -57,7 +57,7 @@ Simulation
         !--------------------------------------------------------------------
         ! Timestepping scheme:
         !--------------------------------------------------------------------
-        Timestep Sizes = {{ p.SETTING_TIMESTEP_SIZE|typed }}:float
+        Timestep Sizes = {{ p.SETTING_TIMESTEP_SIZE|typed }}
 
         Angular Frequency = Real $$ 2 * 3.14159265357589 * {{ p.CONSTANT_INPUT_FREQUENCY }} $$
         Steady State Max Iterations = Integer 1000
@@ -72,7 +72,7 @@ Body 1
 !====================================================================
   {{ p.BODIES_REGIONS_ORGANS }}
 
-  Name = "Tissue & Blood"
+  Name = "Tissue &amp; Blood"
   Equation = Integer 1
   Body Force = Integer 1
   Initial condition = Integer 1
@@ -188,13 +188,19 @@ Equation 1
 End
 !====================================================================
 
+!{{ p.CONSTANT_INPUT_POWER }}
+{% set INPUT_POWER_COUNT = p.CONSTANT_INPUT_POWER.value|length %}
+{% set INPUT_POWER = list(zip(*p.CONSTANT_INPUT_POWER.value)) %}
+!{{ INPUT_POWER }}
+{% set INPUT_POWER_TIMES = INPUT_POWER[0] %}
+{% set INPUT_POWER_VALUES = INPUT_POWER[1] %}
 !====================================================================
 Solver 1
 !====================================================================
     Equation = String "NUMA Power Field Trigger"
     Procedure = File "libnuma-powerfield" "NumaPowerFieldTrigger"
-    Phases(2, {{ p.CONSTANT_INPUT_POWER_COUNT }}:int ) = Real {{ p.CONSTANT_INPUT_POWER_TIMES }}:array(float)
-         {{ p.CONSTANT_INPUT_POWER }}:array(int)
+    Phases(2, {{ INPUT_POWER_COUNT }} ) = Real {{ ' '.join(map(str, INPUT_POWER_TIMES)) }}
+         {{ ' '.join(map(str, INPUT_POWER_VALUES)) }}
 
     Mesh = "{{ p.MESHLOCATION_MESHER_INNER_COARSE }}"
     Data Solver = Integer 2
@@ -283,7 +289,7 @@ Solver 6 ! Heat solver (tissue temperatures)
     Cell Death Modelling = Logical True
     Perfusion Visualization = Logical True
     Variable = String "Temperature"
-    Interpolation Missed Value = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
+    Interpolation Missed Value = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}
     Interpolation Only = Logical True
     Variable DOFs = Integer 1
     Linear System Solver = "Iterative"
@@ -315,9 +321,9 @@ Solver 7 ! Cells state
 
     Variable = String "CellState[Alive :1 Dead:1]"
     Variable DOFs = Integer 2
-    Forward Rate = {{ p.CONSTANT_FORWARD_RATE|typed }}:float
-    Backward Rate = {{ p.CONSTANT_BACKWARD_RATE|typed }}:float
-    Exponential Rate = {{ p.CONSTANT_EXPONENTIAL_RATE|typed }}:float
+    Forward Rate = {{ p.CONSTANT_FORWARD_RATE|typed }}
+    Backward Rate = {{ p.CONSTANT_BACKWARD_RATE|typed }}
+    Exponential Rate = {{ p.CONSTANT_EXPONENTIAL_RATE|typed }}
     Nonlinear System Max Iterations = 500
     Nonlinear System Convergence Tolerance = 1.0e-6
 !====================================================================
@@ -368,24 +374,24 @@ Material 1 ! Body
 !====================================================================
   Name = "Tissue"
 
-  Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
-  Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TISSUE|typed }}:float
-  Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE|typed }}:float
-  Density = {{ p.CONSTANT_DENSITY_TISSUE|typed }}:float
+  Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}
+  Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TISSUE|typed }}
+  Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE|typed }}
+  Density = {{ p.CONSTANT_DENSITY_TISSUE|typed }}
   In Tissue = Real 1.0
   Relative Permittivity = Equals MyRelativePermittivity
   Electric Conductivity = Equals MyElectricConductivity
-  Relative Permeability = {{ p.CONSTANT_MW_RELATIVE_PERMEABILITY_TISSUE|typed }}:float
-  Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_TISSUE|typed }}:float
-  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_TISSUE|typed }}:float
-  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_TISSUE|typed }}:float
-  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_TISSUE|typed }}:float
-  Vapourization Cut Off = {{ p.CONSTANT_VAPOURIZATION_CUT_OFF_TISSUE|typed }}:float
-  !Vapourization Minimum Deposition = {{ p.CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TISSUE|typed }}:float
-  !Vapourization Gradient = {{ p.CONSTANT_VAPOURIZATION_GRADIENT_TISSUE|typed }}:float
-  !Coagulation Cut Off = {{ p.CONSTANT_COAGULATION_CUT_OFF_TISSUE|typed }}:float
-  !Coagulation Minimum Deposition = {{ p.CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TISSUE|typed }}:float
-  !Coagulation Gradient = {{ p.CONSTANT_COAGULATION_GRADIENT_TISSUE|typed }}:float
+  Relative Permeability = {{ p.CONSTANT_MW_RELATIVE_PERMEABILITY_TISSUE|typed }}
+  Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_TISSUE|typed }}
+  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_TISSUE|typed }}
+  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_TISSUE|typed }}
+  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_TISSUE|typed }}
+  Vapourization Cut Off = {{ p.CONSTANT_VAPOURIZATION_CUT_OFF_TISSUE|typed }}
+  !Vapourization Minimum Deposition = {{ p.CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TISSUE|typed }}
+  !Vapourization Gradient = {{ p.CONSTANT_VAPOURIZATION_GRADIENT_TISSUE|typed }}
+  !Coagulation Cut Off = {{ p.CONSTANT_COAGULATION_CUT_OFF_TISSUE|typed }}
+  !Coagulation Minimum Deposition = {{ p.CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TISSUE|typed }}
+  !Coagulation Gradient = {{ p.CONSTANT_COAGULATION_GRADIENT_TISSUE|typed }}
 !====================================================================
 End
 !====================================================================
@@ -396,16 +402,16 @@ Material 2
   Name = "Slot"
 
   In Tissue = Real 0.0
-  Electric Conductivity = {{ p.CONSTANT_MW_ELECTRIC_CONDUCTIVITY_AIR|typed }}:float
-  Relative Permeability = {{ p.CONSTANT_MW_RELATIVE_PERMEABILITY_AIR|typed }}:float
-  Relative Permittivity = {{ p.CONSTANT_MW_RELATIVE_PERMITTIVITY_AIR|typed }}:float
-  Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_NEEDLE|typed }}:float
-  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_NEEDLE|typed }}:float
-  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_NEEDLE|typed }}:float
-  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_NEEDLE|typed }}:float
-  Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE|typed }}:float
-  Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TISSUE|typed }}:float
-  Density = {{ p.CONSTANT_DENSITY_TISSUE|typed }}:float
+  Electric Conductivity = {{ p.CONSTANT_MW_ELECTRIC_CONDUCTIVITY_AIR|typed }}
+  Relative Permeability = {{ p.CONSTANT_MW_RELATIVE_PERMEABILITY_AIR|typed }}
+  Relative Permittivity = {{ p.CONSTANT_MW_RELATIVE_PERMITTIVITY_AIR|typed }}
+  Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_NEEDLE|typed }}
+  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_NEEDLE|typed }}
+  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_NEEDLE|typed }}
+  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_NEEDLE|typed }}
+  Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE|typed }}
+  Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TISSUE|typed }}
+  Density = {{ p.CONSTANT_DENSITY_TISSUE|typed }}
 !====================================================================
 End
 !====================================================================
@@ -416,16 +422,16 @@ Material 3
   Name = "Dielectric Cable"
 
   In Tissue = Real 0.0
-  Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_NEEDLE|typed }}:float
-  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_NEEDLE|typed }}:float
-  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_NEEDLE|typed }}:float
-  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_NEEDLE|typed }}:float
-  Electric Conductivity = {{ p.CONSTANT_MW_ELECTRIC_CONDUCTIVITY_DIELECTRIC_CABLE|typed }}:float
-  Relative Permeability = {{ p.CONSTANT_MW_RELATIVE_PERMEABILITY_DIELECTRIC_CABLE|typed }}:float
-  Relative Permittivity = {{ p.CONSTANT_MW_RELATIVE_PERMITTIVITY_DIELECTRIC_CABLE|typed }}:float
-  Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE|typed }}:float
-  Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TISSUE|typed }}:float
-  Density = {{ p.CONSTANT_DENSITY_TISSUE|typed }}:float
+  Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_NEEDLE|typed }}
+  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_NEEDLE|typed }}
+  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_NEEDLE|typed }}
+  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_NEEDLE|typed }}
+  Electric Conductivity = {{ p.CONSTANT_MW_ELECTRIC_CONDUCTIVITY_DIELECTRIC_CABLE|typed }}
+  Relative Permeability = {{ p.CONSTANT_MW_RELATIVE_PERMEABILITY_DIELECTRIC_CABLE|typed }}
+  Relative Permittivity = {{ p.CONSTANT_MW_RELATIVE_PERMITTIVITY_DIELECTRIC_CABLE|typed }}
+  Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE|typed }}
+  Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TISSUE|typed }}
+  Density = {{ p.CONSTANT_DENSITY_TISSUE|typed }}
 !====================================================================
 End
 !====================================================================
@@ -436,16 +442,16 @@ Material 4
   Name = "Catheter"
 
   In Tissue = Real 0.0
-  Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_NEEDLE|typed }}:float
-  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_NEEDLE|typed }}:float
-  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_NEEDLE|typed }}:float
-  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_NEEDLE|typed }}:float
-  Electric Conductivity = {{ p.CONSTANT_MW_ELECTRIC_CONDUCTIVITY_CATHETER|typed }}:float
-  Relative Permeability = {{ p.CONSTANT_MW_RELATIVE_PERMEABILITY_CATHETER|typed }}:float
-  Relative Permittivity = {{ p.CONSTANT_MW_RELATIVE_PERMITTIVITY_CATHETER|typed }}:float
-  Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE|typed }}:float
-  Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TISSUE|typed }}:float
-  Density = {{ p.CONSTANT_DENSITY_TISSUE|typed }}:float
+  Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_NEEDLE|typed }}
+  Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_NEEDLE|typed }}
+  Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_NEEDLE|typed }}
+  Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_NEEDLE|typed }}
+  Electric Conductivity = {{ p.CONSTANT_MW_ELECTRIC_CONDUCTIVITY_CATHETER|typed }}
+  Relative Permeability = {{ p.CONSTANT_MW_RELATIVE_PERMEABILITY_CATHETER|typed }}
+  Relative Permittivity = {{ p.CONSTANT_MW_RELATIVE_PERMITTIVITY_CATHETER|typed }}
+  Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TISSUE|typed }}
+  Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TISSUE|typed }}
+  Density = {{ p.CONSTANT_DENSITY_TISSUE|typed }}
 !====================================================================
 End
 !====================================================================
@@ -453,20 +459,20 @@ End
 !====================================================================
 Material 5 ! Tumour
 !====================================================================
-    Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
-    Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR|typed }}:float
-    Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TUMOUR|typed }}:float
-    Density = {{ p.CONSTANT_DENSITY_TUMOUR|typed }}:float
+    Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}
+    Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR|typed }}
+    Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TUMOUR|typed }}
+    Density = {{ p.CONSTANT_DENSITY_TUMOUR|typed }}
 
     In Tissue = Real 1.0
     Electric Conductivity = Equals MyElectricConductivity
-    Relative Permeability = {{ p.CONSTANT_MW_RELATIVE_PERMEABILITY_TUMOUR|typed }}:float
+    Relative Permeability = {{ p.CONSTANT_MW_RELATIVE_PERMEABILITY_TUMOUR|typed }}
     Relative Permittivity = Equals MyRelativePermittivity
 
-    Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_TUMOUR|typed }}:float
-    Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_TUMOUR|typed }}:float
-    Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_TUMOUR|typed }}:float
-    Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_TUMOUR|typed }}:float
+    Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_TUMOUR|typed }}
+    Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_TUMOUR|typed }}
+    Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_TUMOUR|typed }}
+    Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_TUMOUR|typed }}
     Vapourization Cut Off = {{ p.CONSTANT_VAPOURIZATION_CUT_OFF_TUMOUR|typed }}
     !Vapourization Minimum Deposition = {{ p.CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TUMOUR|typed }}
     !Vapourization Gradient = {{ p.CONSTANT_VAPOURIZATION_GRADIENT_TUMOUR|typed }}
@@ -490,10 +496,10 @@ Material 6 ! Needle
     Relative Permeability = {{ p.CONSTANT_MW_RELATIVE_PERMEABILITY_CATHETER|typed }}
     Relative Permittivity = {{ p.CONSTANT_MW_RELATIVE_PERMITTIVITY_CATHETER|typed }}
 
-    Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_NEEDLE|typed }}:float
-    Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_NEEDLE|typed }}:float
-    Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_NEEDLE|typed }}:float
-    Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_NEEDLE|typed }}:float
+    Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_NEEDLE|typed }}
+    Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_NEEDLE|typed }}
+    Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_NEEDLE|typed }}
+    Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_NEEDLE|typed }}
     !Vapourization Minimum Deposition = {{ p.CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TISSUE|typed }}
     !Vapourization Gradient = {{ p.CONSTANT_VAPOURIZATION_GRADIENT_TISSUE|typed }}
     !Coagulation Cut Off = {{ p.CONSTANT_COAGULATION_CUT_OFF_TISSUE|typed }}
@@ -506,20 +512,20 @@ End
 !====================================================================
 Material 7 ! TACE
 !====================================================================
-    Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
-    Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TACE|typed }}:float
-    Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TACE|typed }}:float
-    Density = {{ p.CONSTANT_DENSITY_TACE|typed }}:float
+    Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}
+    Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TACE|typed }}
+    Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TACE|typed }}
+    Density = {{ p.CONSTANT_DENSITY_TACE|typed }}
 
     In Tissue = Real 1.0
     Electric Conductivity = Equals MyElectricConductivity
-    Relative Permeability = {{ p.CONSTANT_MW_RELATIVE_PERMEABILITY_TACE|typed }}:float
+    Relative Permeability = {{ p.CONSTANT_MW_RELATIVE_PERMEABILITY_TACE|typed }}
     Relative Permittivity = Equals MyRelativePermittivity
 
-    Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_TACE|typed }}:float
-    Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_TACE|typed }}:float
-    Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_TACE|typed }}:float
-    Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_TACE|typed }}:float
+    Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_TACE|typed }}
+    Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_TACE|typed }}
+    Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_TACE|typed }}
+    Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_TACE|typed }}
     Vapourization Cut Off = {{ p.CONSTANT_VAPOURIZATION_CUT_OFF_TACE|typed }}
     !Vapourization Minimum Deposition = {{ p.CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_TACE|typed }}
     !Vapourization Gradient = {{ p.CONSTANT_VAPOURIZATION_GRADIENT_TACE|typed }}
@@ -533,20 +539,20 @@ End
 !====================================================================
 Material 8 ! Lesion
 !====================================================================
-    Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
-    Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_LESION|typed }}:float
-    Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_LESION|typed }}:float
-    Density = {{ p.CONSTANT_DENSITY_LESION|typed }}:float
+    Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}
+    Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_LESION|typed }}
+    Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_LESION|typed }}
+    Density = {{ p.CONSTANT_DENSITY_LESION|typed }}
 
     In Tissue = Real 1.0
     Electric Conductivity = Equals MyElectricConductivity
-    Relative Permeability = {{ p.CONSTANT_MW_RELATIVE_PERMEABILITY_LESION|typed }}:float
+    Relative Permeability = {{ p.CONSTANT_MW_RELATIVE_PERMEABILITY_LESION|typed }}
     Relative Permittivity = Equals MyRelativePermittivity
 
-    Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_LESION|typed }}:float
-    Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_LESION|typed }}:float
-    Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_LESION|typed }}:float
-    Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_LESION|typed }}:float
+    Perfusion Rate = {{ p.CONSTANT_PERFUSION_RATE_LESION|typed }}
+    Perfusion Density = {{ p.CONSTANT_PERFUSION_DENSITY_LESION|typed }}
+    Perfusion Heat Capacity = {{ p.CONSTANT_PERFUSION_HEAT_CAPACITY_LESION|typed }}
+    Perfusion Reference Temperature = {{ p.CONSTANT_PERFUSION_REFERENCE_TEMPERATURE_LESION|typed }}
     Vapourization Cut Off = {{ p.CONSTANT_VAPOURIZATION_CUT_OFF_LESION|typed }}
     !Vapourization Minimum Deposition = {{ p.CONSTANT_VAPOURIZATION_MINIMUM_DEPOSITION_LESION|typed }}
     !Vapourization Gradient = {{ p.CONSTANT_VAPOURIZATION_GRADIENT_LESION|typed }}
@@ -600,7 +606,7 @@ End
 Boundary Condition 5
 !====================================================================
     {{ p.REGIONS_BOUNDARY }}
-    Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
+    Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}
 !====================================================================
 End
 !====================================================================
@@ -611,8 +617,8 @@ Boundary Condition 6
     {{ p.REGIONS_VEINS }}
     Flow Pressure = Real -0.00000000    
     Heat Flux BC = Logical True    
-    Heat Transfer Coefficient = {{ p.CONSTANT_VENOUS_HEAT_TRANSFER_COEFFICIENT|typed }}:float
-    External Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
+    Heat Transfer Coefficient = {{ p.CONSTANT_VENOUS_HEAT_TRANSFER_COEFFICIENT|typed }}
+    External Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}
 !====================================================================
 End
 !====================================================================
@@ -622,7 +628,7 @@ Boundary Condition 7
 !====================================================================
     {{ p.REGIONS_ARTERIES }}
     Flow Pressure = Real 0.00000000    
-    Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
+    Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}
 !====================================================================
 End
 !====================================================================
@@ -641,8 +647,8 @@ Boundary Condition 9
     {{ p.REGIONS_BRONCHI }}
     Flow Pressure = Real -0.00000000
     Heat Flux BC = Logical True
-    Heat Transfer Coefficient = {{ p.CONSTANT_BRONCHI_HEAT_TRANSFER_COEFFICIENT|typed }}:float
-    External Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
+    Heat Transfer Coefficient = {{ p.CONSTANT_BRONCHI_HEAT_TRANSFER_COEFFICIENT|typed }}
+    External Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}
 !====================================================================
 End
 !====================================================================
@@ -651,12 +657,14 @@ End
 Initial Condition 1
 !====================================================================
 
-    Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
-    ITemperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
-    CellState(2) = Real {{ p.CONSTANT_INITIAL_CELLS_ALIVE }}:float {{ p.CONSTANT_INITIAL_CELLS_DEAD }}:float
-    MyElectricConductivity = {{ p.CONSTANT_MW_EFFECTIVE_ELECTRIC_CONDUCTIVITY_TISSUE|typed }}:float
-    MyRelativePermittivity = {{ p.CONSTANT_MW_RELATIVE_PERMITTIVITY_TISSUE|typed }}:float
+    Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}
+    ITemperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}
+    CellState(2) = Real {{ p.CONSTANT_INITIAL_CELLS_ALIVE }} {{ p.CONSTANT_INITIAL_CELLS_DEAD }}
+    MyElectricConductivity = {{ p.CONSTANT_MW_EFFECTIVE_ELECTRIC_CONDUCTIVITY_TISSUE|typed }}
+    MyRelativePermittivity = {{ p.CONSTANT_MW_RELATIVE_PERMITTIVITY_TISSUE|typed }}
 
 !====================================================================
 End
 !====================================================================
+
+{{ p.SOURCES }}

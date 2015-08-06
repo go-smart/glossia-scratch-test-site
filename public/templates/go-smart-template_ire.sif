@@ -4,17 +4,21 @@ Header
     Results Directory ""
 End
 
+!{{ p.CONSTANT_IRE_SEQUENCE }}:array(tuple(int,int,float))
+{% SEQUENCE_ANODES, SEQUENCE_CATHODES, SEQUENCE_POTENTIAL_DIFFERENCES = zip(*p.CONSTANT_IRE_SEQUENCE.value) %}
+{% SEQUENCE_LENGTH = len(p.CONSTANT_IRE_SEQUENCE.value) %}
+
 Simulation
 	Test Name = String "{{ p.RUNNAME }}"					![Si1]!
     Coordinate System = String "Cartesian 3D"
     Simulation Type = String "Transient"
-    Timestep Intervals = {{ p.CONSTANT_IRE_SEQUENCE_COUNT|typed }}:int
+    Timestep Intervals = Integer {{ SEQUENCE_LENGTH }}
     Steady State Max Iterations = {{ p.CONSTANT_IRE_NONLINEAR_ITERATIONS|typed }}:int
     Steady State Min Iterations = {{ p.CONSTANT_IRE_NONLINEAR_ITERATIONS|typed }}:int
     Timestep Sizes = Real 1
-    Anode({{ p.CONSTANT_IRE_SEQUENCE_COUNT }} ) = {{ p.CONSTANT_IRE_ANODE_SEQUENCE|typed }}:array(int)
-    Cathode({{ p.CONSTANT_IRE_SEQUENCE_COUNT }} ) = {{ p.CONSTANT_IRE_CATHODE_SEQUENCE|typed }}:array(int)
-    Potential Consecutive Values(2, {{ p.CONSTANT_IRE_SEQUENCE_COUNT }} ) = {{ p.CONSTANT_IRE_POTENTIAL_DIFFERENCES|typed }}
+    Anode({{ SEQUENCE_LENGTH }} ) = {{ SEQUENCE_ANODES|typed('array(int)') }}
+    Cathode({{ SEQUENCE_LENGTH }} ) = {{ SEQUENCE_CATHODES|typed('array(int)') }}
+    Potential Consecutive Values(2, {{ SEQUENCE_COUNT }} ) = {{ SEQUENCE_POTENTIAL_DIFFERENCES|typed('array(float)') }}
                                               0    0    0    0    0    0    0    0    0
 End
 

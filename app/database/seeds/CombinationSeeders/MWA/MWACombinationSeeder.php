@@ -93,6 +93,7 @@ class MWACombinationSeeder extends Seeder {
     $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_AXISYMMETRIC_INNER', 'Type' => 'string', 'Value' => 'basic-mwa', 'Widget' => 'textbox']);
     $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_AXISYMMETRIC_INNER_COARSE', 'Type' => 'string', 'Value' => 'basic-mwa-coarse', 'Widget' => 'textbox']);
     $model['mwa nonlinear sif']->attribute(['Name' => 'ELMER_NUMA_MODULES', 'Type' => 'array(string)', 'Value' => '[ "mwa_RelPerm", "mwa_ElecCond" ]', 'Widget' => 'textbox']);
+    $model['mwa nonlinear sif']->placeholder('CONSTANT_INPUT_POWER', null, 'array(tuple(Time,float))', true, 'Linegraph(Time,Power)');
 
     $organ = Region::whereName('organ')->first();
     $vessels = Region::whereName('vessels')->first();

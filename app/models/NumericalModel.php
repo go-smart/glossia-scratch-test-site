@@ -67,7 +67,7 @@ class NumericalModel extends Paramable {
     $parameterRegex = Config::get('gosmart.parameterRegex');
 
     if (empty($parameterRegex))
-      $parameterRegex = '/({{ p.((CONSTANT|SETTING|PARAMETER)_[A-Z_]+)\|?[a-zA-Z0-9_]* }}):?([a-z0-9\(\)A-Z_]*)/';
+      $parameterRegex = '/({{ p.((CONSTANT|SETTING|PARAMETER)_[A-Z_]+)\|?[a-zA-Z0-9_]* }}):?([a-z0-9\(\)A-Z_,]*)/';
 
     $this->updatePlaceholdersFromString($parameterRegex, $definition);
     $definition = preg_replace($parameterRegex, '${1}', $definition);

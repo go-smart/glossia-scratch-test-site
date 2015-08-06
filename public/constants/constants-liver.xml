@@ -70,6 +70,8 @@
     <constant name="coagulation gradient (tissue)" value="0.01" units="K" />
     <constant name="coagulation minimum deposition (tissue)" value="0.0" units="K" />
     <constant name="coagulation cut off (tumour)" value="0.9" units="K" />
+    <constant name="coagulation cut off (lesion)" value="0.9" units="K" />
+    <constant name="coagulation cut off (TACE)" value="0.9" units="K" />
     <constant name="coagulation gradient (tumour)" value="0.01" units="K" />
     <constant name="coagulation gradient (lesion)" value="0.01" units="K" />
     <constant name="coagulation gradient (TACE)" value="0.01" units="K" />
@@ -77,8 +79,14 @@
     <constant name="coagulation minimum deposition (lesion)" value="0.0" units="K" />
     <constant name="coagulation minimum deposition (TACE)" value="0.0" units="K" />
     <constant name="vapourization cut off (tissue)" value="443" units="K" />
+    <constant name="vapourization cut off (lesion)" value="443" units="K" />
+    <constant name="vapourization cut off (TACE)" value="443" units="K" />
     <constant name="vapourization gradient (tissue)" value="0.01" units="K" />
+    <constant name="vapourization gradient (TACE)" value="0.01" units="K" />
+    <constant name="vapourization gradient (lesion)" value="0.01" units="K" />
     <constant name="vapourization minimum deposition (tissue)" value="0.0" units="K" />
+    <constant name="vapourization minimum deposition (lesion)" value="0.0" units="K" />
+    <constant name="vapourization minimum deposition (TACE)" value="0.0" units="K" />
     <constant name="vapourization cut off (tumour)" value="443" units="K" />
     <constant name="vapourization cut off (lesion)" value="443" units="K" />
     <constant name="vapourization cut off (TACE)" value="443" units="K" />

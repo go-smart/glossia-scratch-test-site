@@ -32,7 +32,7 @@ class Simulation extends UuidModel {
 
   protected $cachedAsString = false;
 
-  protected $appends = ['asHtml', 'asString', 'clinician', 'hasSegmentedLesion', 'modality', 'isDeleted', 'creationDate'];
+  protected $appends = ['asHtml', 'asString', 'clinician', 'hasSegmentedLesion', 'modality'];
 
   protected static $updateByDefault = false;
 
@@ -58,25 +58,6 @@ class Simulation extends UuidModel {
     return $this->hasMany('SimulationNeedle', 'Simulation_Id');
   }
 
-  public function getCreationDateAttribute() {
-    $itemSet = DB::table('ItemSet')
-      ->where('Id', '=', $this->Id)
-      ->first();
-    if (!$itemSet)
-      return null;
-    $created = strtotime($itemSet->CreationDate);
-    return date("Y-m-d H:i:s", $created);
-  }
-
-  public function getIsDeletedAttribute() {
-    return $this->newQuery()
-      ->join('ItemSet_Patient as P', 'P.Id', '=', 'Simulation.Patient_Id')
-      ->join('ItemSet as IS', 'IS.Id', '=', 'P.Id')
-      ->where('IS.IsDeleted', '=', true)
-      ->where('Simulation.Id', '=', $this->Id)
-      ->count() > 0;
-  }
-
   public function getSegmentationsAttribute() {
     $segmentations = new Collection(DB::select('
       SELECT IS_F.Id AS FileId, IS_S.SegmentationType AS SegmentationType, IS_F.FileName AS FileName, IS_F.Extension AS Extension
@@ -97,6 +78,8 @@ class Simulation extends UuidModel {
 
   public function getSegmentedLesionAttribute()
   {
+    return null;
+    /*
     return $this->newQuery()
       ->where('Simulation.Id', '=', $this->Id)
       ->join('ItemSet_Segmentation as ISS', 'ISS.Patient_Id', '=', 'Simulation.Patient_Id')
@@ -106,21 +89,25 @@ class Simulation extends UuidModel {
       ->where('ISS.State', '=', '3')
       ->where('ISS.SegmentationType', '=', SegmentationTypeEnum::Lesion)
       ->first();
+     */
   }
 
   public function getHasSegmentedLesionAttribute()
   {
-    return $this->segmentedLesion !== null;
+    return $this->SegmentedLesionId !== null;
   }
 
   public function getClinicianAttribute()
   {
+    return ['Id' => $this->ClinicianId, 'UserName' => $this->ClinicianUserName];
+    /*
     $clinician = DB::table('AspNetUsers')
       ->select('AspNetUsers.*')
       ->join('ItemSet_Patient', 'ItemSet_Patient.AspNetUsersId', '=', 'AspNetUsers.Id')
       ->where('ItemSet_Patient.Id', '=', $this->Patient_Id)->first();
 
     return $clinician;
+     */
   }
 
   public function getAsStringAttribute()
@@ -135,6 +122,7 @@ class Simulation extends UuidModel {
   public function getAsHtmlAttribute()
   {
     $simulation = "<span class='parameter' title='" . htmlentities($this->asString) . "'>" . $this->Caption . "</span>";
+    /*
     if ($this->Patient_Id)
     {
       if (!$this->cachedPatient)
@@ -142,6 +130,7 @@ class Simulation extends UuidModel {
       $patient = $this->cachedPatient;
       $simulation .= "</br><span class='parameter' title='" . htmlentities($this->Caption) . "'>" . htmlentities($patient->Description) . "</span> [<span class='parameter'>" . $patient->Alias . "</span>]";
     }
+     */
 
     return $simulation;
   }

@@ -27,11 +27,14 @@ abstract class Paramable extends UuidModel
    * (or more specific) on this parameter. If none exists,
    * it adds it
    */
-  public function placeholder($name, $context = null, $type = null, $overwrite = true) {
+  public function placeholder($name, $context = null, $type = null, $overwrite = true, $widget = null) {
     $data = ['Name' => $name, 'Value' => null];
 
     if ($type)
       $data['Type'] = $type;
+
+    if ($widget)
+      $data['Widget'] = $widget;
 
     $this->attribute($data, $context, $overwrite);
   }
@@ -76,6 +79,16 @@ abstract class Paramable extends UuidModel
       $value = null;
     }
 
+    if (array_key_exists('Widget', $data))
+    {
+      $widget = $data['Widget'];
+      unset($data['Widget']);
+    }
+    else
+    {
+      $widget = null;
+    }
+
     if (array_key_exists('Editable', $data))
     {
       $editable = $data['Editable'];
@@ -93,12 +106,14 @@ abstract class Paramable extends UuidModel
       {
         $parameterAttribution->Value = $value;
         $parameterAttribution->Editable = $editable;
+        $parameterAttribution->Widget = $widget;
         $parameterAttribution->save();
       }
       else
       {
         $value = $parameterAttribution->Value;
         $editable = $parameterAttribution->Editable;
+        $widget = $parameterAttribution->Widget;
       }
     }
     else
@@ -114,23 +129,28 @@ abstract class Paramable extends UuidModel
       $id_name = train_case(get_class($this)) . '_Id';
 
       $type = array_key_exists('Type', $data) ? $data['Type'] : $parameter->Type;
+      $widget = isset($widget) ? $widget : $parameter->Widget;
 
       $attribution = [
         $id_name => $this->Id,
         'Parameter_Id' => $parameter->Id,
         'Value' => $value,
         'Format' => $type,
-        'Editable' => $editable
+        'Editable' => $editable,
+        'Widget' => $widget
       ];
 
       if ($context !== null)
         $attribution[Context::$idContext] = $context->Id;
 
       $parameterAttribution = ParameterAttribution::create($attribution);
+
     }
 
     $parameter->value = $value;
     $parameter->Editable = $editable;
+    $parameter->Widget = $widget;
+    $parameterAttribution->save();
 
     return $parameter;
   }
