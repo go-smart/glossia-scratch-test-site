@@ -4,9 +4,9 @@ Header
     Results Directory ""
 End
 
-!{{ p.CONSTANT_IRE_SEQUENCE }}:array(tuple(int,int,float))
-{% SEQUENCE_ANODES, SEQUENCE_CATHODES, SEQUENCE_POTENTIAL_DIFFERENCES = zip(*p.CONSTANT_IRE_SEQUENCE.value) %}
-{% SEQUENCE_LENGTH = len(p.CONSTANT_IRE_SEQUENCE.value) %}
+!{{ p.CONSTANT_IRE_NEEDLEPAIR_VOLTAGE }}:array(tuple(int,int,float))
+{% set SEQUENCE_ANODES, SEQUENCE_CATHODES, SEQUENCE_POTENTIAL_DIFFERENCES = zip(*p.CONSTANT_IRE_SEQUENCE.value) %}
+{% set SEQUENCE_LENGTH = p.CONSTANT_IRE_SEQUENCE.value|length %}
 
 Simulation
 	Test Name = String "{{ p.RUNNAME }}"					![Si1]!
@@ -16,9 +16,9 @@ Simulation
     Steady State Max Iterations = {{ p.CONSTANT_IRE_NONLINEAR_ITERATIONS|typed }}:int
     Steady State Min Iterations = {{ p.CONSTANT_IRE_NONLINEAR_ITERATIONS|typed }}:int
     Timestep Sizes = Real 1
-    Anode({{ SEQUENCE_LENGTH }} ) = {{ SEQUENCE_ANODES|typed('array(int)') }}
-    Cathode({{ SEQUENCE_LENGTH }} ) = {{ SEQUENCE_CATHODES|typed('array(int)') }}
-    Potential Consecutive Values(2, {{ SEQUENCE_COUNT }} ) = {{ SEQUENCE_POTENTIAL_DIFFERENCES|typed('array(float)') }}
+    Anode({{ SEQUENCE_LENGTH }} ) = {{ SEQUENCE_ANODES|totyped('array(int)') }}
+    Cathode({{ SEQUENCE_LENGTH }} ) = {{ SEQUENCE_CATHODES|totyped('array(int)') }}
+    Potential Consecutive Values(2, {{ SEQUENCE_LENGTH }} ) = {{ SEQUENCE_POTENTIAL_DIFFERENCES|totyped('array(float)') }}
                                               0    0    0    0    0    0    0    0    0
 End
 
