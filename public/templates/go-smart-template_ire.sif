@@ -5,8 +5,8 @@ Header
 End
 
 !{{ p.CONSTANT_IRE_NEEDLEPAIR_VOLTAGE }}:array(tuple(int,int,float))
-{% set SEQUENCE_ANODES, SEQUENCE_CATHODES, SEQUENCE_POTENTIAL_DIFFERENCES = zip(*p.CONSTANT_IRE_SEQUENCE.value) %}
-{% set SEQUENCE_LENGTH = p.CONSTANT_IRE_SEQUENCE.value|length %}
+{% set SEQUENCE_ANODES, SEQUENCE_CATHODES, SEQUENCE_POTENTIAL = zip(*p.CONSTANT_IRE_NEEDLEPAIR_VOLTAGE.value) %}
+{% set SEQUENCE_LENGTH = p.CONSTANT_IRE_NEEDLEPAIR_VOLTAGE.value|length %}
 
 Simulation
 	Test Name = String "{{ p.RUNNAME }}"					![Si1]!
@@ -18,7 +18,7 @@ Simulation
     Timestep Sizes = Real 1
     Anode({{ SEQUENCE_LENGTH }} ) = {{ SEQUENCE_ANODES|totyped('array(int)') }}
     Cathode({{ SEQUENCE_LENGTH }} ) = {{ SEQUENCE_CATHODES|totyped('array(int)') }}
-    Potential Consecutive Values(2, {{ SEQUENCE_LENGTH }} ) = {{ SEQUENCE_POTENTIAL_DIFFERENCES|totyped('array(float)') }}
+    Potential Consecutive Values(2, {{ SEQUENCE_LENGTH }} ) = Real {% for i in range(SEQUENCE_ANODES|length) %}{{ SEQUENCE_POTENTIAL[i] * needle_distance(SEQUENCE_ANODES[i], SEQUENCE_CATHODES[i]) * 100 }} {% endfor %}
                                               0    0    0    0    0    0    0    0    0
 End
 
