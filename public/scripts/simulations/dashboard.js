@@ -313,7 +313,8 @@ function regenerateBoard() {
         tr.append('<td class="modality-indicator modality-' + simulation.modality.Name + '"></td>');
       else
         tr.append('<td></td>');
-      tr.append('<td name="name">' + simulation.asHtml + ' [' + simulation.creationDate + ']<br/><span style="font-size:xx-small">'
+      var shortId = String(Id).substr(0, 6);
+      tr.append('<td name="name">' + simulation.asHtml + ' [' + simulation.creationDate + '] <span style="color: #aaa">' + shortId + '...</span><br/><span style="font-size:xx-small">'
           + simulation.asString + '</span>' + ' <span class="location">[<span name="location"></span>]</span></td>');
       if (simulation.interactive === false)
       {
