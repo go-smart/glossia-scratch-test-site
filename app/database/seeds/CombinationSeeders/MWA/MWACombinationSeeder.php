@@ -101,6 +101,7 @@ class MWACombinationSeeder extends Seeder {
     $arteries = Region::whereName('arteries')->first();
     $bronchi = Region::whereName('bronchi')->first();
     $simulatedLesion = Region::whereName('existing-lesion')->first();
+    $segmentedLesion = Region::whereName('segmented-lesion')->first();
     $tace = Region::whereName('tace')->first();
     $tumour = Region::whereName('tumour')->first();
     $model['mwa nonlinear sif']->regions()->attach($organ, ['Minimum' => 1, 'Maximum' => 1]);
@@ -110,6 +111,7 @@ class MWACombinationSeeder extends Seeder {
     $model['mwa nonlinear sif']->regions()->attach($tumour);
     $model['mwa nonlinear sif']->regions()->attach($bronchi);
     $model['mwa nonlinear sif']->regions()->attach($simulatedLesion);
+    $model['mwa nonlinear sif']->regions()->attach($segmentedLesion);
     $model['mwa nonlinear sif']->regions()->attach($tace);
 
     $this->call('\CombinationSeeders\MWA\AmicaCombinationSeeder');

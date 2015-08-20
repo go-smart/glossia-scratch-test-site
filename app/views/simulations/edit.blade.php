@@ -2,7 +2,7 @@
 
 @section('content')
 
-<h1>Simulations</h1>
+<h1>Simulations : {{ $simulation->Id }}</h1>
 <p>{{ link_to_route('simulation.index', '&rarr; back to simulations') }}</p>
 
 {{ Form::open(['route' => ['simulation.update', $simulation->Id], 'method' => 'PATCH']) }}
@@ -58,8 +58,9 @@
 </ul>
 
 <table>
+<tr><td>{{ Form::text('new-parameter-name') }}</td><td>{{ Form::text('new-parameter-value') }}</td></tr>
 @foreach ($simulation->Parameters as $parameter)
-<tr><td>{{ $parameter->Name }}</td><td>{{ Form::text('parameters-' . $parameter->Id, $parameter->pivot->ValueSet) }}</td></tr>
+<tr><td>{{ $parameter->asHtml }}</td><td>{{ Form::text('parameters-' . $parameter->Id, $parameter->pivot->ValueSet) }}</td></tr>
 @endforeach
 </table>
 

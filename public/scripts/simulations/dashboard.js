@@ -315,7 +315,7 @@ function regenerateBoard() {
         tr.append('<td></td>');
       var shortId = String(Id).substr(0, 6);
       tr.append('<td name="name">' + simulation.asHtml + ' [' + simulation.creationDate + '] <span style="color: #aaa">' + shortId + '...</span><br/><span style="font-size:xx-small">'
-          + simulation.asString + '</span>' + ' <span class="location">[<span name="location"></span>]</span></td>');
+          + simulation.asString + '</span>' + ' <span class="location">[ <span name="location"></span> ]</span></td>');
       if (simulation.interactive === false)
       {
         tr.append('<td></td>');

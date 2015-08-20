@@ -70,6 +70,7 @@ class IRECombinationSeeder extends Seeder {
     $bronchi = Region::whereName('bronchi')->first();
     $tumour = Region::whereName('tumour')->first();
     $simulatedLesion = Region::whereName('existing-lesion')->first();
+    $segmentedLesion = Region::whereName('segmented-lesion')->first();
     $tace = Region::whereName('tace')->first();
     $model['numa sif']->regions()->attach($organ, ['Minimum' => 1, 'Maximum' => 1]);
     $model['numa sif']->regions()->attach($vessels);
@@ -77,6 +78,7 @@ class IRECombinationSeeder extends Seeder {
     $model['numa sif']->regions()->attach($arteries);
     $model['numa sif']->regions()->attach($tumour);
     $model['numa sif']->regions()->attach($simulatedLesion);
+    $model['numa sif']->regions()->attach($segmentedLesion);
     $model['numa sif']->regions()->attach($tace);
 
     $this->call('\CombinationSeeders\IRE\AngiodynamicsCombinationSeeder');

@@ -21,6 +21,8 @@ Simulation
     Timestep Sizes = Real 1
     Anode({{ SEQUENCE_LENGTH }} ) = {{ SEQUENCE_ANODES|totyped('array(int)') }}
     Cathode({{ SEQUENCE_LENGTH }} ) = {{ SEQUENCE_CATHODES|totyped('array(int)') }}
+!Using gradient? {{ p.CONSTANT_IRE_USING_GRADIENT }}:boolean
+{% if (not p.CONSTANT_IRE_USING_GRADIENT.value) %}
     Potential Consecutive Values(2, {{ SEQUENCE_LENGTH }} ) = Real {% for i in range(SEQUENCE_LENGTH) %}{{
         (SEQUENCE_POTENTIAL[i] * needle_distance(SEQUENCE_ANODES[i], SEQUENCE_CATHODES[i], p.CONSTANT_IRE_NEEDLE_SEPARATION_REFERENCE_OFFSET_FROM_TIP) * 100)|discretize(20)
     }} {% endfor %}

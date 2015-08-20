@@ -27,7 +27,7 @@ abstract class Paramable extends UuidModel
    * (or more specific) on this parameter. If none exists,
    * it adds it
    */
-  public function placeholder($name, $context = null, $type = null, $overwrite = true, $widget = null) {
+  public function placeholder($name, $context = null, $type = null, $overwrite = true, $widget = null, $units = null) {
     $data = ['Name' => $name, 'Value' => null];
 
     if ($type)
@@ -35,6 +35,9 @@ abstract class Paramable extends UuidModel
 
     if ($widget)
       $data['Widget'] = $widget;
+
+    if ($units)
+      $data['Units'] = $units;
 
     $this->attribute($data, $context, $overwrite);
   }
@@ -89,6 +92,16 @@ abstract class Paramable extends UuidModel
       $widget = null;
     }
 
+    if (array_key_exists('Units', $data))
+    {
+      $units = $data['Units'];
+      unset($data['Units']);
+    }
+    else
+    {
+      $units = null;
+    }
+
     if (array_key_exists('Editable', $data))
     {
       $editable = $data['Editable'];
@@ -107,6 +120,7 @@ abstract class Paramable extends UuidModel
         $parameterAttribution->Value = $value;
         $parameterAttribution->Editable = $editable;
         $parameterAttribution->Widget = $widget;
+        $parameterAttribution->Units = $units;
         $parameterAttribution->save();
       }
       else
@@ -114,6 +128,7 @@ abstract class Paramable extends UuidModel
         $value = $parameterAttribution->Value;
         $editable = $parameterAttribution->Editable;
         $widget = $parameterAttribution->Widget;
+        $units = $parameterAttribution->Units;
       }
     }
     else
@@ -130,6 +145,7 @@ abstract class Paramable extends UuidModel
 
       $type = array_key_exists('Type', $data) ? $data['Type'] : $parameter->Type;
       $widget = isset($widget) ? $widget : $parameter->Widget;
+      $units = isset($units) ? $units : $parameter->Units;
 
       $attribution = [
         $id_name => $this->Id,
@@ -137,7 +153,8 @@ abstract class Paramable extends UuidModel
         'Value' => $value,
         'Format' => $type,
         'Editable' => $editable,
-        'Widget' => $widget
+        'Widget' => $widget,
+        'Units' => $units
       ];
 
       if ($context !== null)
@@ -150,6 +167,7 @@ abstract class Paramable extends UuidModel
     $parameter->value = $value;
     $parameter->Editable = $editable;
     $parameter->Widget = $widget;
+    $parameter->Units = $units;
     $parameterAttribution->save();
 
     return $parameter;

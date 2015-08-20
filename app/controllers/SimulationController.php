@@ -298,16 +298,26 @@ class SimulationController extends \BaseController {
 
   public function getSegmentedLesion($id)
   {
-    $simulation = Simulation::find($id);
+    $simulation = Simulation::select(
+      'LesionFile.Id as SegmentedLesionId',
+      'LesionFile.FileName as SegmentedLesionFileName',
+      'LesionFile.Extension as SegmentedLesionExtension'
+    )
+    ->leftJoin('ItemSet_Segmentation', function ($leftJoin) {
+      $leftJoin->on('ItemSet_Segmentation.Patient_Id', '=', 'Simulation.Patient_Id');
+      $leftJoin->on('ItemSet_Segmentation.State', '=', DB::raw('3'));
+      $leftJoin->on('ItemSet_Segmentation.SegmentationType', '=', DB::raw(SegmentationTypeEnum::Lesion));
+    })
+    ->leftJoin('ItemSet_VtkFile as VtkFile', 'VtkFile.Segmentation_Id', '=', 'ItemSet_Segmentation.Id')
+    ->leftJoin('ItemSet_File as LesionFile', 'LesionFile.Id', '=', 'VtkFile.Id')
+    ->find($id);
 
     if (!$simulation)
       return Response::make('Simulation not found', 400);
 
-    $lesion = $simulation->SegmentedLesion;
-
-    if ($lesion)
+    if ($simulation->SegmentedLesionId)
     {
-      return Redirect::to($this->httpTransferrerBase . '/' . strtolower($lesion->Id) . '/' . $lesion->FileName . '.' . $lesion->Extension);
+      return Redirect::to($this->httpTransferrerBase . '/' . strtolower($simulation->SegmentedLesionId) . '/' . $simulation->SegmentedLesionFileName . '.' . $simulation->SegmentedLesionExtension);
     }
 
     return Response::make('Segmented lesion not found', 404);
@@ -356,6 +366,16 @@ class SimulationController extends \BaseController {
       {
         $parameter->pivot->ValueSet = Input::get('parameters-' . $parameter->Id);
         $parameter->pivot->save();
+      }
+    }
+
+    if (Input::get('new-parameter-name') && Input::get('new-parameter-value') != '')
+    {
+      $parameter = Parameter::whereName(Input::get('new-parameter-name'))->first();
+      if ($parameter)
+      {
+        $simulation->Parameters()->attach($parameter, ["ValueSet" => Input::get('new-parameter-value')]);
+        $simulation->save();
       }
     }
 

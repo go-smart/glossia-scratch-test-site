@@ -67,6 +67,7 @@ class CryoablationCombinationSeeder extends Seeder {
     $arteries = Region::whereName('Arteries')->first();
     $tumour = Region::whereName('Tumour')->first();
     $simulatedLesion = Region::whereName('existing-lesion')->first();
+    $segmentedLesion = Region::whereName('segmented-lesion')->first();
     $tace = Region::whereName('tace')->first();
     $model['numa sif']->regions()->attach($organ, ['Minimum' => 1, 'Maximum' => 1]);
     $model['numa sif']->regions()->attach($vessels);
@@ -74,6 +75,7 @@ class CryoablationCombinationSeeder extends Seeder {
     $model['numa sif']->regions()->attach($arteries);
     $model['numa sif']->regions()->attach($tumour);
     $model['numa sif']->regions()->attach($simulatedLesion);
+    $model['numa sif']->regions()->attach($segmentedLesion);
     $model['numa sif']->regions()->attach($tace);
 
     $model['Galilfoam'] = new NumericalModel;
