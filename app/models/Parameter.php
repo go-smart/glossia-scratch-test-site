@@ -74,20 +74,52 @@ class Parameter extends UuidModel {
     return $this->asHtml;
   }
 
+  public function getUnitsAttribute($units) {
+    return ($units !== null ? json_decode($units) : null);
+  }
+
+  public function setUnitsAttribute($units) {
+    if ($units !== null) {
+      $units = json_encode($units);
+    }
+
+    $this->attributes['Units'] = $units;
+  }
+
+  public function getWidgetAttribute($widget) {
+    return ($widget !== null ? json_decode($widget) : null);
+  }
+
+  public function setWidgetAttribute($widget) {
+    if ($widget !== null) {
+      if (!is_array($widget))
+        $widget = [$widget];
+
+      $widget = json_encode($widget);
+    }
+
+    $this->attributes['Widget'] = $widget;
+  }
+
   public function getAsHtmlAttribute()
   {
     $combined = "<span class='parameter' title='Type: $this->Type";
 
     if ($this->Units)
     {
-      $combined .= "; Units: " . $this->Units;
+      $combined .= "; Units: " . (is_array($this->Units) ? implode('|', $this->Units) : $this->Units);
     }
 
     if ($this->Restriction)
       $combined .= "; Must be from $this->Restriction";
 
     if ($this->Widget)
-      $combined .= "; Can be given by user using $this->Widget";
+    {
+      $combined .= "; Can be given by user using " . $this->Widget[0];
+      if (count($this->Widget) > 1)
+        $combined .= "(" . implode(', ', array_slice($this->Widget, 1)) . ")";
+    }
+
 
     if ($this->Description)
       $combined .= "; ($this->Description)";

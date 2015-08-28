@@ -23,7 +23,7 @@
   <table class='parameter-table'>
   @foreach ($numerical_model->ParameterAttributions as $pa)
     <tr>
-      <td>{{ $pa->Format ?: $pa->Parameter->Type }}</td><td>{{ $pa->Parameter->as_html() }}</td><td>{{ $pa->Context ? $pa->Context->Name : '' }}</td>
+      <td>{{ $pa->Format ?: $pa->Parameter->Type }}</td><td>{{ $pa->asHtml }}</td><td>{{ $pa->Context ? $pa->Context->Name : '' }}</td>
     </tr>
   @endforeach
   </table>

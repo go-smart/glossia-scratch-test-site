@@ -84,6 +84,33 @@ class ParameterAttribution extends UuidModel {
     return Context::find($this->{Context::$idField});
   }
 
+  public function getUnitsAttribute($units) {
+    return ($units !== null ? json_decode($units) : null);
+  }
+
+  public function setUnitsAttribute($units) {
+    if ($units !== null) {
+      $units = json_encode($units);
+    }
+
+    $this->attributes['Units'] = $units;
+  }
+
+  public function getWidgetAttribute($widget) {
+    return ($widget !== null ? json_decode($widget) : null);
+  }
+
+  public function setWidgetAttribute($widget) {
+    if ($widget !== null) {
+      if (!is_array($widget))
+        $widget = [$widget];
+
+      $widget = json_encode($widget);
+    }
+
+    $this->attributes['Widget'] = $widget;
+  }
+
   public function Context() {
     return $this->belongsTo('Context', Context::$idField);
   }
@@ -110,7 +137,27 @@ class ParameterAttribution extends UuidModel {
     return false;
   }
 
-  public function getAsHtmlAttribute() {
-    return "[" . $this->Parameter->as_html() . ":" . ($this->Value ?: "!") . ":" . $this->Format . "]";
+  public function getAsHtmlAttribute()
+  {
+    $combined = "<span class='parameter' title='Type: $this->Format";
+
+    if ($this->Units)
+    {
+      $combined .= "; Units: " . (is_array($this->Units) ? implode('|', $this->Units) : $this->Units);
+    }
+
+    if ($this->Widget)
+    {
+      $combined .= "; Can be given by user using " . $this->Widget[0];
+      if (count($this->Widget) > 1)
+        $combined .= "(" . implode(', ', $this->Widget[1]) . ")";
+    }
+
+    if ($this->Parameter->Description)
+      $combined .= "; ($this->Description)";
+
+    $combined .= "'>{$this->Parameter->Name}</span>";
+
+    return $combined;
   }
 }

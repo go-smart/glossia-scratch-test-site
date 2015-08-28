@@ -56,7 +56,7 @@ class CryoablationCombinationSeeder extends Seeder {
     $model['numa sif']->attribute(['Name' => 'SETTING_ORGAN_AS_SUBDOMAIN', 'Type' => 'boolean', 'Value' => 'false', 'Widget' => 'checkbox']);
     $model['numa sif']->attribute(['Name' => 'SIMULATION_DOMAIN_RADIUS', 'Type' => 'float', 'Value' => '40.0', 'Widget' => 'textbox']);
     $model['numa sif']->attribute(['Name' => 'CENTRE_LOCATION', 'Type' => 'string', 'Value' => 'centroid-of-tips', 'Widget' => 'textbox']);
-    $model['numa sif']->placeholder('CONSTANT_FLOW_RATE', null, 'array(tuple(Time,float))', true, 'Linegraph(Time,Flow)');
+    $model['numa sif']->placeholder('CONSTANT_FLOW_RATE', null, 'array(tuple(Time,float))', true, ['linegraph', ['Time', 'Flow']], ['s', '%']);
     $model['numa sif']->importSif(public_path() . '/templates/go-smart-template_cryo.sif');
     $model['numa sif']->arguments()->attach(Argument::create(['Name' => 'Temperature']));
     $model['numa sif']->arguments()->attach(Argument::create(['Name' => 'Time']));
@@ -83,7 +83,7 @@ class CryoablationCombinationSeeder extends Seeder {
     $modality['Cryo']->numericalModels()->save($model['Galilfoam']);
     $model['Galilfoam']->arguments()->attach(Argument::create(['Name' => 'Temperature']));
     $model['Galilfoam']->arguments()->attach(Argument::create(['Name' => 'Time']));
-    $model['Galilfoam']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'Float', 'Value' => null, 'Widget' => 'Textbox']);
+    $model['Galilfoam']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'Float', 'Value' => null, 'Widget' => 'textbox']);
 
     $model['Galilfoam']->regions()->attach($organ, ['Minimum' => 1, 'Maximum' => 1]);
     $model['Galilfoam']->regions()->attach($vessels);

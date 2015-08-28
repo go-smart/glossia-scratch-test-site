@@ -5,7 +5,7 @@
     <argument name='ObservedTemperature' />
   </arguments>
   <parameters>
-    <parameter name='CONSTANT_NEEDLE_EXTENSIONS' type='array(float)' value='[0.015]' />
+    <parameter name='CONSTANT_NEEDLE_EXTENSIONS' type='array(float)' value='[0.02]' />
   </parameters>
   <description>
 time_to_target_temp = -1;

@@ -21,10 +21,58 @@
 
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Builder;
+
+class SimulationExtensionScope implements Illuminate\Database\Eloquent\ScopeInterface {
+  public function apply(Builder $builder)
+  {
+    $builder->with([
+      'Combination.NumericalModel',
+      'Combination.Protocol',
+      'Combination.PowerGenerator',
+      'Combination.PowerGenerator.Modality'
+    ])
+    ->leftJoin('ItemSet as SimulationItem', 'SimulationItem.Id', '=', 'Simulation.Id')
+    ->leftJoin('ItemSet as PatientItem', 'PatientItem.Id', '=', 'Simulation.Patient_Id')
+    ->leftJoin('ItemSet_Patient', 'ItemSet_Patient.Id', '=', 'Simulation.Patient_Id')
+    ->leftJoin('ItemSet_Segmentation', function ($leftJoin) {
+      $leftJoin->on('ItemSet_Segmentation.Patient_Id', '=', 'Simulation.Patient_Id');
+      $leftJoin->on('ItemSet_Segmentation.State', '=', DB::raw('3'));
+      $leftJoin->on('ItemSet_Segmentation.SegmentationType', '=', DB::raw(SegmentationTypeEnum::Lesion));
+    })
+    ->leftJoin('ItemSet_VtkFile as LesionFile', 'LesionFile.Segmentation_Id', '=', 'ItemSet_Segmentation.Id')
+    ->leftJoin('AspNetUsers as Clinician', 'Clinician.Id', '=', 'ItemSet_Patient.AspNetUsersId')
+    ->select(
+      'Simulation.*',
+      'SimulationItem.CreationDate as creationDate',
+      'LesionFile.Id as SegmentedLesionId',
+      'Clinician.Id as ClinicianId',
+      'Clinician.UserName as ClinicianUserName',
+      'ItemSet_Patient.Alias as PatientAlias',
+      'ItemSet_Patient.Description as PatientDescription'
+    );
+  }
+
+  public function remove(Builder $builder)
+  {
+    $builder->select('Simulation.*');
+  }
+}
+
+trait SimulationExtensionTrait {
+  public static function bootSimulationExtensionTrait()
+  {
+    static::addGlobalScope(new SimulationExtensionScope);
+  }
+}
+
 
 class Simulation extends UuidModel {
+  use SimulationExtensionTrait;
 
   protected $cachedParameters = null;
+
+  public $hidden = ['Children'];
 
   public $timestamps = false;
 
@@ -32,7 +80,7 @@ class Simulation extends UuidModel {
 
   protected $cachedAsString = false;
 
-  protected $appends = ['asHtml', 'asString', 'clinician', 'hasSegmentedLesion', 'modality'];
+  protected $appends = ['asHtml', 'asString', 'clinician', 'hasSegmentedLesion', 'modality', 'patient'];
 
   protected static $updateByDefault = false;
 
@@ -40,8 +88,20 @@ class Simulation extends UuidModel {
     return $this->Combination->PowerGenerator->Modality;
   }
 
+  public function getChildIdsAttribute() {
+    return $this->Children->lists('Id');
+  }
+
   public function getCombinationIdAttribute($id) {
       return substr($id, 0, 36);
+  }
+
+  public function Parent() {
+    return $this->belongsTo('Simulation', 'Id');
+  }
+
+  public function Children() {
+    return $this->hasMany('Simulation', 'Parent_Id', 'Id');
   }
 
   public function Combination() {
@@ -56,6 +116,11 @@ class Simulation extends UuidModel {
 
   public function SimulationNeedles() {
     return $this->hasMany('SimulationNeedle', 'Simulation_Id');
+  }
+
+  public function getPatientAttribute() {
+    $patient = ['Alias' => $this->PatientAlias, 'Description' => $this->PatientDescription];
+    return $patient;
   }
 
   public function getSegmentationsAttribute() {

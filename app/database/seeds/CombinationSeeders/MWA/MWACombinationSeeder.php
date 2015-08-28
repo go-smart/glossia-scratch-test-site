@@ -45,29 +45,6 @@ class MWACombinationSeeder extends Seeder {
     $modality['mwa'] = Modality::create(array("Name" => "MWA"));
 
     /* Add model */
-    /*
-    $model['mwa linear sif'] = new NumericalModel;
-    $model['mwa linear sif']->fill(array('Name' => 'NUMA MWA Linear SIF', 'Family' => 'elmer-libnuma'));
-    $modality['mwa']->numericalModels()->save($model['mwa linear sif']);
-    $model['mwa linear sif']->importSif(public_path() . '/templates/go-smart-template_mwa-l.sif');
-    $model['mwa linear sif']->arguments()->attach(Argument::create(['Name' => 'Temperature']));
-    $model['mwa linear sif']->arguments()->attach(Argument::create(['Name' => 'Time']));
-    $model['mwa linear sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);
-    $model['mwa linear sif']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'float', 'Value' => null, 'Widget' => 'textbox']);
-    $model['mwa linear sif']->attribute(['Name' => 'SETTING_LESION_FIELD', 'Type' => 'string', 'Value' => 'dead', 'Widget' => 'textbox']);
-    $model['mwa linear sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_UPPER', 'Type' => 'float', 'Value' => 'null', 'Widget' => 'textbox']);
-    $model['mwa linear sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_LOWER', 'Type' => 'float', 'Value' => '0.8', 'Widget' => 'textbox']);
-
-    $model['mwa linear sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '2', 'Widget' => 'textbox']);
-    // Allows an upper limit if protocol mucks up:
-    $model['mwa linear sif']->attribute(['Name' => 'SETTING_FINAL_TIMESTEP', 'Type' => 'int', 'Value' => '10000', 'Widget' => 'textbox']);
-    $model['mwa linear sif']->attribute(['Name' => 'CENTRE_LOCATION', 'Type' => 'string', 'Value' => 'first-needle', 'Widget' => 'textbox']);
-    $model['mwa linear sif']->attribute(['Name' => 'SIMULATION_SCALING', 'Type' => 'float', 'Value' => '0.001', 'Widget' => 'textbox']);
-    $model['mwa linear sif']->attribute(['Name' => 'SIMULATION_DOMAIN_RADIUS', 'Type' => 'float', 'Value' => '40.0', 'Widget' => 'textbox']);
-    $model['mwa linear sif']->attribute(['Name' => 'SETTING_AXISYMMETRIC_INNER', 'Type' => 'string', 'Value' => 'basic-mwa', 'Widget' => 'textbox']);
-    $model['mwa linear sif']->attribute(['Name' => 'SETTING_AXISYMMETRIC_INNER_COARSE', 'Type' => 'string', 'Value' => 'basic-mwa-coarse', 'Widget' => 'textbox']);
-     */
-
     $model['mwa nonlinear sif'] = new NumericalModel;
     $model['mwa nonlinear sif']->fill(array('Name' => 'NUMA MWA Nonlinear SIF', 'Family' => 'elmer-libnuma'));
     $modality['mwa']->numericalModels()->save($model['mwa nonlinear sif']);
@@ -93,7 +70,7 @@ class MWACombinationSeeder extends Seeder {
     $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_AXISYMMETRIC_INNER', 'Type' => 'string', 'Value' => 'basic-mwa', 'Widget' => 'textbox']);
     $model['mwa nonlinear sif']->attribute(['Name' => 'SETTING_AXISYMMETRIC_INNER_COARSE', 'Type' => 'string', 'Value' => 'basic-mwa-coarse', 'Widget' => 'textbox']);
     $model['mwa nonlinear sif']->attribute(['Name' => 'ELMER_NUMA_MODULES', 'Type' => 'array(string)', 'Value' => '[ "mwa_RelPerm", "mwa_ElecCond" ]', 'Widget' => 'textbox']);
-    $model['mwa nonlinear sif']->placeholder('CONSTANT_INPUT_POWER', null, 'array(tuple(Time,float))', true, 'Linegraph(Time,Power)');
+    $model['mwa nonlinear sif']->placeholder('CONSTANT_INPUT_POWER', null, 'array(tuple(Time,float))', true, ['linegraph', ['Time per step', 'Power']], ['s', 'W']);
 
     $organ = Region::whereName('organ')->first();
     $vessels = Region::whereName('vessels')->first();

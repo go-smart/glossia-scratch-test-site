@@ -99,11 +99,11 @@ class GalilCombinationSeeder extends Seeder {
       foreach ($generator as $g)
         $probe->powerGenerators()->attach($g);
 
-      $probe->attribute(['Name' => 'NEEDLE_GAUGE', 'Type' => 'Float', 'Value' => "$probeA[0]", 'Widget' => 'Textbox']);
-      $probe->attribute(['Name' => 'NEEDLE_SHAFT_LENGTH', 'Type' => 'Float', 'Value' => "$probeA[1]", 'Widget' => 'Textbox']);
-      $probe->attribute(['Name' => 'NEEDLE_ACTIVE_THAWING_TEMPERATURE', 'Type' => 'Float', 'Value' => "$probeA[2]", 'Widget' => 'Textbox']);
-      $probe->attribute(['Name' => 'NEEDLE_PASSING_THAWING_HEAT_FLUX', 'Type' => 'Float', 'Value' => "$probeA[3]", 'Widget' => 'Textbox']);
-      $probe->attribute(['Name' => 'NEEDLE_FREEZING_TEMPERATURE', 'Type' => 'Float', 'Value' => "$probeA[4]", 'Widget' => 'Textbox']);
+      $probe->attribute(['Name' => 'NEEDLE_GAUGE', 'Type' => 'Float', 'Value' => "$probeA[0]", 'Widget' => 'textbox']);
+      $probe->attribute(['Name' => 'NEEDLE_SHAFT_LENGTH', 'Type' => 'Float', 'Value' => "$probeA[1]", 'Widget' => 'textbox']);
+      $probe->attribute(['Name' => 'NEEDLE_ACTIVE_THAWING_TEMPERATURE', 'Type' => 'Float', 'Value' => "$probeA[2]", 'Widget' => 'textbox']);
+      $probe->attribute(['Name' => 'NEEDLE_PASSING_THAWING_HEAT_FLUX', 'Type' => 'Float', 'Value' => "$probeA[3]", 'Widget' => 'textbox']);
+      $probe->attribute(['Name' => 'NEEDLE_FREEZING_TEMPERATURE', 'Type' => 'Float', 'Value' => "$probeA[4]", 'Widget' => 'textbox']);
       $needle[$name] = $probe;
       $probe->save();
     }

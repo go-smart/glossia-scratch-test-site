@@ -179,4 +179,29 @@ a[name=start], a[name=duplicate], a[name=pick] {
   cursor: none;
 }
 
+dl.validation {
+  display: block;
+  background-color: red;
+}
 
+dl.validation dd {
+  display: inline-block;
+  padding: 0px;
+  padding-left: 5px;
+  margin: 0px;
+  font-style: italic;
+  font-size: xx-small;
+}
+
+dl.validation dt {
+  display: inline-block;
+  font-weight: bold;
+  font-size: xx-small;
+  padding: 0px;
+  margin: 0px;
+  padding-left: 5px;
+}
+
+.patient {
+  font-weight: bold;
+}

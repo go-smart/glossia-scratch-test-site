@@ -58,7 +58,7 @@ class IRECombinationSeeder extends Seeder {
     $model['numa sif']->attribute(['Name' => 'CENTRE_LOCATION', 'Type' => 'string', 'Value' => 'centroid-of-tips', 'Widget' => 'textbox']);
     $model['numa sif']->attribute(['Name' => 'SETTING_ORGAN_AS_SUBDOMAIN', 'Type' => 'boolean', 'Value' => 'true', 'Widget' => 'checkbox']);
     $model['numa sif']->attribute(['Name' => 'SETTING_ORGAN_AS_SURFACE', 'Type' => 'boolean', 'Value' => 'true', 'Widget' => 'checkbox']);
-    $model['numa sif']->placeholder('CONSTANT_IRE_NEEDLEPAIR_VOLTAGE', null, 'array(tuple(int,int,float))', true, 'Table(Anode, Cathode, Potential Gradient)');
+    $model['numa sif']->placeholder('CONSTANT_IRE_NEEDLEPAIR_VOLTAGE', null, 'array(tuple(int,int,float))', true, ['table', ['Anode', 'Cathode', 'Potential Difference']], [null, null, 'V'], true);
     $model['numa sif']->importSif(public_path() . '/templates/go-smart-template_ire.sif');
     $model['numa sif']->arguments()->attach(Argument::create(['Name' => 'Temperature']));
     $model['numa sif']->arguments()->attach(Argument::create(['Name' => 'Time']));

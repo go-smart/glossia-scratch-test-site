@@ -4,8 +4,14 @@
   "keywords": ["framework", "laravel"],
   "license": "MIT",
   "type": "project",
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/numa-engineering/framework"
+    }
+  ],
   "require": {
-    "laravel/framework": "4.2.*",
+    "laravel/framework": "dev-F-sqlserver",
     "rhumsaa/uuid": "2.8.*@dev"
   },
   "require-dev": {

@@ -27,7 +27,7 @@ abstract class Paramable extends UuidModel
    * (or more specific) on this parameter. If none exists,
    * it adds it
    */
-  public function placeholder($name, $context = null, $type = null, $overwrite = true, $widget = null, $units = null) {
+  public function placeholder($name, $context = null, $type = null, $overwrite = true, $widget = null, $units = null, $overwrite_parameter = false) {
     $data = ['Name' => $name, 'Value' => null];
 
     if ($type)
@@ -39,10 +39,10 @@ abstract class Paramable extends UuidModel
     if ($units)
       $data['Units'] = $units;
 
-    $this->attribute($data, $context, $overwrite);
+    $this->attribute($data, $context, $overwrite, $overwrite_parameter);
   }
 
-  public function attribute($data, $context = null, $overwrite = true) {
+  public function attribute($data, $context = null, $overwrite = true, $overwrite_parameter = false) {
     $name = $data['Name'];
 
     if (!$this->Id)
@@ -164,7 +164,13 @@ abstract class Paramable extends UuidModel
 
     }
 
-    $parameter->value = $value;
+    if (($parameter->Widget === null && $parameter->Units === null) || $overwrite_parameter)
+    {
+      $parameter->Widget = $widget;
+      $parameter->Units = $units;
+    }
+
+    $parameter->Value = $value;
     $parameter->Editable = $editable;
     $parameter->Widget = $widget;
     $parameter->Units = $units;

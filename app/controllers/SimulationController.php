@@ -14,30 +14,7 @@ class SimulationController extends \BaseController {
 	public function index()
 	{
     $backups = array_filter(scandir(public_path() . '/backups'), function ($d) { return $d[0] != '.'; });
-    $simulations = Simulation::with([
-      'Combination.NumericalModel',
-      'Combination.Protocol',
-      'Combination.PowerGenerator',
-      'Combination.PowerGenerator.Modality'
-    ])
-    ->leftJoin('ItemSet as SimulationItem', 'SimulationItem.Id', '=', 'Simulation.Id')
-    ->leftJoin('ItemSet as PatientItem', 'PatientItem.Id', '=', 'Simulation.Patient_Id')
-    ->leftJoin('ItemSet_Patient', 'ItemSet_Patient.Id', '=', 'Simulation.Patient_Id')
-    ->leftJoin('ItemSet_Segmentation', function ($leftJoin) {
-      $leftJoin->on('ItemSet_Segmentation.Patient_Id', '=', 'Simulation.Patient_Id');
-      $leftJoin->on('ItemSet_Segmentation.State', '=', DB::raw('3'));
-      $leftJoin->on('ItemSet_Segmentation.SegmentationType', '=', DB::raw(SegmentationTypeEnum::Lesion));
-    })
-    ->leftJoin('ItemSet_VtkFile as LesionFile', 'LesionFile.Segmentation_Id', '=', 'ItemSet_Segmentation.Id')
-    ->leftJoin('AspNetUsers as Clinician', 'Clinician.Id', '=', 'ItemSet_Patient.AspNetUsersId')
-    ->select(
-      'Simulation.*',
-      'SimulationItem.CreationDate as creationDate',
-      'LesionFile.Id as SegmentedLesionId',
-      'Clinician.Id as ClinicianId',
-      'Clinician.UserName as ClinicianUserName'
-    )
-    ->get();
+    $simulations = Simulation::all();
 
 		return View::make('simulations.index', compact('simulations', 'backups'));
 	}
@@ -82,7 +59,14 @@ class SimulationController extends \BaseController {
     $simulation = new Simulation;
     $simulation->Combination_Id = $oldSimulation->Combination_Id;
     $simulation->Patient_Id = $oldSimulation->Patient_Id;
-    $simulation->Caption = $oldSimulation->Caption . '+';
+    if (Input::get('caption'))
+    {
+      $simulation->Caption = Input::get('caption');
+    }
+    else
+    {
+      $simulation->Caption = $oldSimulation->Caption . '+';
+    }
     if (substr($simulation->Caption, 0, 2) != "N:")
       $simulation->Caption = "N: " . $simulation->Caption;
     $simulation->SegmentationType = $oldSimulation->SegmentationType;
@@ -90,6 +74,7 @@ class SimulationController extends \BaseController {
     $simulation->State = 0;
     $simulation->Color = 0;
     $simulation->Active = 0;
+    $simulation->Parent_Id = $oldSimulation->Id;
     $simulation->save();
 
     $oldSimulation->SimulationNeedles->each(function ($needle) use ($simulation) {
@@ -112,7 +97,7 @@ class SimulationController extends \BaseController {
     DB::table('ItemSet')->insert(['CreationDate' => date('Y-m-d H:i:s'), 'IsDeleted' => false, 'Id' => $simulation->Id]);
 
     if (Response::json())
-      return $simulation;
+      return Simulation::find($simulation->Id);
 
     return Redirect::route('simulation.edit', $simulation->Id);
 	}

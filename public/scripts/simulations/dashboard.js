@@ -55,24 +55,38 @@ function freestServer()
   return maxServer;
 }
 
-function onFail(args) {
+function onFail(args, skip_identify) {
   var id = args[0];
+  var stat = args[1];
+  var directory = args[2];
+  var timestamp = args[3];
+  var validation = args[4];
+
   if (!(id in statuses))
     statuses[id] = [];
 
-  statuses[id].push(['fail', args[1], args[2]]);
+  if (statuses[id][0] !== 'fail' && !skip_identify)
+    requestIdentify();
+
+  statuses[id].push(['fail', stat, directory, timestamp, validation]);
   reshowStatus(id);
-  requestIdentify();
 }
 
-function onComplete(args) {
+function onComplete(args, skip_identify) {
   var id = args[0];
+  var stat = args[1];
+  var directory = args[2];
+  var timestamp = args[3];
+  var validation = args[4];
+
   if (!(id in statuses))
     statuses[id] = [];
 
-  statuses[id].push(['complete', args[1], args[2]]);
+  if (statuses[id][0] !== 'complete' && !skip_identify)
+    requestIdentify();
+
+  statuses[id].push(['complete', stat, directory, timestamp, validation]);
   reshowStatus(id);
-  requestIdentify();
 }
 
 function showComplete(id) {
@@ -175,8 +189,9 @@ function duplicateSimulation(id) {
   if (session)
   {
     var sE = function(err) { showError(id, err.args[0]); };
+    var newName = prompt("Name for new simulation", "");
 
-    $.get(dupLink, [], function (simulation) {
+    $.get(dupLink, {caption: newName}, function (simulation) {
       simulations[simulation.Id] = simulation;
       regenerateBoard();
     });
@@ -287,14 +302,104 @@ function regenerateBoard() {
 
     table.append('<tr><td><div><h2 title="' + clinicianId + '">' + clinician.UserName + '</h2><table id="clinician-' + clinicianId + '"></table></div></td></tr>');
     var clinicianTable = $('#clinician-' + clinicianId);
+    var tree = _makeSimulationsTree(clinician.simulations);
     for (var i = 0; i < clinician.simulations.length; i++)
     {
-      var simulation = clinician.simulations[i];
+      var simulation = tree[clinician.simulations[i].Id];
+      if (simulation)
+        _fullRow(simulation, clinicianTable);
+    }
+  }
+}
+
+function _makeSimulationsTree(simulations)
+{
+  var tree = {};
+  var simulationMap = {};
+  simulations.map(function (s) { simulationMap[s.Id] = s; });
+  var simulationIds = Object.keys(simulationMap);
+  simulationIds.map(function (id) {
+    if (!simulationMap[id])
+      return;
+    var simulation = simulationMap[id];
+    var parent_id = simulation.Parent_Id;
+    if (!parent_id)
+    {
+      tree[id] = simulation;
+    }
+    else if (parent_id in simulationMap)
+    {
+      if (simulationMap[parent_id].children === undefined)
+        simulationMap[parent_id].children = {};
+      simulationMap[parent_id].children[id] = simulation;
+    }
+    else
+    {
+      alert('Orphan: ' + id);
+    }
+  });
+  return tree;
+}
+
+function _childRow(simulation, clinicianTable, depth)
+{
       var Id = simulation.Id;
       var classes = 'simulation';
       if (simulation.isDeleted)
         classes += ' deleted';
-      clinicianTable.append('<tr id="' + Id + '" class="' + classes + '">');
+      clinicianTable.append('<tr id="' + Id + '" class="' + classes + '">' + "\n");
+      var tr = clinicianTable.find('#' + Id);
+      tr.append('<td name="simulation-server-status"><a href="#" name="start">&#9658;</a></td>');
+
+      tools =
+          '<a href="' + duplicateLink(Id) + '" title="Duplicate" name="duplicate">&#9842;</a>'
+          + '<a href="#" title="Pick" name="pick">&#9935;</a>'
+          + '<a href="' + rebuildLink(Id) + '" title="Rebuild" name="rebuild">&#x1f3ed;</a>';
+
+      if (simulation.hasSegmentedLesion)
+          tools += '<a href="' + segmentedLesionLink(Id) + '" title="Segmented lesion" target="segmentedLesion" name="segmentedLesion">&#x1f359;</a>';
+
+      tr.append('<td name="simulation-tools">'
+          + tools
+          + '</td>');
+      tr.append('<td></td>');
+      var shortId = String(Id).substr(0, 6);
+      tr.append('<td name="name" style="padding-left:' + (20 * depth) + 'px">'
+          + simulation.asHtml + ' [' + simulation.creationDate + '] <span style="color: #aaa">' + shortId + '...</span><br/>'
+          + ' <span class="location">[ <span name="location"></span> ]</span></td>');
+      if (simulation.interactive === false)
+      {
+        tr.append('<td></td>');
+      }
+      else
+      {
+        tr.append('<td>[<span style="font-size: xx-small"><a href="' + editLink(Id) + '">e</a>'
+          + '<a href="' + xmlLink(Id) + '" name="xml-link">X</a><a href="' + htmlLink(Id) + '">H</a></span>]</td>');
+      }
+      tr.append('<td name="simulation-server-progress"><span name="progress-number"></span><div name="progress-bar"></div></td>');
+      tr.append('<td id="simulation-' + Id + '-parameter" class="combination-parameters"></td>');
+      tr.append('<td name="simulation-server-details"><div name="simulation-server-validation"></div><br/><div name="simulation-server-timing"></div><br/><div name="simulation-server-message"></div></td>');
+      tr.find('a[name=pick]').unbind("click");
+      tr.find('a[name=pick]').bind("click", handlePick);
+      tr.find('a[name=start]').unbind("click");
+      tr.find('a[name=start]').bind("click", handleStart);
+      tr.find('a[name=rebuild]').unbind("click");
+      tr.find('a[name=rebuild]').bind("click", handleRebuild);
+      tr.find('a[name=duplicate]').unbind("click");
+      tr.find('a[name=duplicate]').bind("click", handleDuplicate);
+      reshowStatus(Id);
+
+      for (child in simulation.children)
+        _childRow(simulation.children[child], clinicianTable, depth + 1);
+}
+
+function _fullRow(simulation, clinicianTable)
+{
+      var Id = simulation.Id;
+      var classes = 'simulation';
+      if (simulation.isDeleted)
+        classes += ' deleted';
+      clinicianTable.append('<tr id="' + Id + '" class="' + classes + '">' + "\n");
       var tr = clinicianTable.find('#' + Id);
       tr.append('<td name="simulation-server-status"><a href="#" name="start">&#9658;</a></td>');
 
@@ -314,7 +419,13 @@ function regenerateBoard() {
       else
         tr.append('<td></td>');
       var shortId = String(Id).substr(0, 6);
-      tr.append('<td name="name">' + simulation.asHtml + ' [' + simulation.creationDate + '] <span style="color: #aaa">' + shortId + '...</span><br/><span style="font-size:xx-small">'
+      var simulationPatient = '(none)';
+      if (simulation.patient)
+      {
+        simulationPatient = '<span class="patient" title="' + simulation.patient.Description + '">' + simulation.patient.Alias + '</span>';
+      }
+      tr.append('<td name="name">' + simulationPatient + '<br/>'
+          + simulation.asHtml + ' [' + simulation.creationDate + '] <span style="color: #aaa">' + shortId + '...</span><br/><span style="font-size:xx-small">'
           + simulation.asString + '</span>' + ' <span class="location">[ <span name="location"></span> ]</span></td>');
       if (simulation.interactive === false)
       {
@@ -327,7 +438,7 @@ function regenerateBoard() {
       }
       tr.append('<td name="simulation-server-progress"><span name="progress-number"></span><div name="progress-bar"></div></td>');
       tr.append('<td id="simulation-' + Id + '-parameter" class="combination-parameters"></td>');
-      tr.append('<td name="simulation-server-details"><div name="simulation-server-timing"></div><br/><div name="simulation-server-message"></div></td>');
+      tr.append('<td name="simulation-server-details"><div name="simulation-server-validation"></div><br/><div name="simulation-server-timing"></div><br/><div name="simulation-server-message"></div></td>');
       tr.find('a[name=pick]').unbind("click");
       tr.find('a[name=pick]').bind("click", handlePick);
       tr.find('a[name=start]').unbind("click");
@@ -337,8 +448,18 @@ function regenerateBoard() {
       tr.find('a[name=duplicate]').unbind("click");
       tr.find('a[name=duplicate]').bind("click", handleDuplicate);
       reshowStatus(Id);
-    }
-  }
+
+      for (child in simulation.children)
+        _childRow(simulation.children[child], clinicianTable, 1);
+}
+
+function makeListForValidation(results)
+{
+  var html = "<dl class='validation'>";
+  for (term in results)
+    html += "<dt>" + term + "</dt><dd>" + results[term] + "</dd>";
+  html += "</dl>";
+  return html;
 }
 
 function reshowStatus(id)
@@ -349,13 +470,23 @@ function reshowStatus(id)
   var latestStatus = statuses[id][statuses[id].length - 1];
   var condition = latestStatus[0];
   var detail = latestStatus[1];
-  var timestamp = latestStatus[2];
+  var directory = latestStatus[2];
+  var timestamp = latestStatus[3];
+  var validation = latestStatus[4];
+
   if (condition == 'complete')
     showComplete(id);
   else if (condition == 'fail')
     showError(id, detail);
   else if (condition == 'status')
     showStatus(id, detail[0], detail[1]);
+
+  if (validation)
+  {
+    var tr = $('#' + id);
+    var results = $.parseJSON(validation);
+    tr.find('div[name=simulation-server-validation]').html(makeListForValidation(results));
+  }
 
   if (timestamp !== undefined)
   {
@@ -364,9 +495,9 @@ function reshowStatus(id)
     if (statuses[id].length > 1)
     {
       var firstStatus = statuses[id][0];
-      if (firstStatus[2] !== undefined)
+      if (firstStatus[3] !== undefined)
       {
-        var firstDate = new Date(firstStatus[2] * 1000);
+        var firstDate = new Date(firstStatus[3] * 1000);
         date_string += firstDate.toUTCString() + ' -> ';
       }
     }
@@ -378,14 +509,15 @@ function reshowStatus(id)
 
 function onStatus(args) {
   var id = args[0];
-  var percentage = args[1];
-  var statusMessage = args[2];
+  var stat = args[1];
+  var directory = args[2];
   var timestamp = args[3];
+  var validation = args[4];
 
   if (!(id in statuses))
     statuses[id] = [];
 
-  statuses[id].push(['status', [percentage, statusMessage], timestamp]);
+  statuses[id].push(['status', stat, directory, timestamp, validation]);
   reshowStatus(id);
 }
 
@@ -430,24 +562,29 @@ function onAnnounce(args) {
   //}
 
   var serverId = args[0];
-  tr = $('#' + args[1]);
-  simulationToServer[args[1]] = serverId;
+  var guid = args[1];
+  var stat = args[2];
+  var directory = args[3];
+  var timestamp = args[4];
+  var validation = args[5];
 
-  if (args[2])
+  tr = $('#' + guid);
+  simulationToServer[guid] = serverId;
+
+  if (stat)
   {
-    var stat = args[2][1];
-    var timestamp = args[4];
-    if (stat.code == 'SUCCESS')
+    var state = stat[1];
+    if (state.code == 'SUCCESS')
     {
-      onComplete([args[1], timestamp]);
+      onComplete([guid, state, directory, timestamp, validation], true);
     }
-    else if (stat.code == 'IN_PROGRESS')
+    else if (state.code == 'IN_PROGRESS')
     {
-      onStatus([args[1], args[2][0], stat.message, timestamp]);
+      onStatus([guid, stat, directory, timestamp, validation], true);
     }
     else
     {
-      onFail([args[1], stat, timestamp]);
+      onFail([guid, state, directory, timestamp, validation], true);
     }
   }
 
