@@ -1,4 +1,4 @@
-<?php
+<!--
 /**
  * This file is part of the Go-Smart Simulation Architecture (GSSA).
  * Go-Smart is an EU-FP7 project, funded by the European Commission.
@@ -18,43 +18,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
-
-class CreateNeedlesTable extends Migration {
-
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::create('Needle', function(Blueprint $table)
-		{
-			$table->char('Id', 36)->primary();
-      $table->char('Modality_Id', 36);
-      $table->foreign('Modality_Id')->references('Id')->on('Modality');
-			$table->string('Name');
-			$table->string('Manufacturer');
-			$table->string('Class');
-			$table->char('FileId', 36)->nullable();
-			$table->string('Extension')->nullable();
-			$table->string('FileName')->nullable();
-      $table->unique(['Name', 'Manufacturer', 'Class']);
-		});
-	}
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::drop('Needle');
-	}
-
+-->
+<algorithm modality="MWA" protocol="Generic modifiable power" result="PERCENTAGE">
+  <arguments>
+    <argument name='Time' />
+  </arguments>
+  <parameters>
+  </parameters>
+  <description>
+function PERCENTAGE( Time )
+{
+    _PERCENTAGE = 100 * Time / 1560;
 }
+  </description>
+</algorithm>

@@ -11,6 +11,7 @@
   function xmlLink(id) { return "{{ URL::route('simulation.show', ['ID']) }}".replace('ID', id); };
   function htmlLink(id) { return "{{ URL::route('simulation.show', ['ID', 'html' => '1']) }}".replace('ID', id); };
   function editLink(id) { return "{{ URL::route('simulation.edit', ['ID']) }}".replace('ID', id); };
+  var preferred_server = "{{{ $preferred_server }}}";
 </script>
 @stop
 
@@ -49,14 +50,23 @@ function updateParameters()
 
 <table>
 <thead>
-  <tr><td>ID</td><td>Hostname</td><td>Score</td></tr>
+  <tr><td></td><td>Server to use</td><td>Hostname</td><td>Score</td></tr>
 </thead>
 <tbody id='servers-table'>
 </tbody>
 </table>
 
+<p><a name='updatePreferredServer' href="{{ URL::route('simulation.updatePreferredServer') }}">Update preferred server</a></p>
+
+<h2>Modalities</h2>
+
+<p>
+{{ implode(' | ', $modalities->map(function ($m) { return HTML::linkRoute('simulation.index', $m->Name, ['modality' => $m->Id]); })->toArray()); }}
+</p>
+
 <h2>Simulations</h2>
 
+<div id='patientList'></div>
 <table class='simulations-table'>
 </table>
 

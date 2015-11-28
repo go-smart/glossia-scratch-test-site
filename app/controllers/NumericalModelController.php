@@ -120,7 +120,9 @@ class NumericalModelController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		//
+    $numerical_model = NumericalModel::find($id);
+
+    return View::make('numerical_models.edit', compact('numerical_model'));
 	}
 
 
@@ -132,7 +134,16 @@ class NumericalModelController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+    $numerical_model = NumericalModel::find($id);
+    if (Input::has('definition'))
+    {
+      $numerical_model->Definition = Input::get('definition');
+      $dfile = fopen("/tmp/model-" . $id . ".txt", "w");
+      fwrite($dfile, $numerical_model->Definition);
+      fclose($dfile);
+    }
+    $numerical_model->save();
+    return Redirect::route('numerical_model.edit', $id);
 	}
 
 

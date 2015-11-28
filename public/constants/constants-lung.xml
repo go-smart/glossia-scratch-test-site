@@ -47,7 +47,7 @@
     <constant name="perfusion density (tumour)" value="1060.0" units="?" />
     <constant name="perfusion heat capacity (tumour)" value="3639.0" units="?" />
     <constant name="perfusion reference temperature (tumour)" value="310.0" units="?" />
-    <constant name="perfusion rate" value="0.004 (tumour)" units="1/s" />
+    <constant name="perfusion rate (tumour)" value="0.004" units="1/s" />
     <constant name="perfusion density (TACE)" value="1060.0" units="?" />
     <constant name="perfusion heat capacity (TACE)" value="3639.0" units="?" />
     <constant name="perfusion reference temperature (TACE)" value="310.0" units="?" />

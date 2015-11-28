@@ -35,6 +35,7 @@ class SimulationExtensionScope implements Illuminate\Database\Eloquent\ScopeInte
     ->leftJoin('ItemSet as SimulationItem', 'SimulationItem.Id', '=', 'Simulation.Id')
     ->leftJoin('ItemSet as PatientItem', 'PatientItem.Id', '=', 'Simulation.Patient_Id')
     ->leftJoin('ItemSet_Patient', 'ItemSet_Patient.Id', '=', 'Simulation.Patient_Id')
+    ->leftJoin('ItemSet_VtkFile as SimulatedLesionItem', 'SimulatedLesionItem.Simulation_Id', '=', 'Simulation.Id')
     ->leftJoin('ItemSet_Segmentation', function ($leftJoin) {
       $leftJoin->on('ItemSet_Segmentation.Patient_Id', '=', 'Simulation.Patient_Id');
       $leftJoin->on('ItemSet_Segmentation.State', '=', DB::raw('3'));
@@ -42,6 +43,8 @@ class SimulationExtensionScope implements Illuminate\Database\Eloquent\ScopeInte
     })
     ->leftJoin('ItemSet_VtkFile as LesionFile', 'LesionFile.Segmentation_Id', '=', 'ItemSet_Segmentation.Id')
     ->leftJoin('AspNetUsers as Clinician', 'Clinician.Id', '=', 'ItemSet_Patient.AspNetUsersId')
+    ->leftJoin('Combination', 'Combination.Combination_Id', '=', 'Simulation.Combination_Id')
+    ->leftJoin('Power_Generator', 'Power_Generator.Id', '=', 'Combination.Power_Generator_Id')
     ->select(
       'Simulation.*',
       'SimulationItem.CreationDate as creationDate',
@@ -49,7 +52,9 @@ class SimulationExtensionScope implements Illuminate\Database\Eloquent\ScopeInte
       'Clinician.Id as ClinicianId',
       'Clinician.UserName as ClinicianUserName',
       'ItemSet_Patient.Alias as PatientAlias',
-      'ItemSet_Patient.Description as PatientDescription'
+      'ItemSet_Patient.Description as PatientDescription',
+      'SimulatedLesionItem.Id as SimulatedLesionId',
+      'Power_Generator.Modality_Id'
     );
   }
 
@@ -72,7 +77,7 @@ class Simulation extends UuidModel {
 
   protected $cachedParameters = null;
 
-  public $hidden = ['Children'];
+  protected $hidden = ['Combination'];
 
   public $timestamps = false;
 
@@ -80,16 +85,20 @@ class Simulation extends UuidModel {
 
   protected $cachedAsString = false;
 
-  protected $appends = ['asHtml', 'asString', 'clinician', 'hasSegmentedLesion', 'modality', 'patient'];
+  protected $appends = ['asHtml', 'asString', 'clinician', 'hasSimulatedLesion', 'hasSegmentedLesion', 'modality', 'patient', 'contextName'];
 
   protected static $updateByDefault = false;
+
+  public function getContextNameAttribute() {
+    return $this->Combination->Context->Name;
+  }
 
   public function getModalityAttribute() {
     return $this->Combination->PowerGenerator->Modality;
   }
 
-  public function getChildIdsAttribute() {
-    return $this->Children->lists('Id');
+  public function getReplicaIdsAttribute() {
+    return $this->Replicas->lists('Id');
   }
 
   public function getCombinationIdAttribute($id) {
@@ -97,11 +106,19 @@ class Simulation extends UuidModel {
   }
 
   public function Parent() {
-    return $this->belongsTo('Simulation', 'Id');
+    return $this->belongsTo('Simulation', 'Parent_Id');
   }
 
   public function Children() {
     return $this->hasMany('Simulation', 'Parent_Id', 'Id');
+  }
+
+  public function Original() {
+    return $this->belongsTo('Simulation', 'Original_Id');
+  }
+
+  public function Replicas() {
+    return $this->hasMany('Simulation', 'Original_Id', 'Id');
   }
 
   public function Combination() {
@@ -111,7 +128,7 @@ class Simulation extends UuidModel {
   /* This actually hydrates and then stringifies the parameter value again, but if the Parameter
    * object starts to store values as non-strings this is where it should change */
   public function Parameters() {
-    return $this->belongsToMany('Parameter', 'Simulation_Parameter', 'SimulationId', 'ParameterId')->withPivot(['ValueSet']);
+    return $this->belongsToMany('Parameter', 'Simulation_Parameter', 'SimulationId', 'ParameterId')->withPivot(['ValueSet', 'Editable', 'Format']);
   }
 
   public function SimulationNeedles() {
@@ -123,6 +140,21 @@ class Simulation extends UuidModel {
     return $patient;
   }
 
+  public function getSimulatedLesionAttribute() {
+    if (!$this->SimulatedLesionId)
+      return null;
+
+    $segmentation = DB::select('
+      SELECT IS_F.Id AS FileId, IS_F.FileName AS FileName, IS_F.Extension AS Extension
+      FROM ItemSet_File IS_F
+      WHERE Id=:FileId
+    ', ['FileId' => $this->SimulatedLesionId])[0];
+
+    $segmentation->SegmentationType = SegmentationTypeEnum::Simulation;
+
+    return $segmentation;
+  }
+
   public function getSegmentationsAttribute() {
     $segmentations = new Collection(DB::select('
       SELECT IS_F.Id AS FileId, IS_S.SegmentationType AS SegmentationType, IS_F.FileName AS FileName, IS_F.Extension AS Extension
@@ -132,6 +164,10 @@ class Simulation extends UuidModel {
        JOIN ItemSet_File IS_F ON IS_F.Id=IS_V.Id
       WHERE IS_P.Id=:PatientId AND IS_S.State=3
     ', ['PatientId' => $this->Patient_Id]));
+    if ($this->Parent_Id && $this->Parent->hasSimulatedLesion)
+    {
+      $segmentations[] = $this->Parent->SimulatedLesion;
+    }
     $segmentations->each(function ($s) { $s->Name = SegmentationTypeEnum::get($s->SegmentationType); });
     return $segmentations;
   }
@@ -155,6 +191,11 @@ class Simulation extends UuidModel {
       ->where('ISS.SegmentationType', '=', SegmentationTypeEnum::Lesion)
       ->first();
      */
+  }
+
+  public function getHasSimulatedLesionAttribute()
+  {
+    return $this->SimulatedLesionId !== null;
   }
 
   public function getHasSegmentedLesionAttribute()
@@ -186,7 +227,10 @@ class Simulation extends UuidModel {
 
   public function getAsHtmlAttribute()
   {
-    $simulation = "<span class='parameter' title='" . htmlentities($this->asString) . "'>" . $this->Caption . "</span>";
+    $simulation = "<span class='parameter";
+    if ($this->hasSimulatedLesion)
+      $simulation .= " simulation-simulated";
+    $simulation .= "' title='" . htmlentities($this->asString) . "'>" . $this->Caption . "</span>";
     /*
     if ($this->Patient_Id)
     {
@@ -326,6 +370,7 @@ class Simulation extends UuidModel {
       $root->appendChild($parametersNode);
       foreach ($parameters as $parameter) {
         $parameter->Value = $parameter->pivot->ValueSet;
+        $parameter->Format = $parameter->pivot->Format;
         $parameter->xml($parametersNode, $backup);
       }
     }

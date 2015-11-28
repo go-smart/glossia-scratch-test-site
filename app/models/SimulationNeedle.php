@@ -20,7 +20,7 @@ class SimulationNeedle extends UuidModel {
 
   public function Parameters()
   {
-    return $this->belongsToMany('Parameter', 'Simulation_Needle_Parameter', 'SimulationNeedleId', 'ParameterId')->withPivot(['ValueSet']);
+    return $this->belongsToMany('Parameter', 'Simulation_Needle_Parameter', 'SimulationNeedleId', 'ParameterId')->withPivot(['ValueSet', 'Editable', 'Format']);
   }
 
   public function findUnique()

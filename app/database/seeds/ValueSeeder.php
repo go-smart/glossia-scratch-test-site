@@ -46,6 +46,9 @@ class ValueSeeder extends Seeder {
       'name', 'type', 'widget', 'description', 'units',
       'priority', 'restriction'
     ];
+    $attributionFields = [
+      'Name', 'Type', 'Widget', 'Units'
+    ];
     $constantsXmls = File::allFiles(public_path() . '/constants');
 
     foreach ($constantsXmls as $constantsXml) {
@@ -112,17 +115,21 @@ class ValueSeeder extends Seeder {
         $id_name = train_case($class) . '_Id';
         if ($id_name == "Context_Id")
           $id_name = Context::$idField;
-        $attributionData = [$id_name => $target->Id, 'Parameter_Id' => $parameter->Id];
+
+        $attributionData = array_intersect_key($parameterData, array_flip($attributionFields));
 
         if ($constant->hasAttribute('context'))
-          $attributionData[Context::$idField] = Context::byNameFamily($constant->getAttribute('context'), $constant->getAttribute('contextFamily') ?: 'organ')->first()->id;
+          //$attributionData[Context::$idField] = Context::byNameFamily($constant->getAttribute('context'), $constant->getAttribute('contextFamily') ?: 'organ')->first()->id;
+          $context = Context::byNameFamily($constant->getAttribute('context'), $constant->getAttribute('contextFamily') ?: 'organ')->first();
+        else
+          $context = null;
 
         if ($constant->hasAttribute('value'))
           $attributionData['Value'] = $constant->getAttribute('value');
         else
           $attributionData['Value'] = null;
 
-        $attribution = ParameterAttribution::create($attributionData);
+        $attribution = $target->attribute($attributionData, $context);
       }
     }
   }

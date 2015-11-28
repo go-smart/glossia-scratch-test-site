@@ -1,0 +1,13 @@
+<algorithm modality="Cryoablation" protocol="Empty" result="PERCENTAGE">
+  <arguments>
+    <argument name='Time' />
+  </arguments>
+  <parameters>
+  </parameters>
+  <description>
+function PERCENTAGE( Time )
+{
+    _PERCENTAGE = 100 * Time / 1560;
+}
+  </description>
+</algorithm>

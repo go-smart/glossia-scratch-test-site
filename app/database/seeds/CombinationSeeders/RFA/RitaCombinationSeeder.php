@@ -67,7 +67,6 @@ class RitaCombinationSeeder extends Seeder {
     $needle['rita starburst xl']->fill(array(
       'Name' => 'Starburst XL',
       'Manufacturer' => 'RITA',
-      'File' => '',
       'Geometry' => 'library:straight tines',
       'Class' => 'point-sources'
     ));
@@ -81,7 +80,6 @@ class RitaCombinationSeeder extends Seeder {
     $needle['rita starburst semi-flex']->fill(array(
       'Name' => 'Starburst Semi-Flex',
       'Manufacturer' => 'RITA',
-      'File' => '',
       'Geometry' => 'library:straight tines',
       'Class' => 'point-sources'
     ));
@@ -95,7 +93,6 @@ class RitaCombinationSeeder extends Seeder {
     $needle['rita starburst mri']->fill(array(
       'Name' => 'Starburst MRI',
       'Manufacturer' => 'RITA',
-      'File' => '',
       'Geometry' => 'library:straight tines',
       'Class' => 'point-sources'
     ));
@@ -109,7 +106,6 @@ class RitaCombinationSeeder extends Seeder {
     $needle['rita starburst sde']->fill(array(
       'Name' => 'Starburst SDE',
       'Manufacturer' => 'RITA',
-      'File' => '',
       'Geometry' => 'library:straight tines',
       'Class' => 'point-sources'
     ));

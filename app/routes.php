@@ -36,6 +36,7 @@ Route::get('combination/{id}/parameter/{name}', 'CombinationController@retrieveP
 
 /* Simulations */
 Route::get('simulation/dashboard', 'SimulationController@dashboard');
+Route::get('simulation/updatePreferredServer', ['uses' => 'SimulationController@updatePreferredServer', 'as' => 'simulation.updatePreferredServer']);
 Route::get('simulation/{id}/duplicate', ['uses' => 'SimulationController@duplicate', 'as' => 'simulation.duplicate']);
 Route::get('simulation/{id}/rebuild', ['uses' => 'SimulationController@rebuild', 'as' => 'simulation.rebuild']);
 Route::get('simulation/{id}/segmentedLesion', ['uses' => 'SimulationController@getSegmentedLesion', 'as' => 'simulation.getSegmentedLesion']);

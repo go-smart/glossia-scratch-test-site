@@ -18,83 +18,54 @@
 !  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 !  */
 ! 
-!====================================================================
 !  - Complete model with 3 solvers:
 !    - Heat Solver
 !    - Cells state Solver
 !    - VTU output
 !  - Transient simulation
 !  - 1 materials (Blood and tissue)
-!====================================================================
 
-!====================================================================
 Header
-!====================================================================
 !  Computational mesh directory (also used to save the vtu files):
-!--------------------------------------------------------------------
-  Mesh DB "." "{{ p.MESHLOCATION_MESHER }}"                                   ![H1]!
+  Mesh DB "." "{{ p.MESHLOCATION_MESHER }}"                                   ![H1]
   Include Path ""
   Results Directory ""
-!====================================================================
 End
-!====================================================================
 
-!====================================================================
 Simulation
-!====================================================================
   ! Test name:
-  !--------------------------------------------------------------------
-  Test Name = String "{{ p.RUNNAME }}"                                        ![Si1]!
-  !--------------------------------------------------------------------
+  Test Name = String "{{ p.RUNNAME }}"                                        ![Si1]
   ! Simulation length (number of timesteps):
-  !--------------------------------------------------------------------
-  Timestep intervals = {{ p.SETTING_FINAL_TIMESTEP|typed }}:int                ![Si2]!
-  !--------------------------------------------------------------------
+  Timestep intervals = {{ p.SETTING_FINAL_TIMESTEP|typed }}:int                ![Si2]
   ! Problem characteristics:
-  !--------------------------------------------------------------------
   Coordinate System = String "Cartesian 3D"
   Simulation Type = String "Transient"
-  !--------------------------------------------------------------------
   ! Timestepping scheme:
-  !--------------------------------------------------------------------
   Timestep Sizes = {{ p.SETTING_TIMESTEP_SIZE|typed }}:float
-  !--------------------------------------------------------------------
   ! Electric sources:
-  !--------------------------------------------------------------------
   ! Sources coordinates (text files):
-  !--------------------------------------------------------------------
-  Electric Tips Filename Root = String "{{ p.RUNNAME }}-probe-locations"          ![Si5]!
-  !--------------------------------------------------------------------
+  Electric Tips Filename Root = String "{{ p.RUNNAME }}-probe-locations"          ![Si5]
   ! Variable Sources coordinates in time:
-  !--------------------------------------------------------------------
-  !--------------------------------------------------------------------
   ! Electric power over time (text file):
-  !--------------------------------------------------------------------
-  Electric Power Filename = String "{{ p.RUNNAME }}-power-over-time"          ![Si5]!
+  Electric Power Filename = String "{{ p.RUNNAME }}-power-over-time"          ![Si5]
   Multi Electric Tips Location = Logical True
   Electric Tips Location Times Nb = {{ p.PROBELOCATIONS_COUNT|typed }}
   Multi Electric Tips Location Times({{ p.PROBELOCATIONS_COUNT }}) = {{ p.PROBELOCATIONS|typed }}
-
-!====================================================================
 End
-!====================================================================
 
-!====================================================================
-Body 1
-!====================================================================
+{% if p.BODIES_REGIONS_ORGANS %}
+Body {{ c.BODY }}
   {{ p.BODIES_REGIONS_ORGANS }}
   Name = "Tissue & Blood"
   Equation = Integer 1
   Body Force = Integer 1
   Initial condition = Integer 1
   Material = Integer 1
-!====================================================================
 End
-!====================================================================
+{% endif %}
 
-!====================================================================
-Body 2
-!====================================================================
+{% if p.BODIES_REGIONS_TUMOURS %}
+Body {{ c.BODY }}
   {{ p.BODIES_REGIONS_TUMOURS }}
 
   Name = "Tumour"
@@ -102,13 +73,11 @@ Body 2
   Initial condition = Integer 1
   Material = Integer 2
   Body Force = Integer 1
-!====================================================================
 End
-!====================================================================
+{% endif %}
 
-!====================================================================
-Body 3
-!====================================================================
+{% if p.BODIES_REGIONS_TACE %}
+Body {{ c.BODY }}
   {{ p.BODIES_REGIONS_TACE }}
 
   Name = "TACE"
@@ -116,36 +85,27 @@ Body 3
   Initial condition = Integer 1
   Material = Integer 3
   Body Force = Integer 1
-!====================================================================
 End
-!====================================================================
+{% endif %}
 
-!====================================================================
-Body 4
-!====================================================================
+{% if p.BODIES_REGIONS_LESIONS %}
+Body {{ c.BODY }}
   {{ p.BODIES_REGIONS_LESIONS }}
 
   Name = "Lesion"
   Equation = Integer 1
-  Initial condition = Integer 1
+  Initial condition = Integer 2
   Material = Integer 4
   Body Force = Integer 1
-!====================================================================
 End
-!====================================================================
+{% endif %}
 
-!====================================================================
 Equation 1
-!====================================================================
   Name = "NUMA RFA Point Sources"
   Active Solvers(5) = Integer 1 2 3 4 5
-!====================================================================
 End
-!====================================================================
 
-!====================================================================
 Solver 1 ! Heat solver (tissue temperatures)
-!====================================================================
   Equation = String "heatequation"
   Procedure = File "libnuma-eheatsolver" "HeatSolver"
 
@@ -172,13 +132,9 @@ Solver 1 ! Heat solver (tissue temperatures)
   Nonlinear System Newton After Iterations = 3
   Nonlinear System Newton After Tolerance = 1.0e-02
   Nonlinear System Relaxation Factor = 0.25
-!====================================================================
 End
-!====================================================================
 
-!====================================================================
 Solver 2 ! Cells state
-!====================================================================
   Equation = String "cellstate"
   Procedure = File "libnuma-cellstate" "NumaCellStateSolver"
 
@@ -189,13 +145,9 @@ Solver 2 ! Cells state
   Exponential Rate = {{ p.CONSTANT_EXPONENTIAL_RATE|typed }}:float
   Nonlinear System Max Iterations = 500
   Nonlinear System Convergence Tolerance = 1.0e-9
-!====================================================================
 End
-!====================================================================
 
-!====================================================================
 Solver 3
-!====================================================================
   Equation = String "powergenerator"
   Exec Solver = String "Before timestep"
   Procedure = File "libnuma-powergenerator" "NumaPowerGeneratorSolver"
@@ -220,44 +172,29 @@ Solver 3
   Steady State Convergence Tolerance = 1.0e-03
 End
 
-!====================================================================
 Solver 4 ! VTU Output writer
-!====================================================================
   Equation = String "vtuoutput"
   Exec Solver = String "After timestep"
   Procedure = File "ResultOutputSolve" "ResultOutputSolver"
+  Save Geometry Ids = Logical True
   Output Format = String "vtu"
   Vtu Format = Logical True
-!--------------------------------------------------------------------
 !  Frequency of output (in timesteps):
-!--------------------------------------------------------------------
-   Output Frequency = Integer 1                         ![So1]!
-!====================================================================
+   Output Frequency = Integer 1                         ![So1]
 End
-!====================================================================
 
-!====================================================================
 Solver 5 ! Progress Solver
-!====================================================================
   Equation = String "progress"
   Procedure = File "libnuma-progress" "NumaProgressSolver"
   Percentage Progress = {{ p.PERCENTAGE|typed }}
-!====================================================================
 End
-!====================================================================
 
-!====================================================================
 Body Force 1
-!====================================================================
   Heat Source = Equals SAR
   Volumetric Heat Source = Logical True
-!====================================================================
 End
-!====================================================================
 
-!====================================================================
 Material 1 ! Body
-!====================================================================
   Name = "Tissue"
 
   Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
@@ -274,13 +211,9 @@ Material 1 ! Body
   !Coagulation Cut Off = {{ p.CONSTANT_COAGULATION_CUT_OFF_TISSUE|typed }}:float
   !Coagulation Minimum Deposition = {{ p.CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TISSUE|typed }}:float
   !Coagulation Gradient = {{ p.CONSTANT_COAGULATION_GRADIENT_TISSUE|typed }}:float
-!====================================================================
 End
-!====================================================================
 
-!====================================================================
 Material 2 ! Tumour
-!====================================================================
   Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
   Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TUMOUR|typed }}:float
   Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TUMOUR|typed }}:float
@@ -296,13 +229,9 @@ Material 2 ! Tumour
     !Coagulation Cut Off = {{ p.CONSTANT_COAGULATION_CUT_OFF_TUMOUR|typed }}:float
     !Coagulation Minimum Deposition = {{ p.CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TUMOUR|typed }}:float
     !Coagulation Gradient = {{ p.CONSTANT_COAGULATION_GRADIENT_TUMOUR|typed }}:float
-!====================================================================
 End
-!====================================================================
 
-!====================================================================
 Material 3 ! TACE
-!====================================================================
   Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
   Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_TACE|typed }}:float
   Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_TACE|typed }}:float
@@ -318,13 +247,9 @@ Material 3 ! TACE
     !Coagulation Cut Off = {{ p.CONSTANT_COAGULATION_CUT_OFF_TACE|typed }}:float
     !Coagulation Minimum Deposition = {{ p.CONSTANT_COAGULATION_MINIMUM_DEPOSITION_TACE|typed }}:float
     !Coagulation Gradient = {{ p.CONSTANT_COAGULATION_GRADIENT_TACE|typed }}:float
-!====================================================================
 End
-!====================================================================
 
-!====================================================================
 Material 4 ! Lesion
-!====================================================================
   Body Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
   Heat Conductivity = {{ p.CONSTANT_THERMAL_CONDUCTIVITY_LESION|typed }}:float
   Heat Capacity = {{ p.CONSTANT_SPECIFIC_HEAT_CAPACITY_LESION|typed }}:float
@@ -340,100 +265,70 @@ Material 4 ! Lesion
     !Coagulation Cut Off = {{ p.CONSTANT_COAGULATION_CUT_OFF_LESION|typed }}:float
     !Coagulation Minimum Deposition = {{ p.CONSTANT_COAGULATION_MINIMUM_DEPOSITION_LESION|typed }}:float
     !Coagulation Gradient = {{ p.CONSTANT_COAGULATION_GRADIENT_LESION|typed }}:float
-!====================================================================
 End
-!====================================================================
 
-!====================================================================
-Boundary Condition 1 !Organ wall + sphere
-!====================================================================
+{% if p.BOUNDARIES_REGIONS_BOUNDARY %}
+Boundary Condition {{ c.BOUNDARY }} !Organ wall + sphere
   {{ p.BOUNDARIES_REGIONS_BOUNDARY }}
   Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
-!====================================================================
 End
-!====================================================================
+{% endif %}
 
-!====================================================================
-Boundary Condition 2 ! Output vessel (Hepatic vein)
-!====================================================================
+{% if p.BOUNDARIES_REGIONS_VEINS %}
+Boundary Condition {{ c.BOUNDARY }} ! Output vessel (Hepatic vein)
 
-  !--------------------------------------------------------------------
   ! Boundary index(es):
-  !--------------------------------------------------------------------
   {{ p.BOUNDARIES_REGIONS_VEINS }}
-  !--------------------------------------------------------------------
   ! Convective BC on temperature:
-  !--------------------------------------------------------------------
   Heat Flux BC = Logical True
-  !--------------------------------------------------------------------
   ! Convective transfer coefficient (kg.s^-3.K^-1):
-  !--------------------------------------------------------------------
   Heat Transfer Coefficient = {{ p.CONSTANT_VENOUS_HEAT_TRANSFER_COEFFICIENT|typed }}:float
-  !--------------------------------------------------------------------
   ! External temperature (K):
-  !--------------------------------------------------------------------
   External Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
-!====================================================================
 End
-!====================================================================
+{% endif %}
 
-!====================================================================
-Boundary Condition 3 ! Input vessel (Portal vein + HA)
-!====================================================================
+{% if p.BOUNDARIES_REGIONS_ARTERIES %}
+Boundary Condition {{ c.BOUNDARY }} ! Input vessel (Portal vein + HA)
 
-  !--------------------------------------------------------------------
   ! Boundary index(es):
-  !--------------------------------------------------------------------
   {{ p.BOUNDARIES_REGIONS_ARTERIES }}
-  !--------------------------------------------------------------------
   ! Dirichlet BC on blood and tissue temperatures (K):
-  !--------------------------------------------------------------------
   Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
-!====================================================================
 End
-!====================================================================
+{% endif %}
 
-!====================================================================
-Boundary Condition 4 !Bronchi
-!====================================================================
+{% if p.BOUNDARIES_REGIONS_BRONCHI %}
+Boundary Condition {{ c.BOUNDARY }} !Bronchi
   {{ p.BOUNDARIES_REGIONS_BRONCHI }}
   Heat Flux BC = Logical True
   Flow Pressure = Real -0.00000000
   Heat Transfer Coefficient = {{ p.CONSTANT_BRONCHI_HEAT_TRANSFER_COEFFICIENT|typed }}:float
   External Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
-!====================================================================
 End
-!====================================================================
+{% endif %}
 
-!====================================================================
-Boundary Condition 5 ! Input vessel (Portal vein + HA)
-!====================================================================
+{% if p.BOUNDARIES_REGIONS_VESSELS %}
+Boundary Condition {{ c.BOUNDARY }} ! Input vessel (Portal vein + HA)
 
-  !--------------------------------------------------------------------
   ! Boundary index(es):
-  !--------------------------------------------------------------------
   {{ p.BOUNDARIES_REGIONS_VESSELS }}
-  !--------------------------------------------------------------------
   Heat Flux BC = Logical True
-  !--------------------------------------------------------------------
   ! Convective transfer coefficient (kg.s^-3.K^-1):
-  !--------------------------------------------------------------------
   Heat Transfer Coefficient = {{ p.CONSTANT_VENOUS_HEAT_TRANSFER_COEFFICIENT|typed }}:float
-  !--------------------------------------------------------------------
   ! External temperature (K):
-  !--------------------------------------------------------------------
   External Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
-!====================================================================
 End
-!====================================================================
+{% endif %}
 
-!====================================================================
 Initial Condition 1
-!====================================================================
-
   Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
-
-  CellState(2) = Real {{ p.CONSTANT_INITIAL_CELLS_ALIVE }}:float {{ p.CONSTANT_INITIAL_CELLS_DEAD }}:float
-!====================================================================
+  Alive = Real {{ p.CONSTANT_INITIAL_CELLS_ALIVE }}
+  Dead = Real {{ p.CONSTANT_INITIAL_CELLS_DEAD }}
 End
-!====================================================================
+
+Initial Condition 2
+  Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
+  Alive = Real $ 1 - {{ p.SETTING_LESION_THRESHOLD_LOWER }}:float - 1e-6 $
+  Dead = Real $ {{ p.SETTING_LESION_THRESHOLD_LOWER }}:float + 1e-6 $
+End

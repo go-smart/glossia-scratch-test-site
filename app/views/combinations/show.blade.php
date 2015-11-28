@@ -20,13 +20,13 @@
   </thead>
   <tbody>
     <tr>
-      <td>{{{ $combination->PowerGenerator->Name }}}</td>
+      <td>{{ HTML::linkRoute('power_generator.show', $combination->PowerGenerator->Name, $combination->PowerGenerator->Id) }}</td>
       <td>
         @foreach ($combination->Needles as $needle)
-          {{{ $needle->Name }}}<br/>
+          {{ HTML::linkRoute('needle.show', $needle->Name, [$needle->Id]) }}<br/>
         @endforeach
       </td>
-      <td>{{{ $combination->Numerical_Model->Name }}}</td>
+      <td>{{ HTML::linkRoute('numerical_model.show', $combination->Numerical_Model->Name, [$combination->Numerical_Model->Id]) }}</td>
       <td>{{{ $combination->Context->Family }}} :: {{{ $combination->Context->Name }}}</td>
       <td>{{ HTML::link(route('combination.show', [$combination->Combination_Id, 'html' => 1]), "[XML]") }}</td>
       <td>

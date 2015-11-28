@@ -49,17 +49,17 @@ class IRECombinationSeeder extends Seeder {
     $model['numa sif']->fill(array('Name' => 'NUMA IRE 3D SIF', 'Family' => 'elmer-libnuma', 'Definition' => 'lorem ipsum'));
     $modality['ire']->numericalModels()->save($model['numa sif']);
     $model['numa sif']->attribute(['Name' => 'SIMULATION_SCALING', 'Type' => 'float', 'Value' => '0.001', 'Widget' => 'textbox']);
-    $model['numa sif']->attribute(['Name' => 'SIMULATION_DOMAIN_RADIUS', 'Type' => 'float', 'Value' => '40.0', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'SIMULATION_DOMAIN_RADIUS', 'Type' => 'float', 'Value' => '60.0', 'Widget' => 'textbox']);
     $model['numa sif']->attribute(['Name' => 'SETTING_SOLID_NEEDLES', 'Type' => 'boolean', 'Value' => 'true', 'Widget' => 'checkbox']);
-    $model['numa sif']->attribute(['Name' => 'SETTING_LESION_FIELD', 'Type' => 'string', 'Value' => 'max_e', 'Widget' => 'textbox']);
-    $model['numa sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_UPPER', 'Type' => 'float', 'Value' => 'null', 'Widget' => 'textbox']);
-    $model['numa sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_LOWER', 'Type' => 'float', 'Value' => '80000', 'Widget' => 'textbox']);
-    $model['numa sif']->attribute(['Name' => 'RESOLUTION_FIELD_NEEDLE_ZONE', 'Type' => 'float', 'Value' => '0.3', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'SETTING_LESION_FIELD', 'Type' => 'string', 'Value' => 'survival', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_UPPER', 'Type' => 'float', 'Value' => '0.2', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_LOWER', 'Type' => 'float', 'Value' => 'null', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'RESOLUTION_FIELD_NEEDLE_ZONE', 'Type' => 'float', 'Value' => '0.8', 'Widget' => 'textbox']);
     $model['numa sif']->attribute(['Name' => 'CENTRE_LOCATION', 'Type' => 'string', 'Value' => 'centroid-of-tips', 'Widget' => 'textbox']);
     $model['numa sif']->attribute(['Name' => 'SETTING_ORGAN_AS_SUBDOMAIN', 'Type' => 'boolean', 'Value' => 'true', 'Widget' => 'checkbox']);
     $model['numa sif']->attribute(['Name' => 'SETTING_ORGAN_AS_SURFACE', 'Type' => 'boolean', 'Value' => 'true', 'Widget' => 'checkbox']);
-    $model['numa sif']->placeholder('CONSTANT_IRE_NEEDLEPAIR_VOLTAGE', null, 'array(tuple(int,int,float))', true, ['table', ['Anode', 'Cathode', 'Potential Difference']], [null, null, 'V'], true);
     $model['numa sif']->importSif(public_path() . '/templates/go-smart-template_ire.sif');
+    $model['numa sif']->placeholder('CONSTANT_IRE_NEEDLEPAIR_VOLTAGE', null, 'array(tuple(int,int,float))', true, ['table', ['Anode', 'Cathode', 'Potential Difference']], [null, null, 'V'], true);
     $model['numa sif']->arguments()->attach(Argument::create(['Name' => 'Temperature']));
     $model['numa sif']->arguments()->attach(Argument::create(['Name' => 'Time']));
 

@@ -50,6 +50,8 @@ abstract class Paramable extends UuidModel
 
     /* Convention over configuration */
     $id_name = train_case(get_class($this)) . '_Id';
+    if ($id_name == 'Context_Id')
+      $id_name = Context::$idField;
 
     $parameterClause = ParameterAttribution::where($id_name, '=', $this->Id);
     $activeFields = [snake_case(get_class($this))];
@@ -142,6 +144,8 @@ abstract class Paramable extends UuidModel
 
       /* Convention over configuration */
       $id_name = train_case(get_class($this)) . '_Id';
+      if ($id_name == 'Context_Id')
+        $id_name = Context::$idField;
 
       $type = array_key_exists('Type', $data) ? $data['Type'] : $parameter->Type;
       $widget = isset($widget) ? $widget : $parameter->Widget;

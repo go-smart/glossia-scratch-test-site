@@ -42,92 +42,101 @@ class GalilCombinationSeeder extends Seeder {
 	public function run()
 	{
     \Eloquent::unguard();
-    $modality['Cryo'] = Modality::whereName('Cryoablation')->first();
-    $model['numa sif'] = NumericalModel::whereName('NUMA Cryoablation Basic SIF')->first();
-    $model['Galilfoam'] = NumericalModel::whereName('Galil OpenFOAM')->first();
+    $modality[''] = Modality::whereName('Cryoablation')->first();
+    $modality[' [G]'] = Modality::whereName('Cryoablation [GS-only]')->first();
 
-    /* Add generators */
-    $generator['visual-ice'] = new PowerGenerator;
-    $generator['visual-ice']->fill(array(
-      'Name' => 'Visual-ICE',
-      'Manufacturer' => 'Galil Medical'
-    ));
-    $modality['Cryo']->powerGenerators()->save($generator['visual-ice']);
-    $generator['visual-ice']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
-    $generator['visual-ice']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "10", 'Widget' => 'textbox']);
+    $model[''] = NumericalModel::whereName('NUMA Cryoablation Basic SIF')->first();
+    $model[' [G]'] = NumericalModel::whereName('GOpenFOAM')->first();
+    $needleFile = Needle::where('FileName', '=', 'needle_mw')->first();
 
-    $generator['Presice'] = new PowerGenerator;
-    $generator['Presice']->fill(array(
-      'Name' => 'Presice',
-      'Manufacturer' => 'Galil Medical'
-    ));
-    $modality['Cryo']->powerGenerators()->save($generator['Presice']);
-    $generator['Presice']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
-    $generator['Presice']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "10", 'Widget' => 'textbox']);
-
-    $generator['Seednet'] = new PowerGenerator;
-    $generator['Seednet']->fill(array(
-      'Name' => 'SeedNet',
-      'Manufacturer' => 'Galil Medical'
-    ));
-    $modality['Cryo']->powerGenerators()->save($generator['Seednet']);
-    $generator['Seednet']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
-    $generator['Seednet']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "10", 'Widget' => 'textbox']);
-
-    $generator['mri-seednet'] = new PowerGenerator;
-    $generator['mri-seednet']->fill(array(
-      'Name' => 'MRI SeedNet',
-      'Manufacturer' => 'Galil Medical'
-    ));
-    $modality['Cryo']->powerGenerators()->save($generator['mri-seednet']);
-    $generator['mri-seednet']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
-    $generator['mri-seednet']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "10", 'Widget' => 'textbox']);
-
-    $probes = [
-      'IceSEED' => ['X', 'Y', 'Z', '0', 'B'],
-      'IceEDGE' => ['X', 'Y', 'Z', '0', '123'],
-      'IceROD' => ['X', 'Y', 'Z', '0', '143'],
-      'IceSPHERE' => ['X', 'Y', 'Z', '0', 'B'],
-    ];
-
-    /* Add needles */
-    foreach ($probes as $name => $probeA)
+    foreach ($modality as $mlabel => $m)
     {
-      $probe = new Needle(['Name' => $name, 'Manufacturer' => 'Galil Medical', 'File' => '', 'Geometry' => 'library:cryo-two-part-cylinder-1', 'Class' => 'solid-boundary']);
-      $modality['Cryo']->needles()->save($probe);
+      /* Add generators */
+      $generator['visual-ice'] = new PowerGenerator;
+      $generator['visual-ice']->fill(array(
+        'Name' => 'Visual-ICE' . $mlabel,
+        'Manufacturer' => 'Galil Medical'
+      ));
+      $m->powerGenerators()->save($generator['visual-ice']);
+      $generator['visual-ice']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
+      $generator['visual-ice']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "10", 'Widget' => 'textbox']);
 
-      foreach ($generator as $g)
-        $probe->powerGenerators()->attach($g);
+      $generator['Presice'] = new PowerGenerator;
+      $generator['Presice']->fill(array(
+        'Name' => 'Presice' . $mlabel,
+        'Manufacturer' => 'Galil Medical'
+      ));
+      $m->powerGenerators()->save($generator['Presice']);
+      $generator['Presice']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
+      $generator['Presice']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "10", 'Widget' => 'textbox']);
 
-      $probe->attribute(['Name' => 'NEEDLE_GAUGE', 'Type' => 'Float', 'Value' => "$probeA[0]", 'Widget' => 'textbox']);
-      $probe->attribute(['Name' => 'NEEDLE_SHAFT_LENGTH', 'Type' => 'Float', 'Value' => "$probeA[1]", 'Widget' => 'textbox']);
-      $probe->attribute(['Name' => 'NEEDLE_ACTIVE_THAWING_TEMPERATURE', 'Type' => 'Float', 'Value' => "$probeA[2]", 'Widget' => 'textbox']);
-      $probe->attribute(['Name' => 'NEEDLE_PASSING_THAWING_HEAT_FLUX', 'Type' => 'Float', 'Value' => "$probeA[3]", 'Widget' => 'textbox']);
-      $probe->attribute(['Name' => 'NEEDLE_FREEZING_TEMPERATURE', 'Type' => 'Float', 'Value' => "$probeA[4]", 'Widget' => 'textbox']);
-      $needle[$name] = $probe;
-      $probe->save();
-    }
-    /* Add protocols */
-    $protocol['Empty'] = new Protocol;
-    $protocol['Empty']->fill(array(
-      'Name' => 'Empty'
-    ));
-    $modality['Cryo']->protocols()->save($protocol['Empty']);
+      $generator['Seednet'] = new PowerGenerator;
+      $generator['Seednet']->fill(array(
+        'Name' => 'SeedNet' . $mlabel,
+        'Manufacturer' => 'Galil Medical'
+      ));
+      $m->powerGenerators()->save($generator['Seednet']);
+      $generator['Seednet']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
+      $generator['Seednet']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "10", 'Widget' => 'textbox']);
 
-    /* Add combinations */
-     foreach ($model as $m)
-      foreach ($generator as $g) {
-        $c = new Combination;
-        $c->isPublic = ($m->Name == 'NUMA Cryoablation Basic SIF');
-        $c->protocol()->associate($protocol['Empty']);
-        $c->powerGenerator()->associate($g);
-        $c->numericalModel()->associate($m);
-        $c->context()->associate(Context::byNameFamily('kidney', 'organ'));
-        $c->save();
-        foreach ($needle as $n)
-          $c->needles()->attach($n);
-        $combination['galil-' . $g->name . '-' . $m->name] = $c;
+      $generator['mri-seednet'] = new PowerGenerator;
+      $generator['mri-seednet']->fill(array(
+        'Name' => 'MRI SeedNet' . $mlabel,
+        'Manufacturer' => 'Galil Medical'
+      ));
+      $m->powerGenerators()->save($generator['mri-seednet']);
+      $generator['mri-seednet']->attribute(['Name' => 'NEEDLE_MIN_AMOUNT', 'Type' => 'int', 'Value' => "1", 'Widget' => 'textbox']);
+      $generator['mri-seednet']->attribute(['Name' => 'NEEDLE_MAX_AMOUNT', 'Type' => 'int', 'Value' => "10", 'Widget' => 'textbox']);
+
+      $probes = [
+        'IceSEED' => ['X', '20', '288', '0', 'B'],
+        'IceEDGE' => ['X', '45', '288', '0', '123'],
+        'IceROD' => ['X', '45', '288', '0', '143'],
+        'IceSPHERE' => ['X', '25', '288', '0', 'B'],
+      ];
+
+      /* Add needles */
+      foreach ($probes as $name => $probeA)
+      {
+        $name .= $mlabel;
+        print $name;
+        $probe = new Needle(['Name' => $name, 'Manufacturer' => 'Galil Medical', 'Geometry' => 'library:rfa-cylinder-1', 'Class' => 'solid-boundary',
+        'FileId' => $needleFile->FileId, 'Extension' => $needleFile->Extension, 'FileName' => $needleFile->FileName]);
+        $m->needles()->save($probe);
+
+        foreach ($generator as $g)
+          $probe->powerGenerators()->attach($g);
+
+        $probe->attribute(['Name' => 'NEEDLE_GAUGE', 'Type' => 'float', 'Value' => "$probeA[0]", 'Widget' => 'textbox']);
+        $probe->attribute(['Name' => 'NEEDLE_ACTIVE_LENGTH', 'Type' => 'float', 'Value' => "$probeA[1]", 'Widget' => 'textbox']);
+        $probe->attribute(['Name' => 'NEEDLE_ACTIVE_THAWING_TEMPERATURE', 'Type' => 'float', 'Value' => "$probeA[2]", 'Widget' => 'textbox']);
+        $probe->attribute(['Name' => 'NEEDLE_PASSING_THAWING_HEAT_FLUX', 'Type' => 'float', 'Value' => "$probeA[3]", 'Widget' => 'textbox']);
+        $probe->attribute(['Name' => 'NEEDLE_FREEZING_TEMPERATURE', 'Type' => 'float', 'Value' => "$probeA[4]", 'Widget' => 'textbox']);
+        $needle[$name] = $probe;
+        $probe->save();
       }
+      /* Add protocols */
+      $protocol['Empty'] = new Protocol;
+      $protocol['Empty']->fill(array(
+        'Name' => 'Empty' . $mlabel
+      ));
+      $m->protocols()->save($protocol['Empty']);
+
+      /* Add combinations */
+      $m = $model[$mlabel];
+        foreach ($generator as $g) {
+          $c = new Combination;
+          $c->isPublic = true; //($m->Name == 'NUMA Cryoablation Basic SIF');
+          $c->protocol()->associate($protocol['Empty']);
+          $c->powerGenerator()->associate($g);
+          $c->numericalModel()->associate($m);
+          $c->context()->associate(Context::byNameFamily('kidney', 'organ'));
+          $c->save();
+          foreach ($needle as $n)
+            $c->needles()->attach($n);
+          $combination['galil-' . $g->name . '-' . $m->name] = $c;
+        }
+    }
 	}
 
 }

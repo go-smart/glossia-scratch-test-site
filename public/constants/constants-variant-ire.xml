@@ -20,10 +20,10 @@
  */
 -->
 <constants class="NumericalModel" name="NUMA IRE 3D SIF">
-    <constant name="IRE needlepair voltage" note="Description of anode-cathode pairings and the respective potential" type="array(tuple(int, int, float))" units="V" />
-    <constant name="IRE nonlinear iterations" value="1" note="Number of iterations performed to account for nonlinear interaction of conductivity and energy deposition" type="int" />
+    <constant name='IRE needlepair voltage' note='Description of anode-cathode pairings and the respective potential' type='array(tuple(int, int, float))' units="['', '', 'V']" widget="['table',['Anode','Cathode','Potential Difference']]" />
+    <constant name="IRE nonlinear iterations" value="2" note="Number of iterations performed to account for nonlinear interaction of conductivity and energy deposition" type="int" />
     <constant name="IRE needle separation reference offset from tip" value="10" note="Distance from tip that should be used to measure the perpendicular distance between two needles, producted with potential gradient for potential calculation" type="int" units="mm" />
-    <constant name="IRE using gradient" value="false" note="Should we use the potential gradient (or, alternatively, potential) in IRE_NEEDLEPAIR_VOLTAGE" />
+    <constant name="IRE using gradient" value="true" note="Should we use the potential gradient (or, alternatively, potential) in IRE_NEEDLEPAIR_VOLTAGE" />
     <constant name="IRE relative permittivity (tissue)" value="1.0" units="F/m" />
     <constant name="IRE relative permittivity (needle)" value="1.0" units="F/m" />
     <constant name="IRE relative permittivity (tumour)" value="1.0" units="F/m" />

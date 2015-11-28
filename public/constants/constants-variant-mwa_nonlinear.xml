@@ -21,7 +21,7 @@
 -->
 <constants class="NumericalModel" name="NUMA MWA Nonlinear SIF">
     <constant name="initial cells alive" value="0.99" units="-" />
-    <constant name="initial cells dead" value="0.0" units="-" />
+    <constant name="initial cells dead" value="0.01" units="-" />
     <constant name="forward rate" value="0.00333" units="-" />
     <constant name="backward rate" value="0.00777" units="-" />
     <constant name="exponential rate" value="40.5" units="K" />

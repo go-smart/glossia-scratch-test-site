@@ -14,10 +14,23 @@ class SimulationController extends \BaseController {
 	public function index()
 	{
     $backups = array_filter(scandir(public_path() . '/backups'), function ($d) { return $d[0] != '.'; });
-    $simulations = Simulation::all();
+    $preferred_server = Session::get('preferred_server', '');
+    if (Input::has('modality'))
+      $simulations = Simulation::where('Power_Generator.Modality_Id', '=', Input::get('modality'))->get();
+    else
+      $simulations = Simulation::all();
 
-		return View::make('simulations.index', compact('simulations', 'backups'));
+    $modalities = Modality::all();
+
+		return View::make('simulations.index', compact('simulations', 'backups', 'preferred_server', 'modalities'));
 	}
+
+  public function updatePreferredServer()
+  {
+    $preferred_server = Input::get('preferred_server');
+    Session::put('preferred_server', $preferred_server);
+    return ['success' => true];
+  }
 
 
 	/**
@@ -74,7 +87,8 @@ class SimulationController extends \BaseController {
     $simulation->State = 0;
     $simulation->Color = 0;
     $simulation->Active = 0;
-    $simulation->Parent_Id = $oldSimulation->Id;
+    $simulation->Original_Id = $oldSimulation->Id;
+    $simulation->Parent_Id = $oldSimulation->Parent_Id;
     $simulation->save();
 
     $oldSimulation->SimulationNeedles->each(function ($needle) use ($simulation) {
@@ -86,12 +100,12 @@ class SimulationController extends \BaseController {
       $simulationNeedle->save();
 
       $needle->Parameters->each(function ($parameter) use ($simulationNeedle) {
-        $simulationNeedle->Parameters()->attach($parameter, ['ValueSet' => $parameter->ValueSet]);
+        $simulationNeedle->Parameters()->attach($parameter, ['ValueSet' => $parameter->pivot->ValueSet, 'Format' => $parameter->pivot->Format, 'Editable' => $parameter->pivot->Editable]);
       });
     });
 
     $oldSimulation->Parameters->each(function ($parameter) use ($simulation) {
-      $simulation->Parameters()->attach($parameter, ['ValueSet' => $parameter->pivot->ValueSet]);
+      $simulation->Parameters()->attach($parameter, ['ValueSet' => $parameter->pivot->ValueSet, 'Format' => $parameter->pivot->Format, 'Editable' => $parameter->pivot->Editable]);
     });
 
     DB::table('ItemSet')->insert(['CreationDate' => date('Y-m-d H:i:s'), 'IsDeleted' => false, 'Id' => $simulation->Id]);
@@ -123,12 +137,13 @@ class SimulationController extends \BaseController {
     $simulation->SimulationNeedles->each(function ($simulationNeedle) use ($needleParameters) {
       $simulationNeedle->Parameters()->detach();
       $needleIx = substr($simulationNeedle->Id, 0, 36);
+      \Log::error($needleIx);
       if (array_key_exists($needleIx, $needleParameters))
       {
         foreach ($needleParameters[$needleIx] as $needleParameter)
         {
           \Log::error($needleParameter->ValueSet);
-          $simulationNeedle->Parameters()->attach($needleParameter, ['ValueSet' => $needleParameter->ValueSet]);
+          $simulationNeedle->Parameters()->attach($needleParameter, ['ValueSet' => $needleParameter->Value]);
         }
       }
     });
@@ -320,6 +335,15 @@ class SimulationController extends \BaseController {
     $simulation = Simulation::find($id);
     $needles = $simulation->Combination->Needles;
     $regions = $simulation->Combination->NumericalModel->Regions;
+    $contexts = Context::all()->lists('Name', 'Id');
+
+    $lineage = [];
+    $s = $simulation->Parent;
+    while ($s)
+    {
+      $lineage[] = $s;
+      $s = $s->Parent;
+    }
 
     $otherSimulationTargets = PointSet::join('Simulation_Needle as SN', 'SN.Target_Id', '=', 'PointSet.Id')
       ->join('Simulation as S', 'S.Id', '=', 'SN.Simulation_Id')
@@ -328,7 +352,7 @@ class SimulationController extends \BaseController {
       ->get()
       ->lists('asString');
 
-		return View::make('simulations.edit', compact('simulation', 'needles', 'regions', 'otherSimulationTargets'));
+		return View::make('simulations.edit', compact('simulation', 'needles', 'regions', 'otherSimulationTargets', 'contexts', 'lineage'));
 	}
 
 
@@ -344,6 +368,13 @@ class SimulationController extends \BaseController {
     if (Input::has('caption'))
       $simulation->Caption = Input::get('caption');
     $simulation->save();
+
+    if (Input::has('Combination_Id'))
+    {
+      $simulation->Combination_Id = Input::get('Combination_Id');
+      $simulation->save();
+      $this->rebuild($simulation->Id);
+    }
 
     foreach ($simulation->Parameters as $parameter)
     {
@@ -361,6 +392,29 @@ class SimulationController extends \BaseController {
       {
         $simulation->Parameters()->attach($parameter, ["ValueSet" => Input::get('new-parameter-value')]);
         $simulation->save();
+      }
+    }
+
+    foreach ($simulation->SimulationNeedles as $simulationNeedle)
+    {
+      foreach ($simulationNeedle->Parameters as $parameter)
+      {
+        if (Input::has('needle-parameters-' . $simulationNeedle->Id . '-' . $parameter->Id))
+        {
+          $parameter->pivot->ValueSet = Input::get('needle-parameters-' . $simulationNeedle->Id . '-' . $parameter->Id);
+          $parameter->pivot->save();
+        }
+      }
+
+      $newparameterprefix = 'needle-' . $simulationNeedle->Id . '-new-parameter-';
+      if (Input::get($newparameterprefix . 'name') && Input::get($newparameterprefix . 'value') != '')
+      {
+        $parameter = Parameter::whereName(Input::get($newparameterprefix . 'name'))->first();
+        if ($parameter)
+        {
+          $simulationNeedle->Parameters()->attach($parameter, ["ValueSet" => Input::get($newparameterprefix . 'value')]);
+          $simulationNeedle->save();
+        }
       }
     }
 

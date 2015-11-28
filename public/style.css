@@ -144,7 +144,7 @@
 
 .simulations-table span.location {
   color: #888;
-  font-size: xx-small;
+  font-size: small;
   visibility: hidden;
 }
 
@@ -153,11 +153,11 @@
 }
 
 .modality-Cryoablation {
-  background: linear-gradient(to bottom, blue 0%,#000055 44%,blue 100%);
+  background: linear-gradient(to bottom, #005 0%,blue 44%,#005 100%);
   /*background-color: blue;*/
 }
 .modality-MWA {
-  background: linear-gradient(to bottom, green 0%,#005500 44%,green 100%);
+  background: linear-gradient(to bottom, #050 0%,green 44%,#050 100%);
   /*background-color: green;*/
 }
 .modality-IRE {
@@ -165,7 +165,7 @@
   /*background-color: purple;*/
 }
 .modality-RFA {
-  background: linear-gradient(to bottom, red 0%,#550000 44%,red 100%);
+  background: linear-gradient(to bottom, #500 0%,red 44%,#500 100%);
   /*background-color: red;*/
 }
 
@@ -202,6 +202,50 @@ dl.validation dt {
   padding-left: 5px;
 }
 
-.patient {
+.patient-Cryoablation {
+  color: blue;
+  /*background-color: blue;*/
+}
+.patient-MWA {
+  color: green;
+  /*background-color: green;*/
+}
+.patient-IRE {
+  color: magenta;
+  /*background-color: purple;*/
+}
+.patient-RFA {
+  color: red;
+  /*background-color: red;*/
+}
+
+.patient-link {
+  font-weight: normal;
+}
+
+#patientList li {
+  display: inline-block;
+  padding-bottom: 3px;
+}
+
+.patient-link {
+  padding: 1px;
+  text-decoration: none;
+  opacity: 0.3;
+}
+
+.patient-link.has-segmented-lesion {
+  opacity: 1;
+}
+
+.patient-link.no-complete.has-segmented-lesion {
+  font-weight: bold;
+}
+
+.simulation-child {
+  background-color: grey;
+}
+
+.simulation-simulated {
   font-weight: bold;
 }

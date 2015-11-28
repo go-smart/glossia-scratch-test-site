@@ -42,18 +42,22 @@ class CryoablationCombinationSeeder extends Seeder {
    */
   public function run()
   {
+		\Eloquent::unguard();
     $modality['Cryo'] = Modality::create(array("Name" => "Cryoablation"));
+    $modality['GCryo'] = Modality::create(array("Name" => "Cryoablation [GS-only]"));
 
     /* Add model */
     $model['numa sif'] = new NumericalModel;
     $model['numa sif']->fill(array('Name' => 'NUMA Cryoablation Basic SIF', 'Family' => 'elmer-libnuma', 'Definition' => 'lorem ipsum'));
     $modality['Cryo']->numericalModels()->save($model['numa sif']);
+    $model['numa sif']->attribute(['Name' => 'SETTING_FINAL_TIMESTEP', 'Type' => 'int', 'Value' => '390', 'Widget' => 'textbox']);
     $model['numa sif']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'float', 'Value' => '4', 'Widget' => 'textbox']);
     $model['numa sif']->attribute(['Name' => 'SETTING_LESION_FIELD', 'Type' => 'string', 'Value' => 'lesion', 'Widget' => 'textbox']);
+    $model['numa sif']->attribute(['Name' => 'RESOLUTION_NEEDLE_ZONE_FIELD', 'Type' => 'float', 'Value' => '1.5', 'Widget' => 'textbox']);
     $model['numa sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_UPPER', 'Type' => 'float', 'Value' => '233.0', 'Widget' => 'textbox']);
     $model['numa sif']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_LOWER', 'Type' => 'float', 'Value' => 'null', 'Widget' => 'textbox']);
     $model['numa sif']->attribute(['Name' => 'SIMULATION_SCALING', 'Type' => 'float', 'Value' => '0.001', 'Widget' => 'textbox']);
-    $model['numa sif']->attribute(['Name' => 'SETTING_ORGAN_AS_SUBDOMAIN', 'Type' => 'boolean', 'Value' => 'false', 'Widget' => 'checkbox']);
+    $model['numa sif']->attribute(['Name' => 'SETTING_ORGAN_AS_SUBDOMAIN', 'Type' => 'boolean', 'Value' => 'true', 'Widget' => 'checkbox']);
     $model['numa sif']->attribute(['Name' => 'SIMULATION_DOMAIN_RADIUS', 'Type' => 'float', 'Value' => '40.0', 'Widget' => 'textbox']);
     $model['numa sif']->attribute(['Name' => 'CENTRE_LOCATION', 'Type' => 'string', 'Value' => 'centroid-of-tips', 'Widget' => 'textbox']);
     $model['numa sif']->placeholder('CONSTANT_FLOW_RATE', null, 'array(tuple(Time,float))', true, ['linegraph', ['Time', 'Flow']], ['s', '%']);
@@ -78,16 +82,26 @@ class CryoablationCombinationSeeder extends Seeder {
     $model['numa sif']->regions()->attach($segmentedLesion);
     $model['numa sif']->regions()->attach($tace);
 
-    $model['Galilfoam'] = new NumericalModel;
-    $model['Galilfoam']->fill(array('Name' => 'Galil OpenFOAM', 'Family' => 'elmer-libnuma', 'Definition' => 'lorem ipsum'));
-    $modality['Cryo']->numericalModels()->save($model['Galilfoam']);
-    $model['Galilfoam']->arguments()->attach(Argument::create(['Name' => 'Temperature']));
-    $model['Galilfoam']->arguments()->attach(Argument::create(['Name' => 'Time']));
-    $model['Galilfoam']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'Float', 'Value' => null, 'Widget' => 'textbox']);
+    $model['Gfoam'] = new NumericalModel;
+    $model['Gfoam']->fill(array('Name' => 'GOpenFOAM', 'Family' => 'gFoam', 'Definition' => 'lorem ipsum'));
+    $modality['GCryo']->numericalModels()->save($model['Gfoam']);
+    $model['Gfoam']->importSif(public_path() . '/templates/go-smart-template_cryo.sif'); // THIS PROVIDES THE KEY PARAM DEPS
+    $model['Gfoam']->Definition = file_get_contents('/home/administrator/parameters.yml') . "\n==========ENDPARAMETERS========\n" . file_get_contents('/home/administrator/g.py');
+    $model['Gfoam']->save();
+    $model['Gfoam']->arguments()->attach(Argument::create(['Name' => 'Temperature']));
+    $model['Gfoam']->arguments()->attach(Argument::create(['Name' => 'Time']));
+    $model['Gfoam']->attribute(['Name' => 'CONSTANT_BODY_TEMPERATURE', 'Type' => 'Float', 'Value' => null, 'Widget' => 'textbox']);
+    $model['Gfoam']->attribute(['Name' => 'SETTING_TIMESTEP_SIZE', 'Type' => 'int', 'Value' => '390', 'Widget' => 'textbox']);
+    $model['Gfoam']->attribute(['Name' => 'CONSTANT_MESH_PADDING_DISTANCE', 'Type' => 'float', 'Value' => '1.0', 'Widget' => 'textbox']);
+    $model['Gfoam']->attribute(['Name' => 'CONSTANT_SIMULTANEOUS_PROCESSES', 'Type' => 'int', 'Value' => '2', 'Widget' => 'textbox']);
+    $model['Gfoam']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_UPPER', 'Type' => 'float', 'Value' => '233.0', 'Widget' => 'textbox']);
+    $model['Gfoam']->attribute(['Name' => 'SETTING_LESION_THRESHOLD_LOWER', 'Type' => 'float', 'Value' => 'null', 'Widget' => 'textbox']);
+    $model['Gfoam']->attribute(['Name' => 'CONSTANT_NUMBER_OF_CYCLES', 'Type' => 'int', 'Value' => '1', 'Widget' => 'textbox']);
 
-    $model['Galilfoam']->regions()->attach($organ, ['Minimum' => 1, 'Maximum' => 1]);
-    $model['Galilfoam']->regions()->attach($vessels);
-    $model['Galilfoam']->regions()->attach($tumour);
+
+    $model['Gfoam']->regions()->attach($organ, ['Minimum' => 1, 'Maximum' => 1]);
+    $model['Gfoam']->regions()->attach($vessels);
+    $model['Gfoam']->regions()->attach($tumour);
 
     $this->call('\CombinationSeeders\Cryoablation\GalilCombinationSeeder');
   }

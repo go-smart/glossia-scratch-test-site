@@ -6,20 +6,17 @@
 <h2>{{ $numerical_model->Family }}</h2>
 
 <p>{{ link_to_route('numerical_model.index', '&larr; all numerical models') }}</p>
-<p>{{ link_to_route('numerical_model.edit', '[Edit]', [$numerical_model->Id]) }}</p>
 <p>Arguments: {{ $numerical_model->Arguments->implode('Name', ', ') }}</p>
 <p>Regions: {{ $numerical_model->Regions->implode('Name', ', ') }}</p>
 
-<div style='width: 40%'>
-<h3>Definition</h3>
-<div style='height: 600px; overflow: scroll; float: left'>
- <pre>
-  {{{ $numerical_model->Definition }}}
- </pre>
-</div>
-</div>
+{{ Form::open(['route' => ['numerical_model.update', $numerical_model->Id], 'method' => 'PATCH']) }}
+  {{ Form::submit() }}
 
-<div style='width: 40%; float: right; border'>
+  <div style='width: 40%'>
+  <h3>Definition</h3>
+   <textarea name='definition' cols=150 rows=400>{{{ $numerical_model->Definition }}}</textarea>
+  </div>
+
   <h3>Parameters</h3>
   <table class='parameter-table'>
   @foreach ($numerical_model->ParameterAttributions as $pa)
@@ -28,6 +25,6 @@
     </tr>
   @endforeach
   </table>
-</div>
+{{ Form::close() }}
 
 @stop

@@ -1,14 +1,66 @@
 @extends('master')
 
+@section('page-js')
+<script src="/scripts/simulations/create.js"></script>
+@stop
+
 @section('content')
 
 <h1>Simulations : {{ $simulation->Id }}</h1>
 <p>{{ link_to_route('simulation.index', '&rarr; back to simulations') }}</p>
 
-{{ Form::open(['route' => ['simulation.update', $simulation->Id], 'method' => 'PATCH']) }}
-<input type='hidden' value=0 name='removing' />
 <p>{{ link_to_route('combination.show', $simulation->Combination->asString, $simulation->Combination->Id) }}</p>
 
+{{ Form::open(['route' => ['simulation.update', $simulation->Id], 'method' => 'PATCH']) }}
+<ul>
+  <li>Choose context: {{ Form::select('Context_Id', array(-1 => "Please select") + $contexts, -1, array('Id' => 'context-choice')) }}</li>
+  <li>Choose modality: {{ Form::select('Modality_Id', array(-1 => "Choose context first"), null, array('Id' => 'modality-choice')) }}</li>
+  <li>Choose generator: {{ Form::select('Power_Generator_Id', array(-1 => "Choose modality first"), null, array('Id' => 'power-generator-choice')) }}</li>
+  <li>Choose protocol: {{ Form::select('Protocol_Id', array(-1 => "Choose generator first"), null, array('Id' => 'protocol-choice')) }}</li>
+  <li>Choose numerical model: {{ Form::select('Numerical_Model_Id', array(-1 => "Choose protocol first"), null, array('Id' => 'numerical-model-choice')) }}</li>
+  <!--<li>Choose needle: {{ Form::select('Needle_Id', array(-1 => "Choose generator first"), null, array('Id' => 'needle-choice')) }}</li> -->
+  <li>Combination: <span id='combination'>[choose above]</span>{{ Form::hidden('Combination_Id', null) }}</li>
+</ul>
+
+{{ Form::submit("Update combination") }}
+
+{{ Form::close() }}
+
+<hr/>
+
+@if (count($lineage) || count($simulation->Children))
+<h2>Lineage</h2>
+
+<ol>
+@foreach ($lineage as $l)
+  <li><a href="{{ URL::route('simulation.edit', [$l->Id]) }}">{{ $l->asHtml }}</a></li>
+@endforeach
+</ol>
+
+<ul>
+@foreach ($simulation->Children as $child)
+  @if (!$child->Original_Id)
+    <li><a href="{{ URL::route('simulation.edit', [$child->Id]) }}">{{ $child->asHtml }}</a></li>
+  @endif
+@endforeach
+</ul>
+<hr/>
+@endif
+
+<h2>Segmentations</h2>
+
+<ul>
+@foreach ($simulation->Segmentations as $s)
+  <li>{{ $s->Name }}</li>
+@endforeach
+</ul>
+
+<h2>Detail</h2>
+
+{{ Form::open(['route' => ['simulation.update', $simulation->Id], 'method' => 'PATCH']) }}
+<input type='hidden' value=0 name='removing' />
+<p>Date : {{ $simulation->creationDate }}</p>
+<p>Patient : {{ $simulation->PatientAlias }} | {{ $simulation->PatientDescription }}</p>
 <p>{{ Form::label('caption', 'Caption') }}: {{ Form::text('caption', $simulation->Caption) }}</p>
 <p>{{ Form::submit() }}</p>
 
@@ -57,12 +109,24 @@
 @endforeach
 </ul>
 
+<h3>General Parameters</h3>
 <table>
 <tr><td>{{ Form::text('new-parameter-name') }}</td><td>{{ Form::text('new-parameter-value') }}</td></tr>
 @foreach ($simulation->Parameters as $parameter)
 <tr><td>{{ $parameter->asHtml }}</td><td>{{ Form::text('parameters-' . $parameter->Id, $parameter->pivot->ValueSet) }}</td></tr>
 @endforeach
 </table>
+
+<h3>Needle Parameters</h3>
+@foreach ($simulation->SimulationNeedles as $simulationNeedle)
+<h4>{{ $simulationNeedle->Needle->Name }} : {{ $simulationNeedle->Target->asString }} &larr; {{ $simulationNeedle->Entry->asString }}</h4>
+<table>
+<tr><td>{{ Form::text('needle-' . $simulationNeedle->Id . '-new-parameter-name') }}</td><td>{{ Form::text('needle-' . $simulationNeedle->Id . '-new-parameter-value') }}</td></tr>
+@foreach ($simulationNeedle->Parameters as $parameter)
+<tr><td>{{ $parameter->asHtml }}</td><td>{{ Form::text('needle-parameters-' . $simulationNeedle->Id . '-' . $parameter->Id, $parameter->pivot->ValueSet) }}</td></tr>
+@endforeach
+</table>
+@endforeach
 
 {{ Form::close() }}
 

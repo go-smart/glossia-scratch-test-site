@@ -73,7 +73,6 @@ class AmicaCombinationSeeder extends Seeder {
         $probe->fill(array(
           'Name' => $name,
           'Manufacturer' => 'HS',
-          'File' => '',
           'Geometry' => 'library:mwa-cooled',
           'Class' => 'solid-boundary'
         ));

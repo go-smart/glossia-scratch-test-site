@@ -1,0 +1,43 @@
+<!--
+/**
+ * This file is part of the Go-Smart Simulation Architecture (GSSA).
+ * Go-Smart is an EU-FP7 project, funded by the European Commission.
+ *
+ * Copyright (C) 2013-  NUMA Engineering Ltd. (see AUTHORS file)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+-->
+<constants class="NumericalModel" name="GOpenFOAM">
+    <constant name="metabolic heat" value="3.93" units="kg m^-1 s^-3" />
+    <constant name="thermal conductivity (tissue) (mushy)" value="1.25" />
+    <constant name="thermal conductivity (tumour) (mushy)" value="1.25" />
+    <constant name="thermal conductivity (lesion) (mushy)" value="1.25" />
+    <constant name="thermal conductivity (TACE) (mushy)" value="1.25" />
+    <constant name="thermal conductivity (tissue) (frozen)" value="2.0" />
+    <constant name="thermal conductivity (tumour) (frozen)" value="2.0" />
+    <constant name="thermal conductivity (lesion) (frozen)" value="2.0" />
+    <constant name="thermal conductivity (TACE) (frozen)" value="2.0" />
+    <constant name="specific heat capacity (tissue) (mushy)" value="1.25" />
+    <constant name="specific heat capacity (tumour) (mushy)" value="1.25" />
+    <constant name="specific heat capacity (lesion) (mushy)" value="1.25" />
+    <constant name="specific heat capacity (TACE) (mushy)" value="1.25" />
+    <constant name="specific heat capacity (tissue) (frozen)" value="2.0" />
+    <constant name="specific heat capacity (tumour) (frozen)" value="2.0" />
+    <constant name="specific heat capacity (lesion) (frozen)" value="2.0" />
+    <constant name="specific heat capacity (TACE) (frozen)" value="2.0" />
+    <constant name="Density (fat)" value="911" units="kg ms^-3" />
+    <constant name="Thermal conductivity (fat)" value="0.21" />
+    <constant name="Specific heat capacity (fat)" value="2348" />
+</constants>
