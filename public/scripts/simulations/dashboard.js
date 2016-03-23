@@ -5,7 +5,7 @@ var servers = {};
 var simulationToServer = {};
 
 var connection = new autobahn.Connection({
-  url: "ws://www.numa.oan:8081/ws",
+  url: "ws://irvine.numa.lan:8080/ws",
   realm: "realm1"
 });
 
@@ -21,6 +21,23 @@ connection.onopen = function (newSession, details) {
 
 connection.onclose = function (reason, details) {
 };
+
+function toggleUnsimulated()
+{
+  var table = $('.simulations-table');
+  table.children('tbody').children().show();
+  table.find('tr.simulation').each(function (ix) {
+    if (!(this.id in statuses)) {
+      $(this).toggle();
+    }
+  });
+  table.children('tbody').children().each(function (ix) {
+    if ($(this).find('tr.simulation:visible').length == 0)
+      $(this).hide();
+    else
+      $(this).show();
+  });
+}
 
 function setProgress(tr, percentage)
 {
@@ -194,7 +211,7 @@ function showProperties(id) {
   if (location)
   {
     simulation.find('div[name=simulation-server-message]').prop('title', location);
-    simulation.find('span[name=location]').html(location);
+    simulation.find('span[name=location]').html(simulationToServer[id] + ':' + location);
     simulation.find('.location').css('visibility', 'visible');
   }
   else
@@ -298,6 +315,7 @@ function startSimulation(id) {
     showDatabaseRequest(id, 'Retrieving XML');
     $.get(xmlLink, [], function (xml) {
       var s = chooseServer();
+      console.log(s);
       session.call('com.gosmartsimulation.' + s + '.init', [id]).then(function (res) {
         statuses[id] = [];
         showMessage(id, "Initiated");
@@ -307,7 +325,7 @@ function startSimulation(id) {
           session.call('com.gosmartsimulation.' + s + '.finalize', [id, '.']).then(function (res) {
             showMessage(id, "Settings finalized");
             session.call('com.gosmartsimulation.' + s + '.start', [id]).then(function (res) {
-              showMessage(id, "Started...");
+              // showMessage(id, "Started...");
               session.call('com.gosmartsimulation.' + s + '.properties', [id]).then(function (res) {
                 showProperties(id);
               }, sE);
@@ -499,7 +517,8 @@ function _childRow(simulation, patientTable, depth)
       else
       {
         tr.append('<td>[<span style="font-size: xx-small"><a href="' + editLink(Id) + '">e</a>'
-          + '<a href="' + xmlLink(Id) + '" name="xml-link">X</a><a href="' + htmlLink(Id) + '">H</a></span>]</td>');
+          + '<a href="' + xmlLink(Id) + '" name="xml-link">X</a><a href="' + htmlLink(Id) + '">H</a>'
+          + '<a href="' + jsonLink(Id) + '" name="json-link">J</a></span>]</td>');
       }
       tr.append('<td name="simulation-server-progress"><span name="progress-number"></span><div name="progress-bar"></div></td>');
       tr.append('<td id="simulation-' + Id + '-parameter" class="combination-parameters"></td>');
@@ -571,7 +590,8 @@ function _fullRow(simulation, patientTable)
       else
       {
         tr.append('<td>[<span style="font-size: xx-small"><a href="' + editLink(Id) + '">e</a>'
-          + '<a href="' + xmlLink(Id) + '" name="xml-link">X</a><a href="' + htmlLink(Id) + '">H</a></span>]</td>');
+          + '<a href="' + xmlLink(Id) + '" name="xml-link">X</a><a href="' + htmlLink(Id) + '">H</a>'
+          + '<a href="' + jsonLink(Id) + '" name="json-link">J</a></span>]</td>');
       }
       tr.append('<td name="simulation-server-progress"><span name="progress-number"></span><div name="progress-bar"></div></td>');
       tr.append('<td id="simulation-' + Id + '-parameter" class="combination-parameters"></td>');

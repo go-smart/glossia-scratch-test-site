@@ -10,6 +10,7 @@
   function segmentedLesionLink(id) { return "{{ URL::route('simulation.getSegmentedLesion', ['ID']) }}".replace('ID', id); };
   function xmlLink(id) { return "{{ URL::route('simulation.show', ['ID']) }}".replace('ID', id); };
   function htmlLink(id) { return "{{ URL::route('simulation.show', ['ID', 'html' => '1']) }}".replace('ID', id); };
+  function jsonLink(id) { return "{{ URL::route('simulation.table', ['ID']) }}".replace('ID', id); };
   function editLink(id) { return "{{ URL::route('simulation.edit', ['ID']) }}".replace('ID', id); };
   var preferred_server = "{{{ $preferred_server }}}";
 </script>
@@ -19,7 +20,7 @@
 
 <h1>Simulations</h1>
 <p>{{ link_to_route('home', '&rarr; to index') }}</p>
-<p>{{ link_to_route('simulation.backup', 'Backup all with prefix NUMA', ['prefix' => 'NUMA']) }} | <a href='#' id='diffLink' class='disabled'>Diff two simulations</a></p>
+<p>{{ link_to_route('simulation.backup', 'Backup all with prefix NUMA', ['prefix' => 'NUMA']) }} | <a href='#' id='diffLink' class='disabled'>Diff two simulations</a> | <a href='javascript:toggleUnsimulated()'>Toggle unsimulated</a></p>
 
 <script>
 var simulations = {

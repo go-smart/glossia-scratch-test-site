@@ -143,9 +143,14 @@ class NumericalModel extends Paramable {
 
     $needlesNode = new DOMElement("needles");
     $parent->appendChild($needlesNode);
+    $i = 1;
     foreach ($needles as $simulationNeedle) {
       $needle = $simulationNeedle->Needle;
-      $needleIx = $simulationNeedle->Id;
+      if ($simulationNeedle->Index)
+        $needleIx = 'needle' . $simulationNeedle->Index;
+      else
+        $needleIx = 'needle' . $i;
+      $i += 1;
 
       $needleNode = new DOMElement("needle");
       $needlesNode->appendChild($needleNode);

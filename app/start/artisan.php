@@ -12,3 +12,5 @@
 */
 
 Artisan::add(new CheckForSimulationsCommand);
+Artisan::add(new WatchForExitsCommand);
+Artisan::add(new TestEmailCommand);

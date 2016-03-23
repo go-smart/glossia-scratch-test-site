@@ -43,7 +43,7 @@ class GalilCombinationSeeder extends Seeder {
 	{
     \Eloquent::unguard();
     $modality[''] = Modality::whereName('Cryoablation')->first();
-    $modality[' [G]'] = Modality::whereName('Cryoablation [GS-only]')->first();
+    $modality[' [G]'] = Modality::whereName("Development")->first();
 
     $model[''] = NumericalModel::whereName('NUMA Cryoablation Basic SIF')->first();
     $model[' [G]'] = NumericalModel::whereName('GOpenFOAM')->first();

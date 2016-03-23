@@ -96,6 +96,7 @@ class SimulationController extends \BaseController {
       $simulationNeedle->Needle_Id = $needle->Needle_Id;
       $simulationNeedle->Target_Id = PointSet::create(['X' => $needle->Target->X, 'Y' => $needle->Target->Y, 'Z' => $needle->Target->Z])->Id;
       $simulationNeedle->Entry_Id = PointSet::create(['X' => $needle->Entry->X, 'Y' => $needle->Entry->Y, 'Z' => $needle->Entry->Z])->Id;
+      $simulationNeedle->Index = $needle->Index;
       $simulationNeedle->Simulation_Id = $simulation->Id;
       $simulationNeedle->save();
 
@@ -217,78 +218,13 @@ class SimulationController extends \BaseController {
     if (Response::json() && !in_array(Request::format(), ['xml', 'html']))
       return $simulation;
 
-    $incompatibilities = [];
-
-    $userParameters = $simulation->Parameters;
-    //$regions = $simulation->Regions;
-    $regions = $simulation->Segmentations;
-    $combination = $simulation->Combination;
-    $needles = [];
-    $needleParameters = [];
-
-    foreach ($simulation->SimulationNeedles as $sn)
-    {
-      $t = (string)$sn->Id;
-      $needles[$t] = $sn->Needle;
-      $needleParameters[$t] = new Collection;
-
-      /* Check in MySQL
-      var_dump($sn->Id === '236548FB-F08A-4420-A922-E1806C61A19B');
-      var_dump(mb_detect_encoding($sn->Id));
-      //dd(gettype($sn->Id));
-      $t = (string)($sn->Id);
-      var_dump(mb_detect_encoding($t));
-      var_dump($t);
-      var_dump($sn->Id);
-      //var_dump($t[0]);
-      //$t[0] = 'E';
-      //var_dump($t);
-      var_dump($sn->Id);
-      $needleParameters[$t] = $needleParameters[$sn->Id];
-      dd($needleParameters);
-      */
-
-      foreach ($sn->Parameters as $snp)
-      {
-        $needleParameters[$t][$snp->Name] = $snp;
-        $needleParameters[$t][$snp->Name]->Value = $snp->pivot->ValueSet;
-      }
-
-      foreach (["NEEDLE_TIP_LOCATION" => $sn->Target, "NEEDLE_ENTRY_LOCATION" => $sn->Entry] as $name => $pointSet)
-      {
-        $location = new Parameter;
-        $location->Name = $name;
-        $location->Type = "array(float)";
-        $location->Value = json_encode([
-          (float)$pointSet->X,
-          (float)$pointSet->Y,
-          (float)$pointSet->Z
-        ]);
-        $needleParameters[$t][$name] = $location;
-      }
-    }
-
-    $xml = new DOMDocument('1.0');
-    $root = $xml->createElement('simulationDefinition');
-    $xml->appendChild($root);
-
-    $transferrer = $xml->createElement('transferrer');
-    $transferrer->setAttribute('class', 'http');
-    $transferrerUrl = $xml->createElement('url');
-    $transferrerUrl->nodeValue = $this->httpTransferrerBase;
-    $transferrer->appendChild($transferrerUrl);
-    $root->appendChild($transferrer);
-
-    $simulation->xml($root);
+    $xml = $simulation->buildXml($this->httpTransferrerBase);
 
     if (!empty($incompatibilities))
       return Response::make(array_map('trim', $incompatibilities), 400);
 
     if ($xml === null)
       return Response::make("Simulation could not be built from input (reasons unreported)", 400);
-
-    $xml->preserveWhiteSpace = false;
-    $xml->formatOutput = true;
 
     if (Input::get('html'))
       return View::make('simulations.show', ['simulationXml' => $xml]);
@@ -574,5 +510,15 @@ class SimulationController extends \BaseController {
         $err .= 'Tested but not stored.';
       return $err;
     }
+  }
+
+  public function table($id) {
+    $simulation = Simulation::find($id);
+    return [
+      'patient' => $simulation->patient,
+      'context' => $simulation->contextName,
+      'id' => $simulation->Id,
+      'timestamp' => $simulation->creationDate
+    ];
   }
 }

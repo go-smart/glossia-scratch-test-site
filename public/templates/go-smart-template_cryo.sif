@@ -483,7 +483,7 @@ Boundary Condition {{ c.BOUNDARY }} !Probe
   {{ p.BOUNDARIES_REGIONS_NEEDLES }}
   Procedure = File "libnuma-alternatebc" "AlternatingBCSolver"
   Body Id = Integer 1
-  BoundaryCheck = Variable Time
+  Alternating Boundary Condition = Variable Time
   Real 
     0.0 1
     599 1

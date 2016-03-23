@@ -35,7 +35,8 @@ class SimulationExtensionScope implements Illuminate\Database\Eloquent\ScopeInte
     ->leftJoin('ItemSet as SimulationItem', 'SimulationItem.Id', '=', 'Simulation.Id')
     ->leftJoin('ItemSet as PatientItem', 'PatientItem.Id', '=', 'Simulation.Patient_Id')
     ->leftJoin('ItemSet_Patient', 'ItemSet_Patient.Id', '=', 'Simulation.Patient_Id')
-    ->leftJoin('ItemSet_VtkFile as SimulatedLesionItem', 'SimulatedLesionItem.Simulation_Id', '=', 'Simulation.Id')
+    ->leftJoin('ItemSet_VtkFile as SimulatedLesionSurface', 'SimulatedLesionSurface.Simulation_Id', '=', 'Simulation.Id')
+    ->leftJoin('ItemSet_VtuFile as SimulatedLesionVolume', 'SimulatedLesionVolume.Simulation_Id', '=', 'Simulation.Id')
     ->leftJoin('ItemSet_Segmentation', function ($leftJoin) {
       $leftJoin->on('ItemSet_Segmentation.Patient_Id', '=', 'Simulation.Patient_Id');
       $leftJoin->on('ItemSet_Segmentation.State', '=', DB::raw('3'));
@@ -53,7 +54,8 @@ class SimulationExtensionScope implements Illuminate\Database\Eloquent\ScopeInte
       'Clinician.UserName as ClinicianUserName',
       'ItemSet_Patient.Alias as PatientAlias',
       'ItemSet_Patient.Description as PatientDescription',
-      'SimulatedLesionItem.Id as SimulatedLesionId',
+      'SimulatedLesionSurface.Id as SimulatedLesionSurfaceId',
+      'SimulatedLesionVolume.Id as SimulatedLesionVolumeId',
       'Power_Generator.Modality_Id'
     );
   }
@@ -135,20 +137,41 @@ class Simulation extends UuidModel {
     return $this->hasMany('SimulationNeedle', 'Simulation_Id');
   }
 
+  public function isDevelopment() {
+    $development = Parameter::whereName('DEVELOPMENT')->first();
+    $pa = $this->Parameters()->where("ParameterId", "=", $development->Id)->first();
+    return $pa && json_decode($pa->pivot->ValueSet);
+  }
+
   public function getPatientAttribute() {
-    $patient = ['Alias' => $this->PatientAlias, 'Description' => $this->PatientDescription];
+    $patient = ['Id' => $this->Patient_Id, 'Alias' => $this->PatientAlias, 'Description' => $this->PatientDescription];
     return $patient;
   }
 
-  public function getSimulatedLesionAttribute() {
-    if (!$this->SimulatedLesionId)
+  public function getSimulatedLesionSurfaceAttribute() {
+    if (!$this->SimulatedLesionSurfaceId)
       return null;
 
     $segmentation = DB::select('
       SELECT IS_F.Id AS FileId, IS_F.FileName AS FileName, IS_F.Extension AS Extension
       FROM ItemSet_File IS_F
       WHERE Id=:FileId
-    ', ['FileId' => $this->SimulatedLesionId])[0];
+    ', ['FileId' => $this->SimulatedLesionSurfaceId])[0];
+
+    $segmentation->SegmentationType = SegmentationTypeEnum::Simulation;
+
+    return $segmentation;
+  }
+
+  public function getSimulatedLesionAttribute() {
+    if (!$this->SimulatedLesionVolumeId)
+      return null;
+
+    $segmentation = DB::select('
+      SELECT IS_F.Id AS FileId, IS_F.FileName AS FileName, IS_F.Extension AS Extension
+      FROM ItemSet_File IS_F
+      WHERE Id=:FileId
+    ', ['FileId' => $this->SimulatedLesionVolumeId])[0];
 
     $segmentation->SegmentationType = SegmentationTypeEnum::Simulation;
 
@@ -195,7 +218,7 @@ class Simulation extends UuidModel {
 
   public function getHasSimulatedLesionAttribute()
   {
-    return $this->SimulatedLesionId !== null;
+    return $this->SimulatedLesionVolumeId !== null;
   }
 
   public function getHasSegmentedLesionAttribute()
@@ -414,6 +437,80 @@ class Simulation extends UuidModel {
       $protocolNode->setAttribute("id", $this->Combination->Protocol->Id);
       $protocolNode->setAttribute("name", $this->Combination->Protocol->Name);
     }
+  }
+
+  public function buildXml($transferrerBase)
+  {
+    $incompatibilities = [];
+
+    $userParameters = $this->Parameters;
+    //$regions = $this->Regions;
+    $regions = $this->Segmentations;
+    $combination = $this->Combination;
+    $needles = [];
+    $needleParameters = [];
+
+    foreach ($this->SimulationNeedles as $sn)
+    {
+      $t = (string)$sn->Id;
+      $needles[$t] = $sn->Needle;
+      $needleParameters[$t] = new Collection;
+
+      /* Check in MySQL
+      var_dump($sn->Id === '236548FB-F08A-4420-A922-E1806C61A19B');
+      var_dump(mb_detect_encoding($sn->Id));
+      //dd(gettype($sn->Id));
+      $t = (string)($sn->Id);
+      var_dump(mb_detect_encoding($t));
+      var_dump($t);
+      var_dump($sn->Id);
+      //var_dump($t[0]);
+      //$t[0] = 'E';
+      //var_dump($t);
+      var_dump($sn->Id);
+      $needleParameters[$t] = $needleParameters[$sn->Id];
+      dd($needleParameters);
+      */
+
+      foreach ($sn->Parameters as $snp)
+      {
+        $needleParameters[$t][$snp->Name] = $snp;
+        $needleParameters[$t][$snp->Name]->Value = $snp->pivot->ValueSet;
+      }
+
+      foreach (["NEEDLE_TIP_LOCATION" => $sn->Target, "NEEDLE_ENTRY_LOCATION" => $sn->Entry] as $name => $pointSet)
+      {
+        $location = new Parameter;
+        $location->Name = $name;
+        $location->Type = "array(float)";
+        $location->Value = json_encode([
+          (float)$pointSet->X,
+          (float)$pointSet->Y,
+          (float)$pointSet->Z
+        ]);
+        $needleParameters[$t][$name] = $location;
+      }
+    }
+
+    $xml = new DOMDocument('1.0');
+    $root = $xml->createElement('simulationDefinition');
+    $xml->appendChild($root);
+
+    $transferrer = $xml->createElement('transferrer');
+    $transferrer->setAttribute('class', 'http');
+    $transferrerUrl = $xml->createElement('url');
+    $transferrerUrl->nodeValue = $transferrerBase;
+    $transferrer->appendChild($transferrerUrl);
+    $root->appendChild($transferrer);
+
+    $this->xml($root);
+
+    if ($xml !== null) {
+      $xml->preserveWhiteSpace = false;
+      $xml->formatOutput = true;
+    }
+
+    return $xml;
   }
 
 }

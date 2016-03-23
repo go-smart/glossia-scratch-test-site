@@ -69,7 +69,7 @@
 <input type='hidden' value='' name='simulation-needle-id' />
 @foreach ($simulation->SimulationNeedles as $simulationNeedle)
   <li>
-    {{ $simulationNeedle->Needle->Name }} : {{ $simulationNeedle->Target->asString }} &larr; {{ $simulationNeedle->Entry->asString }}
+    [{{ $simulationNeedle->Index }}] {{ $simulationNeedle->Needle->Name }} : {{ $simulationNeedle->Target->asString }} &larr; {{ $simulationNeedle->Entry->asString }}
     [<a href='#' class='simulation-needle-remover' name='{{ $simulationNeedle->Id }}'>X</a>]
   </li>
 @endforeach

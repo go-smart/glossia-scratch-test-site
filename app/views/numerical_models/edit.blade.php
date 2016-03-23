@@ -1,6 +1,16 @@
 @extends('master')
 
 @section('content')
+<style type="text/css" media="screen">
+    #editor { 
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+</style>
+    
 
 <h1>{{ $numerical_model->Name }}</h1>
 <h2>{{ $numerical_model->Family }}</h2>
@@ -10,11 +20,12 @@
 <p>Regions: {{ $numerical_model->Regions->implode('Name', ', ') }}</p>
 
 {{ Form::open(['route' => ['numerical_model.update', $numerical_model->Id], 'method' => 'PATCH']) }}
-  {{ Form::submit() }}
+  {{ Form::button('Submit', ['class' => 'submit_button']) }}
 
-  <div style='width: 40%'>
   <h3>Definition</h3>
-   <textarea name='definition' cols=150 rows=400>{{{ $numerical_model->Definition }}}</textarea>
+  <div style='width: 100%; position: relative; height: 500px'>
+<input type='hidden' name="definition" />
+<div id="editor">{{{ $numerical_model->Definition }}}</div>
   </div>
 
   <h3>Parameters</h3>
@@ -27,4 +38,18 @@
   </table>
 {{ Form::close() }}
 
+<script src="/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/javascript");
+    $('.submit_button').click(function (e) {
+       var form = $(this).closest('form');
+       var editor = ace.edit("editor");
+       var input = $("input[name=definition]");
+       input.val(editor.getSession().getValue());
+       form.submit();
+       console.log(form);
+    });
+</script>
 @stop

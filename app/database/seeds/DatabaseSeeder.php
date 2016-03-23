@@ -16,6 +16,10 @@ class DatabaseSeeder extends Seeder {
     //DB::table('Simulation_Needle')->delete();
     //DB::table('PointSet')->delete();
     //DB::table('Simulation')->delete();
+    $development = Modality::whereName("Development")->first();
+    if (!$development)
+      $development = Modality::create(array("Name" => "Development"));
+
     App::make("SimulationSeeder")->clean();
     //App::make("SimulationSeeder")->deepClean();
     App::make("\CombinationSeeders\CombinationSeeder")->clean($this->command);
@@ -48,6 +52,11 @@ class DatabaseSeeder extends Seeder {
     if (!Config::get('gosmart.context_as_enum'))
       $this->call('\ContextSeeders\ContextSeeder');
     $this->call('\CombinationSeeders\CombinationSeeder');
+
+    $developmentModels = $development->NumericalModels;
+    $developmentModels->each(function ($m) {
+      $m->attribute(['Name' => 'DEVELOPMENT', 'Type' => 'boolean', 'Value' => "true"]);
+    });
 
 		$this->call('ValueSeeder');
 		$this->call('AlgorithmSeeder');

@@ -50,7 +50,7 @@ abstract class SegmentationTypeEnum
   public static function get($id)
   {
     if (is_numeric($id))
-      return self::$all[$id];
+      return isset(self::$all[$id]) ? self::$all[$id] : null;
     $id = train_case($id);
     try {
       constant('SegmentationTypeEnum::' . $id); // Check constant exists
