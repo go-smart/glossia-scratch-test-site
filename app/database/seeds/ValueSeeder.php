@@ -101,7 +101,7 @@ class ValueSeeder extends Seeder {
           $parameterData['Description'] = $parameterData['Name'];
 
         $parameterData['Name'] = preg_replace('/[ -]/', '_', $parameterData['Name']);
-        $parameterData['Name'] = 'CONSTANT_' . strtoupper(preg_replace('/[[:^word:]]/', '', $parameterData['Name']));
+        $parameterData['Name'] = strtoupper($constant->nodeName) . '_' . strtoupper(preg_replace('/[[:^word:]]/', '', $parameterData['Name']));
 
         if (!$constant->hasAttribute('type'))
           $parameterData['Type'] = 'float';

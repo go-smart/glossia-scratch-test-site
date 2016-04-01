@@ -81,7 +81,7 @@ End
 Body {{ c.BODY }}
   {{ p.BODIES_REGIONS_BACKGROUND }}
 
-  Name = "Tumour"
+  Name = "Fat"
   Equation = Integer 1
   Initial condition = Integer 1
   Material = Integer 3
@@ -117,17 +117,11 @@ Equation 1
   Name = "NUMA Cryoablation"
   Heat Equation = True
   Phase Change Model = temporal
-  Active Solvers(4) = Integer 1 2 3 4
+  Active Solvers(3) = Integer 1 2 3
 !  Check Latent Heat Release = True
 End
 
-Solver 1
-    Equation = String "Switching Dirichet"
-    Procedure = File "libnuma-alternatebc" "AlternatingBCSolver"
-
-End
-
-Solver 2 ! Heat solver (tissue temperatures)
+Solver 1 ! Heat solver (tissue temperatures)
   Equation = String "heatequation"
   Procedure = File "libnuma-eheatsolver" "HeatSolver"
 
@@ -146,16 +140,16 @@ Solver 2 ! Heat solver (tissue temperatures)
   Linear System Abort Not Converged = True
   !Linear System Preconditioning = "ILU0"
   Linear System Residual Output = 1
-  Steady State Convergence Tolerance = 1.0e-04
+  Steady State Convergence Tolerance = 1.0e-03
   Stabilize = True
-  Nonlinear System Convergence Tolerance = 1.0e-4 
-  Nonlinear System Max Iterations = 500
+  Nonlinear System Convergence Tolerance = 4.0e-4 
+  Nonlinear System Max Iterations = 20
   Nonlinear System Newton After Iterations = 3
-  Nonlinear System Newton After Tolerance = 1.0e-02
-  Nonlinear System Relaxation Factor = 0.25
+  Nonlinear System Newton After Tolerance = 4.0e-04
+  Nonlinear System Relaxation Factor = 0.5
 End
 
-Solver 3 ! VTU Output writer
+Solver 2 ! VTU Output writer
   Equation = String "vtuoutput"
   Exec Solver = String "After timestep"
   Procedure = File "ResultOutputSolve" "ResultOutputSolver"
@@ -167,7 +161,7 @@ Solver 3 ! VTU Output writer
   Output Frequency = Integer 1       ![So1]!
 End
 
-Solver 4 ! Progress Solver
+Solver 3 ! Progress Solver
   Equation = String "progress"
   Procedure = File "libnuma-progress" "NumaProgressSolver"
   Percentage Progress = {{ p.PERCENTAGE|typed }}
@@ -431,13 +425,18 @@ Material 5 ! Lesion
 
 End
 
-{% if p.BOUNDARIES_REGIONS_BOUNDARY %}
-Boundary Condition {{ c.BOUNDARY }} !Organ wall + sphere
-  {{ p.BOUNDARIES_REGIONS_BOUNDARY }}
-  !Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
+{% if p.BOUNDARIES_REGIONS_BACKGROUND %}
+Boundary Condition {{ c.BOUNDARY }} !Extent
+  {{ p.BOUNDARIES_REGIONS_BACKGROUND }}
+  Temperature = {{ p.CONSTANT_BODY_TEMPERATURE|typed }}:float
+End
+{% endif %}
+
+{% if p.BOUNDARIES_REGIONS_ORGANS %}
+Boundary Condition {{ c.BOUNDARY }} !Organ wall
+  {{ p.BOUNDARIES_REGIONS_ORGANS }}
   Heat Flux BC = Logical True
   Heat Flux = Real 0.0
-  Flow Pressure = Real -0.00000000
 End
 {% endif %}
 
@@ -478,12 +477,10 @@ End
 {% endif %}
 
 {% for needle, n in needles.items() %}
-{% if p.BOUNDARIES_REGIONS_NEEDLES %}
+{% if n.BOUNDARIES_REGIONS_NEEDLE %}
 Boundary Condition {{ c.BOUNDARY }} !Probe
-  {{ p.BOUNDARIES_REGIONS_NEEDLES }}
-  Procedure = File "libnuma-alternatebc" "AlternatingBCSolver"
-  Body Id = Integer 1
-  Alternating Boundary Condition = Variable Time
+  {{ n.BOUNDARIES_REGIONS_NEEDLE }}
+  Temperature Condition = Variable Time
   Real 
     0.0 1
     599 1
@@ -517,9 +514,9 @@ Boundary Condition {{ c.BOUNDARY }} !Probe
 End
 {% endif %}
 
-{% if p.BOUNDARIES_REGIONS_NEEDLES_INACTIVE %}
+{% if n.BOUNDARIES_REGIONS_NEEDLE_INACTIVE %}
 Boundary Condition {{ c.BOUNDARY }}
-    {{ n.BOUNDARIES_REGIONS_NEEDLES_INACTIVE }}
+    {{ n.BOUNDARIES_REGIONS_NEEDLE_INACTIVE }}
     Current Density = Real 0.0
     Current Density BC = Logical True
 End

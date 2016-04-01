@@ -145,8 +145,9 @@ End
 Solver 1
     Equation = String "NUMA Power Field Trigger"
     Procedure = File "libnuma-powerfield" "NumaPowerFieldTrigger"
-    Phases(2, {{ INPUT_POWER_COUNT }} ) = Real {{ ' '.join(map(str, INPUT_POWER_TIMES)) }}
-         {{ ' '.join(map(str, INPUT_POWER_VALUES)) }}
+    ! We expect available power profiles for every 5W interval
+    Phases(2, {{ INPUT_POWER_COUNT }} ) = Real {% for t in INPUT_POWER_TIMES %} {{ t }}{% endfor %}
+         {% for v in INPUT_POWER_VALUES %} {{ round(v, base=5) }}{% endfor %}
 
     Mesh = "{{ p.MESHLOCATION_MESHER_INNER_COARSE }}"
     Data Solver = Integer 2
