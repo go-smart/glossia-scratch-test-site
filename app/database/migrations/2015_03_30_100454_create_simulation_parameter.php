@@ -17,8 +17,9 @@ class CreateSimulationParameter extends Migration {
 			$table->increments('Id');
       $table->char('Simulation_Id', 36);
       $table->foreign('Simulation_Id')->references('Id')->on('Simulation');
-      $table->char('Parameter_Id', 36);
-      $table->foreign('Parameter_Id')->references('Id')->on('Parameter');
+      $parameter_column_name = (Config::get('gosmart.legacy_support') ? 'ParameterId' : 'Parameter_Id');
+      $table->char($parameter_column_name, 36);
+      $table->foreign($parameter_column_name)->references('Id')->on('Parameter');
       $table->string('ValueSet');
 		});
 	}

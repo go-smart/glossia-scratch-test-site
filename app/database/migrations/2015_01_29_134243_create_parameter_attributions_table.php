@@ -45,7 +45,7 @@ class CreateParameterAttributionsTable extends Migration {
       $table->foreign('Numerical_Model_Id')->references('Id')->on('Numerical_Model')->onDelete('cascade');
       if (Config::get('gosmart.context_as_enum'))
       {
-        $table->int('OrganType')->nullable();
+        $table->integer('OrganType')->nullable();
       }
       else
       {
@@ -55,7 +55,8 @@ class CreateParameterAttributionsTable extends Migration {
       $table->char('Algorithm_Id', 36)->nullable();
       $table->foreign('Algorithm_Id')->references('Id')->on('Algorithm')->onDelete('cascade');
       $table->string('Value')->nullable();
-			$table->timestamps();
+      if (!Config::get('gosmart.legacy_support'))
+        $table->timestamps();
 		});
 	}
 

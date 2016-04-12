@@ -13,7 +13,11 @@ class SimulationController extends \BaseController {
 	 */
 	public function index()
 	{
-    $backups = array_filter(scandir(public_path() . '/backups'), function ($d) { return $d[0] != '.'; });
+    if (file_exists(public_path() . '/backups'))
+      $backups = array_filter(scandir(public_path() . '/backups'), function ($d) { return $d[0] != '.'; });
+    else
+      $backups = [];
+
     $preferred_server = Session::get('preferred_server', '');
     if (Input::has('modality'))
       $simulations = Simulation::where('Power_Generator.Modality_Id', '=', Input::get('modality'))->get();
@@ -47,22 +51,26 @@ class SimulationController extends \BaseController {
 
   public function patient()
   {
-    $context = Context::find(Input::get('Context_Id'));
+    if (Config::get('gosmart.integrated_patient_database')) {
+      $context = Context::find(Input::get('Context_Id'));
 
-    $patients = DB::table('ItemSet_Patient')->whereExists(function ($q) {
-      $q->select(DB::raw(1))
-        ->from('ItemSet_Segmentation')
-        ->whereRaw('ItemSet_Patient.Id = ItemSet_Segmentation.Patient_Id')
-        ->where('ItemSet_Segmentation.State', '=', 3);
-      })
-        /*->where('IsDeleted', '=', 'false') SOFT-DELETING SEEMS TO HAVE GONE UPSTREAM */
-      ->where('OrganType', '=', $context->Id)->get();
+      $patients = DB::table('ItemSet_Patient')->whereExists(function ($q) {
+        $q->select(DB::raw(1))
+          ->from('ItemSet_Segmentation')
+          ->whereRaw('ItemSet_Patient.Id = ItemSet_Segmentation.Patient_Id')
+          ->where('ItemSet_Segmentation.State', '=', 3);
+        })
+          /*->where('IsDeleted', '=', 'false') SOFT-DELETING SEEMS TO HAVE GONE UPSTREAM */
+        ->where('OrganType', '=', $context->Id)->get();
 
-    $output = [];
-    foreach ($patients as $patient)
-      $output[$patient->Id] = $patient->Alias . ' (' . $patient->Description . ')';
+      $output = [];
+      foreach ($patients as $patient)
+        $output[$patient->Id] = $patient->Alias . ' (' . $patient->Description . ')';
 
-    return $output;
+      return $output;
+    }
+
+    return [];
   }
 
 	public function duplicate($id)
@@ -109,7 +117,8 @@ class SimulationController extends \BaseController {
       $simulation->Parameters()->attach($parameter, ['ValueSet' => $parameter->pivot->ValueSet, 'Format' => $parameter->pivot->Format, 'Editable' => $parameter->pivot->Editable]);
     });
 
-    DB::table('ItemSet')->insert(['CreationDate' => date('Y-m-d H:i:s'), 'IsDeleted' => false, 'Id' => $simulation->Id]);
+    if (Config::get('gosmart.integrated_patient_database'))
+      DB::table('ItemSet')->insert(['CreationDate' => date('Y-m-d H:i:s'), 'IsDeleted' => false, 'Id' => $simulation->Id]);
 
     if (Response::json())
       return Simulation::find($simulation->Id);
@@ -149,7 +158,8 @@ class SimulationController extends \BaseController {
       }
     });
 
-    DB::table('ItemSet')->where('Id', '=', $simulation->Id)->update(['CreationDate' => date('Y-m-d H:i:s')]);
+    if (Config::get('gosmart.integrated_patient_database'))
+      DB::table('ItemSet')->where('Id', '=', $simulation->Id)->update(['CreationDate' => date('Y-m-d H:i:s')]);
 
     return Response::json(["msg" => "Simulation rebuilt"], 200);
 	}
@@ -162,7 +172,8 @@ class SimulationController extends \BaseController {
 	public function store()
 	{
 		$combination = Combination::find(Input::get('Combination_Id'));
-    $patient = DB::table('ItemSet_Patient')->whereId(Input::get('Patient_Id'))->first();
+    if (Config::get('gosmart.integrated_patient_database'))
+      $patient = DB::table('ItemSet_Patient')->whereId(Input::get('Patient_Id'))->first();
     $caption = Input::get('caption');
 
     $incompatibilities = [];
@@ -234,26 +245,28 @@ class SimulationController extends \BaseController {
 
   public function getSegmentedLesion($id)
   {
-    $simulation = Simulation::select(
-      'LesionFile.Id as SegmentedLesionId',
-      'LesionFile.FileName as SegmentedLesionFileName',
-      'LesionFile.Extension as SegmentedLesionExtension'
-    )
-    ->leftJoin('ItemSet_Segmentation', function ($leftJoin) {
-      $leftJoin->on('ItemSet_Segmentation.Patient_Id', '=', 'Simulation.Patient_Id');
-      $leftJoin->on('ItemSet_Segmentation.State', '=', DB::raw('3'));
-      $leftJoin->on('ItemSet_Segmentation.SegmentationType', '=', DB::raw(SegmentationTypeEnum::Lesion));
-    })
-    ->leftJoin('ItemSet_VtkFile as VtkFile', 'VtkFile.Segmentation_Id', '=', 'ItemSet_Segmentation.Id')
-    ->leftJoin('ItemSet_File as LesionFile', 'LesionFile.Id', '=', 'VtkFile.Id')
-    ->find($id);
+    if (Config::get('gosmart.integrated_patient_database')) {
+      $simulation = Simulation::select(
+        'LesionFile.Id as SegmentedLesionId',
+        'LesionFile.FileName as SegmentedLesionFileName',
+        'LesionFile.Extension as SegmentedLesionExtension'
+      )
+      ->leftJoin('ItemSet_Segmentation', function ($leftJoin) {
+        $leftJoin->on('ItemSet_Segmentation.Patient_Id', '=', 'Simulation.Patient_Id');
+        $leftJoin->on('ItemSet_Segmentation.State', '=', DB::raw('3'));
+        $leftJoin->on('ItemSet_Segmentation.SegmentationType', '=', DB::raw(SegmentationTypeEnum::Lesion));
+      })
+      ->leftJoin('ItemSet_VtkFile as VtkFile', 'VtkFile.Segmentation_Id', '=', 'ItemSet_Segmentation.Id')
+      ->leftJoin('ItemSet_File as LesionFile', 'LesionFile.Id', '=', 'VtkFile.Id')
+      ->find($id);
 
-    if (!$simulation)
-      return Response::make('Simulation not found', 400);
+      if (!$simulation)
+        return Response::make('Simulation not found', 400);
 
-    if ($simulation->SegmentedLesionId)
-    {
-      return Redirect::to($this->httpTransferrerBase . '/' . strtolower($simulation->SegmentedLesionId) . '/' . $simulation->SegmentedLesionFileName . '.' . $simulation->SegmentedLesionExtension);
+      if ($simulation->SegmentedLesionId)
+      {
+        return Redirect::to($this->httpTransferrerBase . '/' . strtolower($simulation->SegmentedLesionId) . '/' . $simulation->SegmentedLesionFileName . '.' . $simulation->SegmentedLesionExtension);
+      }
     }
 
     return Response::make('Segmented lesion not found', 404);

@@ -20,10 +20,6 @@
  */
 
 
-use \Seeder;
-
-use \Region;
-
 class RegionSeeder extends Seeder {
 
   /**

@@ -43,7 +43,7 @@ class CreateCombinationsTable extends Migration {
       $table->foreign('Protocol_Id')->references('Id')->on('Protocol');
       if (Config::get('gosmart.context_as_enum'))
       {
-        $table->int('OrganType');
+        $table->integer('OrganType');
         $table->unique(['Numerical_Model_Id', 'Power_Generator_Id', 'Protocol_Id', 'OrganType'], 'core_unique');
       }
       else

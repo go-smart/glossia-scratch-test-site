@@ -39,7 +39,7 @@ class CreateNumericalModels extends Migration {
       $table->foreign('Modality_Id')->references('Id')->on('Modality');
 			$table->string('Name');
 			$table->string('Family');
-      $table->text('Definition');
+      $table->text('Definition')->nullable();
       $table->unique(['Name', 'Family']);
 		});
 	}

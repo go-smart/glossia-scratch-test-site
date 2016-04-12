@@ -20,8 +20,6 @@
  */
 
 
-use \DB;
-use \Seeder;
 use Illuminate\Database\Eloquent\Collection;
 
 function crossProduct($a, $b)
@@ -62,6 +60,11 @@ class SimulationSeeder extends Seeder {
   public function run()
   {
     Eloquent::unguard();
+
+    if (!Config::get('gosmart.integrated_patient_database')) {
+      \Log::warning("Can only seed simulations if a patient database is available");
+      return;
+    }
 
     $this->clean();
     //$this->deepClean();

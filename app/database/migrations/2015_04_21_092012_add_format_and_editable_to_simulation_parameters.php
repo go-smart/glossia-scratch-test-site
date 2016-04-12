@@ -30,23 +30,28 @@ class AddFormatAndEditableToSimulationParameters extends Migration {
     $column = 'Editable';
     foreach (['Simulation_Parameter', 'Simulation_Needle_Parameter'] as $table)
     {
-      $constraint = DB::select("
-        SELECT D.name FROM sys.default_constraints AS D
-        WHERE D.parent_object_id=OBJECT_ID(:table)
-          AND D.parent_column_id=(
-            SELECT column_id
-            FROM sys.columns
-            WHERE object_id=OBJECT_ID(:table)
-              AND name=:column
-          )
-      ", ["table" => $table, "column" => $column]);
+      if (DB::connection()->getDriverName() == 'sqlsrv') {
+        $constraint = DB::select("
+          SELECT D.name FROM sys.default_constraints AS D
+          WHERE D.parent_object_id=OBJECT_ID(:table)
+            AND D.parent_column_id=(
+              SELECT column_id
+              FROM sys.columns
+              WHERE object_id=OBJECT_ID(:table)
+                AND name=:column
+            )
+        ", ["table" => $table, "column" => $column]);
 
-      if (!empty($constraint))
-        DB::statement("ALTER TABLE " . $table . " DROP CONSTRAINT " . $constraint[0]->name);
+        if (!empty($constraint))
+          DB::statement("ALTER TABLE " . $table . " DROP CONSTRAINT " . $constraint[0]->name);
+      }
 
       Schema::table($table, function(Blueprint $table)
       {
         $table->dropColumn('Format');
+      });
+      Schema::table($table, function(Blueprint $table)
+      {
         $table->dropColumn('Editable');
       });
     }

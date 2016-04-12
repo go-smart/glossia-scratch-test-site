@@ -27,7 +27,7 @@ class RemoveSegmentationtypeColumnFromRegion extends Migration {
 	{
 		Schema::table('Region', function(Blueprint $table)
 		{
-			$table->integer('SegmentationType');
+			$table->integer('SegmentationType')->default(0);
 		});
 	}
 

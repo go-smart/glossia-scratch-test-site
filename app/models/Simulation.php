@@ -26,38 +26,48 @@ use Illuminate\Database\Eloquent\Builder;
 class SimulationExtensionScope implements Illuminate\Database\Eloquent\ScopeInterface {
   public function apply(Builder $builder)
   {
+    $select = [
+      'Simulation.*',
+      'Power_Generator.Modality_Id',
+    ];
+
     $builder->with([
       'Combination.NumericalModel',
       'Combination.Protocol',
       'Combination.PowerGenerator',
       'Combination.PowerGenerator.Modality'
     ])
-    ->leftJoin('ItemSet as SimulationItem', 'SimulationItem.Id', '=', 'Simulation.Id')
-    ->leftJoin('ItemSet as PatientItem', 'PatientItem.Id', '=', 'Simulation.Patient_Id')
-    ->leftJoin('ItemSet_Patient', 'ItemSet_Patient.Id', '=', 'Simulation.Patient_Id')
-    ->leftJoin('ItemSet_VtkFile as SimulatedLesionSurface', 'SimulatedLesionSurface.Simulation_Id', '=', 'Simulation.Id')
-    ->leftJoin('ItemSet_VtuFile as SimulatedLesionVolume', 'SimulatedLesionVolume.Simulation_Id', '=', 'Simulation.Id')
-    ->leftJoin('ItemSet_Segmentation', function ($leftJoin) {
-      $leftJoin->on('ItemSet_Segmentation.Patient_Id', '=', 'Simulation.Patient_Id');
-      $leftJoin->on('ItemSet_Segmentation.State', '=', DB::raw('3'));
-      $leftJoin->on('ItemSet_Segmentation.SegmentationType', '=', DB::raw(SegmentationTypeEnum::Lesion));
-    })
-    ->leftJoin('ItemSet_VtkFile as LesionFile', 'LesionFile.Segmentation_Id', '=', 'ItemSet_Segmentation.Id')
-    ->leftJoin('AspNetUsers as Clinician', 'Clinician.Id', '=', 'ItemSet_Patient.AspNetUsersId')
-    ->leftJoin('Combination', 'Combination.Combination_Id', '=', 'Simulation.Combination_Id')
-    ->leftJoin('Power_Generator', 'Power_Generator.Id', '=', 'Combination.Power_Generator_Id')
-    ->select(
-      'Simulation.*',
-      'SimulationItem.CreationDate as creationDate',
-      'LesionFile.Id as SegmentedLesionId',
-      'Clinician.Id as ClinicianId',
-      'Clinician.UserName as ClinicianUserName',
-      'ItemSet_Patient.Alias as PatientAlias',
-      'ItemSet_Patient.Description as PatientDescription',
-      'SimulatedLesionSurface.Id as SimulatedLesionSurfaceId',
-      'SimulatedLesionVolume.Id as SimulatedLesionVolumeId',
-      'Power_Generator.Modality_Id'
-    );
+      ->leftJoin('Power_Generator', 'Power_Generator.Id', '=', 'Combination.Power_Generator_Id')
+      ->leftJoin('Combination', 'Combination.Combination_Id', '=', 'Simulation.Combination_Id');
+
+    if (Config::get('gosmart.integrated_patient_database')) {
+      $builder
+        ->leftJoin('ItemSet as SimulationItem', 'SimulationItem.Id', '=', 'Simulation.Id')
+        ->leftJoin('ItemSet as PatientItem', 'PatientItem.Id', '=', 'Simulation.Patient_Id')
+        ->leftJoin('ItemSet_Patient', 'ItemSet_Patient.Id', '=', 'Simulation.Patient_Id')
+        ->leftJoin('ItemSet_VtkFile as SimulatedLesionSurface', 'SimulatedLesionSurface.Simulation_Id', '=', 'Simulation.Id')
+        ->leftJoin('ItemSet_VtuFile as SimulatedLesionVolume', 'SimulatedLesionVolume.Simulation_Id', '=', 'Simulation.Id')
+        ->leftJoin('ItemSet_Segmentation', function ($leftJoin) {
+          $leftJoin->on('ItemSet_Segmentation.Patient_Id', '=', 'Simulation.Patient_Id');
+          $leftJoin->on('ItemSet_Segmentation.State', '=', DB::raw('3'));
+          $leftJoin->on('ItemSet_Segmentation.SegmentationType', '=', DB::raw(SegmentationTypeEnum::Lesion));
+        })
+        ->leftJoin('ItemSet_VtkFile as LesionFile', 'LesionFile.Segmentation_Id', '=', 'ItemSet_Segmentation.Id')
+        ->leftJoin('AspNetUsers as Clinician', 'Clinician.Id', '=', 'ItemSet_Patient.AspNetUsersId');
+
+      $select = array_merge($select, [
+        'SimulationItem.CreationDate as creationDate',
+        'LesionFile.Id as SegmentedLesionId',
+        'Clinician.Id as ClinicianId',
+        'Clinician.UserName as ClinicianUserName',
+        'ItemSet_Patient.Alias as PatientAlias',
+        'ItemSet_Patient.Description as PatientDescription',
+        'SimulatedLesionSurface.Id as SimulatedLesionSurfaceId',
+        'SimulatedLesionVolume.Id as SimulatedLesionVolumeId'
+      ]);
+    }
+
+    $builder->select($select);
   }
 
   public function remove(Builder $builder)

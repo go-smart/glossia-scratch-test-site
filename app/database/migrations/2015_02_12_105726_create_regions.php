@@ -40,7 +40,6 @@ class CreateRegions extends Migration {
       $table->string('Groups'); /* JSON array of region groups */
       $table->string('Segmentation');
       $table->unique(['Name', 'Format']);
-			$table->timestamps();
 		});
 	}
 

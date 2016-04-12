@@ -13,7 +13,8 @@
   "require": {
     "laravel/framework": "dev-F-sqlserver",
     "rhumsaa/uuid": "2.8.*@dev",
-    "voryx/thruway": "0.3.*"
+    "voryx/thruway": "0.3.*",
+    "doctrine/dbal": "^2.5"
   },
   "require-dev": {
     "league/factory-muffin": "~2.0"

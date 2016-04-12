@@ -48,6 +48,10 @@ class GalilCombinationSeeder extends Seeder {
     $model[''] = NumericalModel::whereName('NUMA Cryoablation Basic SIF')->first();
     $model[' [G]'] = NumericalModel::whereName('GOpenFOAM')->first();
     $needleFile = Needle::where('FileName', '=', 'needle_mw')->first();
+    if ($needleFile)
+      $needleFile = ['FileId' => $needleFile->FileId, 'Extension' => $needleFile->Extension, 'FileName' => $needleFile->FileName];
+    else
+      $needleFile = ['FileId' => 'needlefileid', 'Extension' => 'stl', 'FileName' => 'needlefilename'];
 
     foreach ($modality as $mlabel => $m)
     {
@@ -100,8 +104,10 @@ class GalilCombinationSeeder extends Seeder {
       {
         $name .= $mlabel;
         print $name;
-        $probe = new Needle(['Name' => $name, 'Manufacturer' => 'Galil Medical', 'Geometry' => 'library:rfa-cylinder-1', 'Class' => 'solid-boundary',
-        'FileId' => $needleFile->FileId, 'Extension' => $needleFile->Extension, 'FileName' => $needleFile->FileName]);
+        $probe = new Needle(array_merge(
+          ['Name' => $name, 'Manufacturer' => 'Galil Medical', 'Geometry' => 'library:rfa-cylinder-1', 'Class' => 'solid-boundary'],
+          $needleFile
+        ));
         $m->needles()->save($probe);
 
         foreach ($generator as $g)

@@ -41,6 +41,7 @@ class CreateNeedlesTable extends Migration {
 			$table->string('Manufacturer');
 			$table->string('Class');
 			$table->char('FileId', 36)->nullable();
+			$table->string('Geometry')->nullable();
 			$table->string('Extension')->nullable();
 			$table->string('FileName')->nullable();
       $table->unique(['Name', 'Manufacturer', 'Class']);

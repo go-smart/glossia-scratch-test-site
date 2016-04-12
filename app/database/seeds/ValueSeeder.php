@@ -20,17 +20,6 @@
  */
 
 
-use \Seeder;
-
-use \Algorithm;
-use \Combination;
-use \Modality;
-use \Needle;
-use \NumericalModel;
-use \Parameter;
-use \PowerGenerator;
-use \Protocol;
-
 class ValueSeeder extends Seeder {
 
   /**

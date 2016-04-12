@@ -20,18 +20,6 @@
  */
 
 
-use \Seeder;
-
-use \Algorithm;
-use \Argument;
-use \Combination;
-use \Modality;
-use \Needle;
-use \NumericalModel;
-use \Parameter;
-use \PowerGenerator;
-use \Protocol;
-
 class AlgorithmSeeder extends Seeder {
 
   /**
@@ -58,8 +46,10 @@ class AlgorithmSeeder extends Seeder {
       $protocolName = $root->getAttribute('protocol');
       $protocol = Protocol::whereName($protocolName)->whereModalityId($modality->Id)->first();
 
-      if (empty($protocol))
-        throw new Exception("Could not find protocol! ($algorithmsXml)");
+      if (empty($protocol)) {
+        \Log::warning("Could not find protocol! ($algorithmsXml)");
+        continue;
+      }
 
       $arguments = [];
       $parameters = [];

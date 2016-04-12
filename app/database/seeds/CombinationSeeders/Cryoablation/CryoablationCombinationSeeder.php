@@ -47,8 +47,9 @@ class CryoablationCombinationSeeder extends Seeder {
     $modality['GCryo'] = Modality::whereName("Development")->first();
 
     $oldNM = $modality['GCryo']->numericalModels()->first();
-    $definition = fopen('/home/administrator/most-recent-gfoam.py', 'w');
-    fwrite($definition, $oldNM->Definition);
+    $definition = fopen('/tmp/.tmp.most-recent-gfoam', 'w');
+    if ($oldNM)
+      fwrite($definition, $oldNM->Definition);
     fclose($definition);
 
     /* Add model */
@@ -71,11 +72,11 @@ class CryoablationCombinationSeeder extends Seeder {
     $model['numa sif']->arguments()->attach(Argument::create(['Name' => 'Temperature']));
     $model['numa sif']->arguments()->attach(Argument::create(['Name' => 'Time']));
 
-    $organ = Region::whereName('Organ')->first();
-    $vessels = Region::whereName('Vessels')->first();
-    $veins = Region::whereName('Veins')->first();
-    $arteries = Region::whereName('Arteries')->first();
-    $tumour = Region::whereName('Tumour')->first();
+    $organ = Region::whereName('organ')->first();
+    $vessels = Region::whereName('vessels')->first();
+    $veins = Region::whereName('veins')->first();
+    $arteries = Region::whereName('arteries')->first();
+    $tumour = Region::whereName('tumour')->first();
     $simulatedLesion = Region::whereName('existing-lesion')->first();
     $segmentedLesion = Region::whereName('segmented-lesion')->first();
     $tace = Region::whereName('tace')->first();
@@ -93,7 +94,7 @@ class CryoablationCombinationSeeder extends Seeder {
     $modality['GCryo']->numericalModels()->save($model['Gfoam']);
     $model['Gfoam']->importSif(public_path() . '/templates/go-smart-template_cryo.sif'); // THIS PROVIDES THE KEY PARAM DEPS
     //$model['Gfoam']->Definition = file_get_contents('/home/administrator/parameters.yml') . "\n==========ENDPARAMETERS========\n" . file_get_contents('/home/administrator/g.py');
-    $model['Gfoam']->Definition = file_get_contents('/home/administrator/most-recent-gfoam.py');
+    $model['Gfoam']->Definition = file_get_contents('/tmp/.tmp.most-recent-gfoam');
     $model['Gfoam']->save();
     $model['Gfoam']->arguments()->attach(Argument::create(['Name' => 'Temperature']));
     $model['Gfoam']->arguments()->attach(Argument::create(['Name' => 'Time']));

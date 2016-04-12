@@ -1,8 +1,5 @@
 <?php
 
-use \DB;
-use \Seeder;
-
 class ParameterSeeder extends Seeder {
   public function clean()
   {

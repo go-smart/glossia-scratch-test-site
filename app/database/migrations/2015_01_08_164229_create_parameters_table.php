@@ -36,7 +36,7 @@ class CreateParametersTable extends Migration {
                 {
 			$table->char('Id', 36)->primary();
 		  $table->string('Name')->unique();
-		  $table->string('Type');
+		  $table->string('Type')->nullable();
 		  $table->string('Widget')->nullable();
 		  $table->string('Description')->nullable();
 		  $table->string('Units')->nullable();
